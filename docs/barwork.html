@@ -309,6 +309,48 @@ input[type=range]{accent-color:var(--color-accent)}
 </div></div>
 </sc-if>
 
+<sc-if value="{{ isPacks }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;min-height:0;overflow:auto"><div style="padding:0 0 40px">
+
+<div style="padding:12px 16px 6px;font:700 10px var(--font-heading);letter-spacing:.14em">1 · SPLIT A SONG</div>
+<div style="padding:0 16px 10px;font:11px/1.5 var(--font-body);color:var(--color-neutral-600)">Pick a file already in your SONGS library, tap SPLIT, then run the command it shows you on your computer. It comes back as vocals, drums, bass, guitar, piano, other, and a mixed instrumental.</div>
+<sc-if value="{{ hasLibrary }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ library }}" as="f" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-bottom:1px solid var(--color-neutral-300)">
+<div style="font:700 13px var(--font-heading);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">{{ f.name }}</div>
+<button onClick="{{ f.onExtract }}" style="flex:none;padding:8px 12px;border:1px solid var(--color-divider);background:transparent;color:var(--color-accent-700);font:800 9px var(--font-heading);letter-spacing:.08em;cursor:pointer">SPLIT FULL STEMS</button>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ noLibrary }}" hint-placeholder-val="{{ true }}">
+<div style="padding:0 16px 16px;font:11px/1.5 var(--font-body);color:var(--color-neutral-600)">No songs yet — upload one in the SONGS tab first.</div>
+</sc-if>
+
+<div style="padding:14px 16px 6px;font:700 10px var(--font-heading);letter-spacing:.14em;border-top:2px solid var(--color-divider)">2 · YOUR SOUND PACKS</div>
+<div style="padding:0 16px 10px;font:11px/1.5 var(--font-body);color:var(--color-neutral-600)">Everything split so far. PLAY previews it; tapping a number loads it onto that BEATS pad and saves it there for next time.</div>
+<sc-if value="{{ hasAllStems }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ allStemsList }}" as="st" hint-placeholder-count="4">
+<div style="padding:10px 16px;border-bottom:1px solid var(--color-neutral-300)">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px">
+<div style="font:800 12px var(--font-heading);letter-spacing:.04em">{{ st.label }}</div>
+<button onClick="{{ st.onPlay }}" style="flex:none;padding:5px 10px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);font:700 9px var(--font-heading);cursor:pointer">▶ PLAY</button>
+</div>
+<div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+<span style="font:700 8px var(--font-heading);letter-spacing:.08em;color:var(--color-neutral-600);margin-right:2px">PAD</span>
+<sc-for list="{{ st.padButtons }}" as="pb" hint-placeholder-count="8">
+<button onClick="{{ pb.onAssign }}" style="flex:none;width:26px;height:26px;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-600);font:800 10px var(--font-heading);cursor:pointer;padding:0">{{ pb.num }}</button>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ noAllStems }}" hint-placeholder-val="{{ true }}">
+<div style="padding:0 16px;font:11px/1.5 var(--font-body);color:var(--color-neutral-600)">Nothing split yet. Split a song above, run the command on your computer, then come back here.</div>
+</sc-if>
+
+</div></div>
+</sc-if>
+
 <sc-if value="{{ isSongs }}" hint-placeholder-val="{{ false }}">
 <div style="flex:1;min-height:0;overflow:auto"><div style="padding:0 0 120px">
 <div style="display:flex;border-bottom:2px solid var(--color-divider)">
@@ -481,7 +523,8 @@ class Component extends DCLogic {
     pads: Array.from({ length: 8 }, () => ({ name: "", loaded: false, hit: false })),
     sequencerSteps: Array.from({ length: 8 }, () => Array(16).fill(false)),
     seqPlaying: false, seqBpm: 90, seqStep: -1,
-    helpOpen: false, helpStep: 0
+    helpOpen: false, helpStep: 0,
+    allStems: [], packBeatId: null
   };
   _deckA = {};
   _deckB = {};
@@ -611,6 +654,14 @@ class Component extends DCLogic {
   loadCloud = async () => {
     if (!this.sb || !this.state.session) return;
     this.loadLibrary();
+    this.loadAllStems();
+    const { data: padRows } = await this.sb.from("pads").select("*").order("pad_index");
+    if (padRows) {
+      for (const row of padRows) {
+        const { data: signed } = await this.sb.storage.from("stems").createSignedUrl(row.storage_path, 3600);
+        if (signed) this.loadPadFromUrl(row.pad_index, signed.signedUrl, row.label);
+      }
+    }
     const uid = this.state.session.user.id;
     const { data: song } = await this.sb.from("songs").select("*").eq("id", this.SONG_UUID).maybeSingle();
     if (song && song.meta) {
@@ -759,7 +810,13 @@ class Component extends DCLogic {
 
   extractStems = async (item) => {
     await this.linkAsBeatRow(item);
-    alert("Linked \"" + item.name + "\" as the active beat.\n\nNow on your computer, run:\npython scripts\\split_stems.py <path to your local copy of this file>\n\n(needs the actual file on your machine — Demucs runs locally, not in the browser)");
+    alert(
+      "Linked \"" + item.name + "\" as the active beat.\n\n" +
+      "Now on your computer, run:\npython scripts\\split_stems.py <path to your local copy of this file>\n\n" +
+      "That's the full split: vocals, drums, bass, guitar, piano, other, plus a mixed instrumental — each one shows up in PACKS ready to load onto a BEATS pad.\n\n" +
+      "Just want a quick vocals/instrumental split instead? Add --quick to the command.\n\n" +
+      "(needs the actual file on your machine — Demucs runs locally, not in the browser)"
+    );
   };
 
   loadDeckFromLibrary = async (which, item) => {
@@ -813,13 +870,52 @@ class Component extends DCLogic {
       if (!file) return;
       const T = await this.ensureScrewLibs();
       const arrayBuf = await file.arrayBuffer();
-      const audioBuf = await T.getContext().rawContext.decodeAudioData(arrayBuf);
+      const audioBuf = await T.getContext().rawContext.decodeAudioData(arrayBuf.slice(0));
+      const name = file.name.replace(/\.[^.]+$/, "");
       this._pads[i] = audioBuf;
       const pads = this.state.pads.slice();
-      pads[i] = { name: file.name.replace(/\.[^.]+$/, ""), loaded: true, hit: false };
+      pads[i] = { name, loaded: true, hit: false };
       this.setState({ pads });
+      if (this.sb && this.state.session) {
+        const uid = this.state.session.user.id;
+        const path = uid + "/pads/" + i + "_" + Date.now() + "_" + file.name;
+        const { error } = await this.sb.storage.from("stems").upload(path, file);
+        if (!error) await this.sb.from("pads").upsert({ user_id: uid, pad_index: i, label: name, storage_path: path }, { onConflict: "user_id,pad_index" });
+      }
     };
     inp.click();
+  };
+
+  loadPadFromUrl = async (i, url, name) => {
+    const T = await this.ensureScrewLibs();
+    const res = await fetch(url);
+    const arrayBuf = await res.arrayBuffer();
+    const audioBuf = await T.getContext().rawContext.decodeAudioData(arrayBuf);
+    this._pads[i] = audioBuf;
+    const pads = this.state.pads.slice();
+    pads[i] = { name, loaded: true, hit: false };
+    this.setState({ pads });
+  };
+
+  assignStemToPad = async (stem, padIndex) => {
+    if (!this.sb || !this.state.session || !stem.url) return;
+    const uid = this.state.session.user.id;
+    await this.sb.from("pads").upsert(
+      { user_id: uid, pad_index: padIndex, label: stem.kind.toUpperCase(), storage_path: stem.storage_path },
+      { onConflict: "user_id,pad_index" }
+    );
+    await this.loadPadFromUrl(padIndex, stem.url, stem.kind.toUpperCase());
+  };
+
+  loadAllStems = async () => {
+    if (!this.sb || !this.state.session) return;
+    const { data } = await this.sb.from("stems").select("*").order("created_at", { ascending: false });
+    if (!data) return;
+    const withUrls = await Promise.all(data.map(async (s) => {
+      const { data: signed } = await this.sb.storage.from("stems").createSignedUrl(s.storage_path, 3600);
+      return { id: s.id, kind: s.kind, label: s.kind.toUpperCase(), storage_path: s.storage_path, url: signed ? signed.signedUrl : null, beatId: s.beat_id };
+    }));
+    this.setState({ allStems: withUrls });
   };
 
   triggerPad = (i, time) => {
@@ -1133,13 +1229,14 @@ class Component extends DCLogic {
     { title: "BOOTH — record over the beat", body: "A real two-channel mixer: BEAT and VOCAL, each with a volume fader, mute, and solo. Hit RECORD (here or in the top transport bar) to capture a take from your mic. Takes list below with play and delete." },
     { title: "SCREW — chop and screw", body: "Two independent decks. Load a song on each, drag the SCREW SPEED slider to slow it down (pitch drops with it, the authentic way), flip on SYRUP for reverb, and click the waveform twice to set a loop-start and loop-end, then hit CHOP to lock in and ride that loop. Crossfade between decks at the bottom." },
     { title: "BEATS — pads, sequencer, and your MIDI keyboard", body: "Load a sound onto any of the 8 pads and tap to play it, or plug in a MIDI keyboard (like an M-Audio Oxygen 25) — grant access in Settings, and its keys trigger the pads live. Tap steps in the 16-step grid under each pad to build a loop, then hit PLAY PATTERN." },
+    { title: "PACKS — split a song into sound packs", body: "Pick any song from SONGS and tap SPLIT FULL STEMS — it links it as your beat and shows a command to run on your computer that splits it into vocals, drums, bass, guitar, piano, other, and a mixed instrumental. Everything you've split shows up below with a PLAY button and pad numbers — tap a number to load that piece straight onto a BEATS pad, saved for next time." },
     { title: "Settings & MIDI", body: "The gear icon has rhyme sensitivity, display toggles, a MIDI DEVICES panel (shows your keyboard once it's plugged in and Chrome grants access), and sign out. That's the whole app — tap the ? anytime to come back here." },
   ];
 
   renderVals() {
     const S = this.state, fams = this.families(), self = this, E = this.E;
     const efam = E ? E.rhymeFamilies(S.lines.map(l => String(l).trim()), this.sens) : null;
-    const tabs = ["SONGS", "WRITE", "FLOW", "BOOTH", "SCREW", "BEATS"].map(n => {
+    const tabs = ["SONGS", "WRITE", "FLOW", "BOOTH", "SCREW", "BEATS", "PACKS"].map(n => {
       const id = n.toLowerCase(), on = S.tab === id;
       return { name: n, mark: on ? "var(--color-accent)" : "transparent", fg: on ? "var(--color-text)" : "var(--color-neutral-600)", onTap: () => this.setState({ tab: id, word: null, edit: -1, ammo: false }) };
     });
@@ -1279,8 +1376,13 @@ class Component extends DCLogic {
       name: n, bg: S.beatMode === n ? "var(--color-text)" : "transparent", fg: S.beatMode === n ? "var(--color-bg)" : "var(--color-text)",
       onTap: () => this.setState({ beatMode: n })
     }));
-    const crumbs = { songs: "BARWORK", write: "VERSE 1 · 82 BPM", flow: "MAP OF THE CITY", booth: "MAP OF THE CITY", screw: "CHOP & SCREW", beats: "BEAT MAKER" };
-    const heads = { songs: "SONGS", write: "MAP OF THE CITY", flow: "FLOW", booth: "BOOTH", screw: "SCREW", beats: "BEATS" };
+    const crumbs = { songs: "BARWORK", write: "VERSE 1 · 82 BPM", flow: "MAP OF THE CITY", booth: "MAP OF THE CITY", screw: "CHOP & SCREW", beats: "BEAT MAKER", packs: "SOUND PACK MAKER" };
+    const heads = { songs: "SONGS", write: "MAP OF THE CITY", flow: "FLOW", booth: "BOOTH", screw: "SCREW", beats: "BEATS", packs: "PACKS" };
+    const allStemsList = S.allStems.map(st => ({
+      ...st,
+      onPlay: () => { if (st.url) new Audio(st.url).play(); },
+      padButtons: Array.from({ length: 8 }, (_, i) => ({ num: i + 1, onAssign: () => this.assignStemToPad(st, i) })),
+    }));
     const pads = S.pads.map((p, i) => ({
       name: p.name || ("PAD " + (i + 1)), num: i + 1,
       hint: p.loaded ? "MIDI " + (36 + i) : "EMPTY",
@@ -1334,7 +1436,8 @@ class Component extends DCLogic {
       signOut: this.signOut,
       toggleAuthMode: () => this.setState({ authMode: S.authMode === "signup" ? "signin" : "signup", authError: "" }),
       crumb: crumbs[S.tab], heading: heads[S.tab],
-      isWrite: S.tab === "write", isFlow: S.tab === "flow", isBooth: S.tab === "booth", isSongs: S.tab === "songs", isScrew: S.tab === "screw", isBeats: S.tab === "beats",
+      isWrite: S.tab === "write", isFlow: S.tab === "flow", isBooth: S.tab === "booth", isSongs: S.tab === "songs", isScrew: S.tab === "screw", isBeats: S.tab === "beats", isPacks: S.tab === "packs",
+      allStemsList, hasAllStems: S.allStems.length > 0, noAllStems: S.allStems.length === 0,
       pads, seqRows,
       seqPlaying: S.seqPlaying, seqPlayLabel: S.seqPlaying ? "STOP" : "PLAY PATTERN",
       seqPlayBg: S.seqPlaying ? "var(--color-accent-700)" : "var(--color-accent)", seqPlayFg: "var(--color-bg)",

@@ -1,22 +1,34 @@
 #!/usr/bin/env python3
 """
-Split a beat into vocal/instrumental stems with Demucs and upload the
-results to Rhymeflux's Supabase storage so they show up in the app's
-FLOW tab under STEMS.
+Split a song into stems with Demucs and upload them to Rhymeflux's
+Supabase storage so they show up in the app's PACKS (Sound Pack Maker)
+and FLOW tabs, and can be assigned straight onto BEATS pads.
 
 Setup (once):
-    pip install demucs supabase
+    pip install demucs supabase soundfile numpy
 
 Usage:
-    python split_stems.py path\\to\\beat.mp3
+    python split_stems.py path\\to\\song.mp3            # full split (default)
+    python split_stems.py path\\to\\song.mp3 --quick     # fast: vocals + instrumental only
+
+Full split (default) uses Demucs's 6-stem model and produces:
+    vocals, drums, bass, guitar, piano, other, and a computed
+    "instrumental" mix (everything except vocals, summed together).
+This downloads a second, separate model file the first time it runs
+and takes longer than the quick mode, since it's separating into more
+parts. Guitar and piano are the least reliable of the six — Demucs
+itself calls that model experimental.
+
+--quick uses the smaller 4-stem-family model in two-stem mode and only
+produces vocals + instrumental, same as before — useful when you just
+want a clean instrumental fast and don't need individual instruments.
 
 You'll be prompted for your Rhymeflux email/password (the same account
 you sign in with on the site), unless RHYMEFLUX_EMAIL / RHYMEFLUX_PASSWORD
 are set as environment variables. Nothing is ever stored in this file.
 
-This only works AFTER you've loaded this same beat in the app itself
-(FLOW tab -> MY FILE -> choose the file) so there's a beat in the cloud
-to attach the stems to.
+This only works AFTER you've loaded this same song in the app (SONGS tab,
+or FLOW tab -> MY FILE) so there's a beat in the cloud to attach stems to.
 """
 import os
 import sys
@@ -30,11 +42,37 @@ SUPABASE_ANON_KEY = "sb_publishable__f6iHjAypO7t6FEdKxXAIw_QqHtAWmy"
 SONG_UUID = "11111111-1111-4111-8111-111111111111"
 
 
+def mix_instrumental(paths, out_path):
+    import numpy as np
+    import soundfile as sf
+
+    data = None
+    sr = None
+    for p in paths:
+        d, this_sr = sf.read(p, always_2d=True)
+        sr = sr or this_sr
+        if data is None:
+            data = d
+        else:
+            n = max(len(data), len(d))
+            if len(data) < n:
+                data = np.pad(data, ((0, n - len(data)), (0, 0)))
+            if len(d) < n:
+                d = np.pad(d, ((0, n - len(d)), (0, 0)))
+            data = data + d
+    peak = float(max(1.0, abs(data).max()))
+    if peak > 1.0:
+        data = data / peak
+    sf.write(out_path, data, sr)
+
+
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python split_stems.py <path-to-audio-file>")
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    quick = "--quick" in sys.argv
+    if len(args) != 1:
+        print("Usage: python split_stems.py <path-to-audio-file> [--quick]")
         sys.exit(1)
-    src = Path(sys.argv[1]).expanduser().resolve()
+    src = Path(args[0]).expanduser().resolve()
     if not src.exists():
         print(f"File not found: {src}")
         sys.exit(1)
@@ -59,21 +97,38 @@ def main():
     )
     if not beats.data:
         print("No beat found in the cloud yet.")
-        print("Load this beat in the app first (FLOW tab -> MY FILE), then re-run this script.")
+        print("Load this song in the app first (SONGS tab, or FLOW tab -> MY FILE), then re-run this script.")
         sys.exit(1)
     beat = beats.data[0]
     beat_id = beat["id"]
-    print(f"Attaching stems to beat: {beat.get('label') or beat_id}")
+    print(f"Attaching stems to: {beat.get('label') or beat_id}")
 
     with tempfile.TemporaryDirectory() as tmp:
-        print("Running Demucs (this can take a few minutes on CPU)...")
-        subprocess.run(
-            [sys.executable, "-m", "demucs", "--two-stems", "vocals", "-o", tmp, str(src)],
-            check=True,
-        )
-        # demucs writes to <tmp>/htdemucs/<filename-without-ext>/{vocals,no_vocals}.wav
-        stem_dir = Path(tmp) / "htdemucs" / src.stem
-        pairs = [("vocals", stem_dir / "vocals.wav"), ("instrumental", stem_dir / "no_vocals.wav")]
+        if quick:
+            print("Running Demucs, quick mode (vocals + instrumental only)...")
+            subprocess.run(
+                [sys.executable, "-m", "demucs", "--two-stems", "vocals", "-o", tmp, str(src)],
+                check=True,
+            )
+            stem_dir = Path(tmp) / "htdemucs" / src.stem
+            pairs = [("vocals", stem_dir / "vocals.wav"), ("instrumental", stem_dir / "no_vocals.wav")]
+        else:
+            print("Running Demucs, full split: vocals, drums, bass, guitar, piano, other...")
+            print("(first run also downloads the 6-stem model — this can take a while)")
+            subprocess.run(
+                [sys.executable, "-m", "demucs", "-n", "htdemucs_6s", "-o", tmp, str(src)],
+                check=True,
+            )
+            stem_dir = Path(tmp) / "htdemucs_6s" / src.stem
+            names = ["vocals", "drums", "bass", "guitar", "piano", "other"]
+            pairs = [(n, stem_dir / f"{n}.wav") for n in names]
+
+            non_vocal = [stem_dir / f"{n}.wav" for n in names if n != "vocals" and (stem_dir / f"{n}.wav").exists()]
+            if non_vocal:
+                print("Mixing down the instrumental (everything except vocals)...")
+                instrumental_path = stem_dir / "instrumental.wav"
+                mix_instrumental(non_vocal, instrumental_path)
+                pairs.append(("instrumental", instrumental_path))
 
         for kind, path in pairs:
             if not path.exists():
@@ -90,7 +145,7 @@ def main():
             ).execute()
             print(f"Uploaded {kind} -> {storage_path}")
 
-    print("Done. Open the app's FLOW tab — the stems will show up under STEMS.")
+    print("Done. Open the app's PACKS tab to hear everything and load pieces onto your BEATS pads.")
 
 
 if __name__ == "__main__":
