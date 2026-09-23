@@ -1,0 +1,30 @@
+{
+  "$schema": "one object per term; ARPAbet with stress digits. Layered over CMUdict, under the curated LEX.",
+  "version": 1,
+  "entries": [
+    { "term": "patek", "phonemes": "P AA0 T EH1 K", "note": "Patek Philippe — brand" },
+    { "term": "audemars", "phonemes": "AO1 D AH0 M AA0 R", "note": "brand, French-final" },
+    { "term": "cardi", "phonemes": "K AA1 R D IY0" },
+    { "term": "drillin", "phonemes": "D R IH1 L IH0 N", "note": "g-dropped -ing" },
+    { "term": "trappin", "phonemes": "T R AE1 P IH0 N" },
+    { "term": "runnin", "phonemes": "R AH1 N IH0 N" },
+    { "term": "bein", "phonemes": "B IY1 IH0 N" },
+    { "term": "finna", "phonemes": "F IH1 N AH0" },
+    { "term": "tryna", "phonemes": "T R AY1 N AH0" },
+    { "term": "gyat", "phonemes": "G Y AE1 T" },
+    { "term": "opps", "phonemes": "AA1 P S" },
+    { "term": "glizzy", "phonemes": "G L IH1 Z IY0" },
+    { "term": "molly", "phonemes": "M AA1 L IY0" },
+    { "term": "wraith", "phonemes": "R EY1 TH" },
+    { "term": "maybach", "phonemes": "M EY1 B AA0 K" },
+    { "term": "hellcat", "phonemes": "HH EH1 L K AE0 T" },
+    { "term": "dior", "phonemes": "D IY0 AO1 R" },
+    { "term": "goyard", "phonemes": "G OY0 AA1 R D" },
+    { "term": "amiri", "phonemes": "AH0 M IH1 R IY0" },
+    { "term": "rico", "phonemes": "R IY1 K OW0" },
+    { "term": "bando", "phonemes": "B AE1 N D OW0" },
+    { "term": "chopper", "phonemes": "CH AA1 P ER0" },
+    { "term": "stainless", "phonemes": "S T EY1 N L AH0 S" },
+    { "term": "digits", "phonemes": "D IH1 JH AH0 T S" }
+  ]
+}
