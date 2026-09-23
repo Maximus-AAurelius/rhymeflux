@@ -61,22 +61,40 @@ input[type=range]{accent-color:var(--color-accent)}
 </div>
 <div style="display:flex;gap:8px;flex:none;align-items:center">
 <span style="font:700 9px var(--font-heading);letter-spacing:.1em;color:{{ syncTone }};border:1px solid var(--color-divider);padding:5px 7px">{{ syncLabel }}</span>
+<button onClick="{{ openHelp }}" style="width:44px;height:44px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);font:800 15px var(--font-heading);cursor:pointer;padding:0" style-hover="background:rgba(32,30,29,.07)">?</button>
 <button onClick="{{ openSettings }}" style="width:44px;height:44px;border:1px solid var(--color-divider);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" style-hover="background:rgba(32,30,29,.07)"><span style="display:block;width:16px;height:16px;border:2px solid var(--color-text);border-left-color:transparent;border-right-color:transparent"></span></button>
 </div>
 </div>
 
 <sc-if value="{{ hasBeatFile }}" hint-placeholder-val="{{ false }}">
-<div style="flex:none;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 16px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100)">
-<button onClick="{{ toggleBeatPlay }}" style="flex:none;width:30px;height:30px;border:0;border-radius:50%;background:var(--color-accent);color:var(--color-bg);cursor:pointer;font:800 11px var(--font-heading);display:flex;align-items:center;justify-content:center;padding:0">{{ beatPlayIcon }}</button>
-<button onClick="{{ stopBeat }}" style="flex:none;width:30px;height:30px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);cursor:pointer;font:11px var(--font-heading);display:flex;align-items:center;justify-content:center;padding:0">■</button>
-<button onClick="{{ recToggle }}" style="flex:none;width:30px;height:30px;border-radius:50%;border:0;background:{{ transportRecBg }};color:#fff;cursor:pointer;font:11px var(--font-heading);display:flex;align-items:center;justify-content:center;padding:0">●</button>
-<div style="flex:none;font:700 10px var(--font-heading);font-variant-numeric:tabular-nums;color:var(--color-neutral-600);white-space:nowrap">{{ beatPosLabel }} / {{ beatDurLabel }}</div>
-<input type="range" min="0" max="{{ beatDur }}" step="0.1" value="{{ beatPos }}" onChange="{{ seekBeat }}" style="flex:1 1 120px;min-width:60px" />
-<div style="flex:none;display:flex;align-items:center;gap:6px">
-<span style="font:700 9px var(--font-heading);letter-spacing:.06em;color:var(--color-neutral-600);white-space:nowrap">TEMPO {{ beatRateLabel }}</span>
-<input type="range" min="0.5" max="1.5" step="0.01" value="{{ beatRate }}" onChange="{{ onBeatRate }}" style="width:80px" />
+<div style="flex:none;display:flex;align-items:stretch;gap:10px;flex-wrap:wrap;padding:8px 16px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100)">
+
+<div style="flex:none;display:flex;border:1px solid var(--color-divider)">
+<button onClick="{{ seekBeatBack }}" style="flex:none;width:32px;height:32px;border:0;border-right:1px solid var(--color-divider);background:transparent;color:var(--color-text);cursor:pointer;font:11px var(--font-heading);display:flex;align-items:center;justify-content:center;padding:0">◀◀</button>
+<button onClick="{{ stopBeat }}" style="flex:none;width:32px;height:32px;border:0;border-right:1px solid var(--color-divider);background:transparent;color:var(--color-text);cursor:pointer;font:11px var(--font-heading);display:flex;align-items:center;justify-content:center;padding:0">■</button>
+<button onClick="{{ toggleBeatPlay }}" style="flex:none;width:32px;height:32px;border:0;border-right:1px solid var(--color-divider);background:var(--color-accent);color:var(--color-bg);cursor:pointer;font:800 11px var(--font-heading);display:flex;align-items:center;justify-content:center;padding:0">{{ beatPlayIcon }}</button>
+<button onClick="{{ seekBeatFwd }}" style="flex:none;width:32px;height:32px;border:0;border-right:1px solid var(--color-divider);background:transparent;color:var(--color-text);cursor:pointer;font:11px var(--font-heading);display:flex;align-items:center;justify-content:center;padding:0">▶▶</button>
+<button onClick="{{ recToggle }}" style="flex:none;width:32px;height:32px;border:0;background:transparent;color:{{ transportRecBg }};cursor:pointer;font:16px var(--font-heading);display:flex;align-items:center;justify-content:center;padding:0">●</button>
 </div>
-<button onClick="{{ toggleBeatLoop }}" style="flex:none;padding:6px 10px;border:1px solid var(--color-divider);background:{{ beatLoopBg }};color:{{ beatLoopFg }};font:800 9px var(--font-heading);letter-spacing:.08em;cursor:pointer">LOOP</button>
+
+<div style="flex:none;border:1px solid var(--color-divider);padding:2px 12px;display:flex;flex-direction:column;justify-content:center;min-width:108px">
+<div style="font:800 17px/1.1 var(--font-heading);font-variant-numeric:tabular-nums;letter-spacing:-.01em">{{ beatPosLabel }}</div>
+<div style="font:700 9px var(--font-heading);font-variant-numeric:tabular-nums;color:var(--color-neutral-600)">/ {{ beatDurLabel }}</div>
+</div>
+
+<input type="range" min="0" max="{{ beatDur }}" step="0.1" value="{{ beatPos }}" onChange="{{ seekBeat }}" style="flex:1 1 100px;min-width:50px;align-self:center" />
+
+<div style="flex:none;border:1px solid var(--color-divider);padding:2px 10px;display:flex;flex-direction:column;justify-content:center;min-width:78px">
+<div style="font:700 8px var(--font-heading);letter-spacing:.1em;color:var(--color-neutral-600)">TEMPO</div>
+<div style="font:800 14px var(--font-heading);font-variant-numeric:tabular-nums">{{ beatRateLabel }}</div>
+</div>
+<input type="range" min="0.5" max="1.5" step="0.01" value="{{ beatRate }}" onChange="{{ onBeatRate }}" style="width:70px;align-self:center" />
+
+<button onClick="{{ toggleBeatLoop }}" style="flex:none;border:1px solid var(--color-divider);padding:2px 12px;display:flex;flex-direction:column;justify-content:center;background:{{ beatLoopBg }};color:{{ beatLoopFg }};cursor:pointer;min-width:56px">
+<div style="font:700 8px var(--font-heading);letter-spacing:.1em">LOOP</div>
+<div style="font:800 11px var(--font-heading)">{{ beatLoopState }}</div>
+</button>
+
 </div>
 </sc-if>
 
@@ -320,8 +338,8 @@ input[type=range]{accent-color:var(--color-accent)}
 </sc-if>
 
 <sc-if value="{{ drawer }}" hint-placeholder-val="{{ false }}">
-<div style="position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(32,30,29,.35)" onClick="{{ closeDrawer }}"></div>
-<div style="position:absolute;left:0;right:0;bottom:0;background:var(--color-bg);border-top:2px solid var(--color-text);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;max-height:66%">
+<div style="position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(32,30,29,.35);z-index:5" onClick="{{ closeDrawer }}"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:var(--color-bg);border-top:2px solid var(--color-text);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;max-height:66%;z-index:6">
 <div style="flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:2px solid var(--color-divider)">
 <div style="min-width:0"><div style="font:700 9px var(--font-heading);letter-spacing:.14em;color:var(--color-neutral-600)">SELECTED WORD</div><div style="font:800 22px/1.1 var(--font-heading);letter-spacing:-.02em">{{ word }}<span style="font:700 11px var(--font-heading);color:var(--color-accent);margin-left:8px">{{ wordSyl }} SYLL</span></div></div>
 <button onClick="{{ closeDrawer }}" style="flex:none;width:44px;height:44px;border:1px solid var(--color-divider);background:transparent;font:700 14px var(--font-heading);cursor:pointer;padding:0" style-hover="background:rgba(32,30,29,.07)">×</button>
@@ -339,8 +357,8 @@ input[type=range]{accent-color:var(--color-accent)}
 </sc-if>
 
 <sc-if value="{{ ammo }}" hint-placeholder-val="{{ false }}">
-<div style="position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(32,30,29,.35)" onClick="{{ closeAmmo }}"></div>
-<div style="position:absolute;left:0;right:0;bottom:0;background:var(--color-bg);border-top:2px solid var(--color-text);box-shadow:var(--shadow-lg);max-height:72%;display:flex;flex-direction:column">
+<div style="position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(32,30,29,.35);z-index:5" onClick="{{ closeAmmo }}"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:var(--color-bg);border-top:2px solid var(--color-text);box-shadow:var(--shadow-lg);max-height:72%;display:flex;flex-direction:column;z-index:6">
 <div style="flex:none;padding:14px 16px;border-bottom:2px solid var(--color-divider);display:flex;justify-content:space-between;align-items:center;gap:10px">
 <div><div style="font:800 20px var(--font-heading);letter-spacing:-.02em">AI AMMO</div><div style="font:11px var(--font-body);color:var(--color-neutral-600)">{{ aiMeter }} actions left this month</div></div>
 <button onClick="{{ closeAmmo }}" style="flex:none;width:44px;height:44px;border:1px solid var(--color-divider);background:transparent;font:700 14px var(--font-heading);cursor:pointer;padding:0">×</button>
@@ -365,9 +383,27 @@ input[type=range]{accent-color:var(--color-accent)}
 </div>
 </sc-if>
 
+<sc-if value="{{ helpOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(32,30,29,.35);z-index:5" onClick="{{ closeHelp }}"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:var(--color-bg);border-top:2px solid var(--color-text);box-shadow:var(--shadow-lg);max-height:76%;display:flex;flex-direction:column;z-index:6">
+<div style="padding:14px 16px;border-bottom:2px solid var(--color-divider);display:flex;justify-content:space-between;align-items:center">
+<div style="font:700 9px var(--font-heading);letter-spacing:.14em;color:var(--color-accent)">STEP {{ helpStepNo }} OF {{ helpStepCount }}</div>
+<button onClick="{{ closeHelp }}" style="width:44px;height:44px;border:1px solid var(--color-divider);background:transparent;font:700 14px var(--font-heading);cursor:pointer;padding:0">×</button>
+</div>
+<div style="flex:1;min-height:0;overflow:auto;padding:20px 16px">
+<div style="font:800 22px/1.15 var(--font-heading);letter-spacing:-.02em;margin-bottom:12px">{{ helpTitle }}</div>
+<div style="font:15px/1.6 var(--font-body);color:var(--color-neutral-700)">{{ helpBody }}</div>
+</div>
+<div style="flex:none;display:flex;border-top:2px solid var(--color-divider)">
+<button onClick="{{ prevHelp }}" style="flex:1;padding:16px;border:0;border-right:1px solid var(--color-neutral-300);background:transparent;color:{{ helpBackFg }};font:800 12px var(--font-heading);letter-spacing:.1em;text-align:left;cursor:pointer">← BACK</button>
+<button onClick="{{ nextHelp }}" style="flex:1;padding:16px;border:0;background:{{ helpNextBg }};color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:.1em;text-align:left;cursor:pointer">{{ helpNextLabel }}</button>
+</div>
+</div>
+</sc-if>
+
 <sc-if value="{{ settings }}" hint-placeholder-val="{{ false }}">
-<div style="position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(32,30,29,.35)" onClick="{{ closeSettings }}"></div>
-<div style="position:absolute;left:0;right:0;bottom:0;background:var(--color-bg);border-top:2px solid var(--color-text);box-shadow:var(--shadow-lg);max-height:76%;overflow:auto">
+<div style="position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(32,30,29,.35);z-index:5" onClick="{{ closeSettings }}"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:var(--color-bg);border-top:2px solid var(--color-text);box-shadow:var(--shadow-lg);max-height:76%;overflow:auto;z-index:6">
 <div style="padding:14px 16px;border-bottom:2px solid var(--color-divider);display:flex;justify-content:space-between;align-items:center"><div style="font:800 20px var(--font-heading);letter-spacing:-.02em">SETTINGS</div><button onClick="{{ closeSettings }}" style="width:44px;height:44px;border:1px solid var(--color-divider);background:transparent;font:700 14px var(--font-heading);cursor:pointer;padding:0">×</button></div>
 <div style="padding:14px 16px 6px;font:700 10px var(--font-heading);letter-spacing:.14em;color:var(--color-neutral-600)">RHYME SENSITIVITY</div>
 <div style="display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--color-neutral-300)">
@@ -444,7 +480,8 @@ class Component extends DCLogic {
     library: [], midiSupported: null, midiDevices: [],
     pads: Array.from({ length: 8 }, () => ({ name: "", loaded: false, hit: false })),
     sequencerSteps: Array.from({ length: 8 }, () => Array(16).fill(false)),
-    seqPlaying: false, seqBpm: 90, seqStep: -1
+    seqPlaying: false, seqBpm: 90, seqStep: -1,
+    helpOpen: false, helpStep: 0
   };
   _deckA = {};
   _deckB = {};
@@ -655,6 +692,14 @@ class Component extends DCLogic {
   };
 
   fmtTime = (s) => { s = Math.floor(s || 0); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+
+  openHelp = () => this.setState({ helpOpen: true, helpStep: 0, settings: false, ammo: false });
+  closeHelp = () => this.setState({ helpOpen: false });
+  nextHelp = () => {
+    if (this.state.helpStep >= this.HELP_STEPS.length - 1) { this.closeHelp(); return; }
+    this.setState({ helpStep: this.state.helpStep + 1 });
+  };
+  prevHelp = () => this.setState({ helpStep: Math.max(this.state.helpStep - 1, 0) });
 
   uploadToLibrary = () => {
     const inp = document.createElement("input");
@@ -888,6 +933,13 @@ class Component extends DCLogic {
     this.setState({ beatPos: a.currentTime });
   };
 
+  seekBeatBy = (delta) => {
+    const a = this.getBeatAudio();
+    if (!a.src) return;
+    a.currentTime = Math.max(0, Math.min(a.duration || 0, a.currentTime + delta));
+    this.setState({ beatPos: a.currentTime });
+  };
+
   applyBeatAudio = () => {
     if (!this._beatAudio) return;
     const S = this.state;
@@ -1072,6 +1124,17 @@ class Component extends DCLogic {
     ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
   };
   TONE = { perfect: "var(--color-accent)", family: "var(--color-accent-700)", slant: "var(--color-neutral-700)", assonance: "var(--color-neutral-600)" };
+
+  HELP_STEPS = [
+    { title: "Welcome to Barwork", body: "A rap writing studio: write bars with live rhyme highlighting, load a beat, chop and screw records, record vocal takes, and build beats on a sampler with your MIDI keyboard. Everything you make is saved to your account and follows you between your phone and computer. Tap NEXT to walk through each tab." },
+    { title: "SONGS — your project folder", body: "Upload any MP3 or WAV here. Each file gets its own row you can rename, and buttons to SET AS BEAT (loads it into the transport bar), send it to a SCREW deck, or EXTRACT STEMS (splits vocals from instrumental — needs a quick command run on your computer, see the README)." },
+    { title: "WRITE — bars and rhymes", body: "Type your bars. Words that rhyme light up in matching colors automatically. Tap any colored word to see more rhymes, same-syllable swaps, and full phrases you can drop in. The syllable count on the right flags bars that run long. Everything autosaves as you type." },
+    { title: "FLOW — beat and structure", body: "Load a beat (YouTube link or your own file), see it on a 4/4 grid against your bars, and check the STEMS panel once you've extracted vocals/instrumental for it. The transport bar at the very top controls playback from any tab, not just here." },
+    { title: "BOOTH — record over the beat", body: "A real two-channel mixer: BEAT and VOCAL, each with a volume fader, mute, and solo. Hit RECORD (here or in the top transport bar) to capture a take from your mic. Takes list below with play and delete." },
+    { title: "SCREW — chop and screw", body: "Two independent decks. Load a song on each, drag the SCREW SPEED slider to slow it down (pitch drops with it, the authentic way), flip on SYRUP for reverb, and click the waveform twice to set a loop-start and loop-end, then hit CHOP to lock in and ride that loop. Crossfade between decks at the bottom." },
+    { title: "BEATS — pads, sequencer, and your MIDI keyboard", body: "Load a sound onto any of the 8 pads and tap to play it, or plug in a MIDI keyboard (like an M-Audio Oxygen 25) — grant access in Settings, and its keys trigger the pads live. Tap steps in the 16-step grid under each pad to build a loop, then hit PLAY PATTERN." },
+    { title: "Settings & MIDI", body: "The gear icon has rhyme sensitivity, display toggles, a MIDI DEVICES panel (shows your keyboard once it's plugged in and Chrome grants access), and sign out. That's the whole app — tap the ? anytime to come back here." },
+  ];
 
   renderVals() {
     const S = this.state, fams = this.families(), self = this, E = this.E;
@@ -1294,12 +1357,13 @@ class Component extends DCLogic {
       beatPosLabel: this.fmtTime(S.beatPos), beatDurLabel: this.fmtTime(S.beatDur),
       beatPos: S.beatPos, beatDur: S.beatDur || 0.01,
       seekBeat: this.seekBeat,
+      seekBeatBack: () => this.seekBeatBy(-5), seekBeatFwd: () => this.seekBeatBy(5),
       toggleBeatPlay: this.toggleBeatPlay,
       stopBeat: this.stopBeat,
       beatRate: S.beatRate, beatRateLabel: S.beatRate.toFixed(2) + "×",
       onBeatRate: (e) => this.setBeatRate(parseFloat(e.target.value)),
       transportRecBg: S.rec ? "#ef4444" : "rgba(239,68,68,.65)",
-      toggleBeatLoop: this.toggleBeatLoop,
+      toggleBeatLoop: this.toggleBeatLoop, beatLoopState: S.beatLoop ? "ON" : "OFF",
       beatLoopBg: S.beatLoop ? "var(--color-accent)" : "transparent",
       beatLoopFg: S.beatLoop ? "var(--color-bg)" : "var(--color-text)",
       beatVol: S.beatVol, onBeatVol: (e) => this.setBeatVol(parseFloat(e.target.value)),
@@ -1355,6 +1419,12 @@ class Component extends DCLogic {
       godPrompt: () => this.setState({ ammo: false, tab: "songs" }),
       ammoNote: "Ammo writes in the " + S.lane + " lane and stays inside your syllable range. Nothing is inserted until you tap it.",
       settings: S.settings, openSettings: () => { this.setState({ settings: true }); this.initMidi(); }, closeSettings: () => this.setState({ settings: false }),
+      helpOpen: S.helpOpen, openHelp: this.openHelp, closeHelp: this.closeHelp, prevHelp: this.prevHelp, nextHelp: this.nextHelp,
+      helpStepNo: S.helpStep + 1, helpStepCount: this.HELP_STEPS.length,
+      helpTitle: this.HELP_STEPS[S.helpStep].title, helpBody: this.HELP_STEPS[S.helpStep].body,
+      helpBackFg: S.helpStep === 0 ? "var(--color-neutral-500)" : "var(--color-text)",
+      helpNextBg: S.helpStep === this.HELP_STEPS.length - 1 ? "var(--color-neutral-700)" : "var(--color-accent)",
+      helpNextLabel: S.helpStep === this.HELP_STEPS.length - 1 ? "DONE" : "NEXT →",
       midiSupported: S.midiSupported, midiDevices: S.midiDevices, hasMidi: S.midiDevices.length > 0,
       midiStatusLine: S.midiSupported === false ? "Not supported in this browser — use Chrome or Edge." : S.midiSupported === null ? "Checking…" : S.midiDevices.length ? "" : "No MIDI devices found — plug in your Oxygen 25 via USB.",
       sensOpts, toggles,
