@@ -21,6 +21,7 @@
 }
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0a0712;font-family:var(--font-body,system-ui)}
 .chrome-text{background:linear-gradient(180deg,#fdfbff 0%,#cbb8ef 30%,#8b5cf6 52%,#cbb8ef 78%,#fdfbff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 2px 14px rgba(139,92,246,.4)}
+input[type=range]{accent-color:var(--color-accent)}
 #app-shell{height:100dvh;width:100%;display:flex}
 #app-card{width:100%;height:100%;background:var(--color-bg);display:flex;flex-direction:column;position:relative}
 #brand-panel{display:none}
@@ -182,6 +183,44 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0a0712;fon
 </div></div>
 </sc-if>
 
+<sc-if value="{{ isScrew }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;min-height:0;overflow:auto"><div style="padding:0 0 40px">
+
+<div style="padding:12px 16px;border-bottom:1px solid var(--color-neutral-300);display:flex;justify-content:space-between;align-items:baseline"><div style="font:700 10px var(--font-heading);letter-spacing:.14em">DECK A</div><div style="font:11px var(--font-body);color:var(--color-neutral-600)">{{ deckAName }}</div></div>
+<canvas id="deckA-canvas" width="700" height="72" onClick="{{ onDeckAClick }}" style="width:100%;height:72px;display:block;border-bottom:1px solid var(--color-neutral-300);cursor:crosshair;background:var(--color-neutral-100)"></canvas>
+<div style="display:flex;border-bottom:1px solid var(--color-neutral-300)">
+<button onClick="{{ loadDeckA }}" style="flex:1;min-height:44px;border:0;border-right:1px solid var(--color-neutral-300);background:transparent;color:var(--color-text);font:800 10px var(--font-heading);letter-spacing:.1em;cursor:pointer">LOAD</button>
+<button onClick="{{ toggleDeckAPlay }}" style="flex:1;min-height:44px;border:0;border-right:1px solid var(--color-neutral-300);background:{{ deckAPlayBg }};color:{{ deckAPlayFg }};font:800 10px var(--font-heading);letter-spacing:.1em;cursor:pointer">{{ deckAPlayLabel }}</button>
+<button onClick="{{ toggleDeckALoop }}" style="flex:1;min-height:44px;border:0;border-right:1px solid var(--color-neutral-300);background:{{ deckALoopBg }};color:{{ deckALoopFg }};font:800 10px var(--font-heading);letter-spacing:.1em;cursor:pointer">CHOP</button>
+<button onClick="{{ toggleDeckAReverb }}" style="flex:1;min-height:44px;border:0;background:{{ deckAReverbBg }};color:{{ deckAReverbFg }};font:800 10px var(--font-heading);letter-spacing:.1em;cursor:pointer">SYRUP</button>
+</div>
+<div style="padding:12px 16px;border-bottom:2px solid var(--color-divider)">
+<div style="display:flex;justify-content:space-between;font:700 9px var(--font-heading);letter-spacing:.12em;color:var(--color-neutral-600);margin-bottom:6px"><span>SCREW SPEED</span><span>{{ deckARateLabel }}</span></div>
+<input type="range" min="0.5" max="1" step="0.01" value="{{ deckARate }}" onChange="{{ onDeckARate }}" style="width:100%" />
+</div>
+
+<div style="padding:12px 16px;border-bottom:1px solid var(--color-neutral-300);display:flex;justify-content:space-between;align-items:baseline"><div style="font:700 10px var(--font-heading);letter-spacing:.14em">DECK B</div><div style="font:11px var(--font-body);color:var(--color-neutral-600)">{{ deckBName }}</div></div>
+<canvas id="deckB-canvas" width="700" height="72" onClick="{{ onDeckBClick }}" style="width:100%;height:72px;display:block;border-bottom:1px solid var(--color-neutral-300);cursor:crosshair;background:var(--color-neutral-100)"></canvas>
+<div style="display:flex;border-bottom:1px solid var(--color-neutral-300)">
+<button onClick="{{ loadDeckB }}" style="flex:1;min-height:44px;border:0;border-right:1px solid var(--color-neutral-300);background:transparent;color:var(--color-text);font:800 10px var(--font-heading);letter-spacing:.1em;cursor:pointer">LOAD</button>
+<button onClick="{{ toggleDeckBPlay }}" style="flex:1;min-height:44px;border:0;border-right:1px solid var(--color-neutral-300);background:{{ deckBPlayBg }};color:{{ deckBPlayFg }};font:800 10px var(--font-heading);letter-spacing:.1em;cursor:pointer">{{ deckBPlayLabel }}</button>
+<button onClick="{{ toggleDeckBLoop }}" style="flex:1;min-height:44px;border:0;border-right:1px solid var(--color-neutral-300);background:{{ deckBLoopBg }};color:{{ deckBLoopFg }};font:800 10px var(--font-heading);letter-spacing:.1em;cursor:pointer">CHOP</button>
+<button onClick="{{ toggleDeckBReverb }}" style="flex:1;min-height:44px;border:0;background:{{ deckBReverbBg }};color:{{ deckBReverbFg }};font:800 10px var(--font-heading);letter-spacing:.1em;cursor:pointer">SYRUP</button>
+</div>
+<div style="padding:12px 16px;border-bottom:2px solid var(--color-divider)">
+<div style="display:flex;justify-content:space-between;font:700 9px var(--font-heading);letter-spacing:.12em;color:var(--color-neutral-600);margin-bottom:6px"><span>SCREW SPEED</span><span>{{ deckBRateLabel }}</span></div>
+<input type="range" min="0.5" max="1" step="0.01" value="{{ deckBRate }}" onChange="{{ onDeckBRate }}" style="width:100%" />
+</div>
+
+<div style="padding:16px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--color-neutral-300)">
+<div style="font:700 9px var(--font-heading);letter-spacing:.12em;color:var(--color-neutral-600);text-align:center">CROSSFADER · A — B</div>
+<input type="range" min="-1" max="1" step="0.01" value="{{ crossfade }}" onChange="{{ onCrossfade }}" style="width:100%" />
+</div>
+<div style="padding:14px 16px;font:11px/1.5 var(--font-body);color:var(--color-neutral-600)">Click the waveform to drop a loop-start marker, click again for the end, then tap CHOP to lock the loop in and play it. Screw speed drops the pitch with the tempo — the way DJ Screw actually did it, slowing the turntable down.</div>
+
+</div></div>
+</sc-if>
+
 <sc-if value="{{ isSongs }}" hint-placeholder-val="{{ false }}">
 <div style="flex:1;min-height:0;overflow:auto"><div style="padding:0 0 120px">
 <div style="display:flex;border-bottom:2px solid var(--color-divider)">
@@ -308,9 +347,14 @@ class Component extends DCLogic {
     beatMode: "YOUTUBE LINK", beatUrl: "", beatLoaded: "no beat loaded", beatFileUrl: null, currentBeatId: null, loop: true, ab: "A",
     takes: [],
     stemsList: [],
+    deckA: { fileName: "no file", loaded: false, playing: false, rate: 1, reverbOn: false, loopOn: false },
+    deckB: { fileName: "no file", loaded: false, playing: false, rate: 1, reverbOn: false, loopOn: false },
+    crossfade: 0,
     session: null, authEmail: "", authPassword: "", authMode: "signin", authBusy: false, authError: "",
     sens: null, syll: null, section: "VERSE 1", songId: "s1", ai: 38
   };
+  _deckA = {};
+  _deckB = {};
   FAM = [
     { bg: "var(--color-accent)", fg: "var(--color-bg)", fw: 600 },
     { bg: "var(--color-neutral-900)", fg: "var(--color-bg)", fw: 600 },
@@ -386,7 +430,11 @@ class Component extends DCLogic {
     this.setState({ lines: next, edit: -1, draft: "" });
     this.saveSong(next);
   };
-  componentWillUnmount() { clearInterval(this._t); }
+  componentWillUnmount() {
+    clearInterval(this._t);
+    if (this._deckA.raf) cancelAnimationFrame(this._deckA.raf);
+    if (this._deckB.raf) cancelAnimationFrame(this._deckB.raf);
+  }
   componentDidMount() {
     // The engine loads async and the editor never waits on it: until it lands,
     // the local spelling heuristic below keeps colouring and counting.
@@ -508,12 +556,181 @@ class Component extends DCLogic {
     if (data) await this.sb.storage.from("takes").remove([data.storage_path]);
     await this.sb.from("takes").delete().eq("id", id);
   };
+
+  ensureScrewLibs = async () => {
+    if (this._Tone) return this._Tone;
+    this._Tone = await import("https://esm.sh/tone@15");
+    return this._Tone;
+  };
+
+  deckStore = (which) => (which === "A" ? this._deckA : this._deckB);
+
+  loadDeck = (which) => {
+    const inp = document.createElement("input");
+    inp.type = "file"; inp.accept = "audio/*,.mp3,.wav,.m4a";
+    inp.onchange = () => {
+      const file = inp.files && inp.files[0];
+      if (file) this.mountDeck(which, file);
+    };
+    inp.click();
+  };
+
+  computePeaks = (audioBuf, buckets) => {
+    const data = audioBuf.getChannelData(0);
+    const step = Math.floor(data.length / buckets) || 1;
+    const peaks = [];
+    for (let i = 0; i < buckets; i++) {
+      let max = 0;
+      const start = i * step;
+      for (let j = 0; j < step && start + j < data.length; j++) {
+        const v = Math.abs(data[start + j]);
+        if (v > max) max = v;
+      }
+      peaks.push(max);
+    }
+    return peaks;
+  };
+
+  mountDeck = async (which, file) => {
+    const T = await this.ensureScrewLibs();
+    const store = this.deckStore(which);
+    if (store.player) { try { store.player.stop(); store.player.dispose(); } catch (e) {} }
+    if (store.reverb) { try { store.reverb.dispose(); } catch (e) {} }
+    if (store.raf) cancelAnimationFrame(store.raf);
+
+    const arrayBuf = await file.arrayBuffer();
+    const ctx = T.getContext().rawContext;
+    const audioBuf = await ctx.decodeAudioData(arrayBuf);
+
+    const reverb = new T.Reverb({ decay: 3.5, wet: 0 });
+    await reverb.generate();
+    reverb.toDestination();
+    const player = new T.Player(audioBuf).connect(reverb);
+    player.playbackRate = 1;
+
+    const peaks = this.computePeaks(audioBuf, 500);
+    Object.assign(store, { player, reverb, buffer: audioBuf, peaks, loopStart: null, loopEnd: null, startedAt: 0, startOffset: 0 });
+
+    this.setState(prev => ({ ["deck" + which]: { ...prev["deck" + which], fileName: file.name, loaded: true, playing: false, rate: 1, reverbOn: false, loopOn: false } }));
+    this.startDeckLoop(which);
+  };
+
+  toggleDeckPlay = (which) => {
+    const store = this.deckStore(which);
+    if (!store.player) return;
+    const S = this.state["deck" + which];
+    if (S.playing) {
+      store.player.stop();
+      this.setState(prev => ({ ["deck" + which]: { ...prev["deck" + which], playing: false } }));
+    } else {
+      const loopReady = S.loopOn && store.loopStart != null && store.loopEnd != null;
+      const offset = loopReady ? store.loopStart : (store.startOffset >= (store.buffer ? store.buffer.duration : 0) ? 0 : store.startOffset || 0);
+      store.player.loop = !!loopReady;
+      if (loopReady) { store.player.loopStart = store.loopStart; store.player.loopEnd = store.loopEnd; }
+      store.startedAt = this._Tone.now();
+      store.startOffset = offset;
+      store.player.start(undefined, offset);
+      this.setState(prev => ({ ["deck" + which]: { ...prev["deck" + which], playing: true } }));
+    }
+  };
+
+  setDeckRate = (which, rate) => {
+    const store = this.deckStore(which);
+    if (store.player) store.player.playbackRate = rate;
+    this.setState(prev => ({ ["deck" + which]: { ...prev["deck" + which], rate } }));
+  };
+
+  toggleDeckReverb = (which) => {
+    const store = this.deckStore(which);
+    const S = this.state["deck" + which];
+    const on = !S.reverbOn;
+    if (store.reverb) store.reverb.wet.value = on ? 0.55 : 0;
+    this.setState(prev => ({ ["deck" + which]: { ...prev["deck" + which], reverbOn: on } }));
+  };
+
+  toggleLoopOn = (which) => {
+    const store = this.deckStore(which);
+    const S = this.state["deck" + which];
+    const on = !S.loopOn;
+    if (store.player) {
+      store.player.loop = on && store.loopStart != null && store.loopEnd != null;
+      if (store.player.loop) { store.player.loopStart = store.loopStart; store.player.loopEnd = store.loopEnd; }
+    }
+    this.setState(prev => ({ ["deck" + which]: { ...prev["deck" + which], loopOn: on } }));
+  };
+
+  onDeckCanvasClick = (which, e) => {
+    const store = this.deckStore(which);
+    if (!store.buffer) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const t = ((e.clientX - rect.left) / rect.width) * store.buffer.duration;
+    if (store.loopStart == null || store.loopEnd != null) {
+      store.loopStart = t; store.loopEnd = null;
+    } else {
+      store.loopEnd = Math.max(t, store.loopStart + 0.05);
+    }
+    this.forceUpdate();
+  };
+
+  setCrossfade = (val) => {
+    this.setState({ crossfade: val });
+    const gA = Math.max(0, 1 - Math.max(0, val));
+    const gB = Math.max(0, 1 + Math.min(0, val));
+    if (this._deckA.player) this._deckA.player.volume.value = gA <= 0 ? -60 : 20 * Math.log10(gA);
+    if (this._deckB.player) this._deckB.player.volume.value = gB <= 0 ? -60 : 20 * Math.log10(gB);
+  };
+
+  startDeckLoop = (which) => {
+    const store = this.deckStore(which);
+    const tick = () => {
+      if (this.state.tab === "screw") this.drawDeckWithPlayhead(which);
+      store.raf = requestAnimationFrame(tick);
+    };
+    if (store.raf) cancelAnimationFrame(store.raf);
+    tick();
+  };
+
+  drawDeckWithPlayhead = (which) => {
+    const store = this.deckStore(which);
+    const canvas = document.getElementById("deck" + which + "-canvas");
+    if (!canvas || !store.peaks || !store.buffer) return;
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    const n = store.peaks.length, bw = w / n;
+    ctx.fillStyle = "#5b4b7d";
+    store.peaks.forEach((p, i) => {
+      const bh = Math.max(1, p * h);
+      ctx.fillRect(i * bw, (h - bh) / 2, Math.max(1, bw - 1), bh);
+    });
+    if (store.loopStart != null && store.loopEnd != null) {
+      const x1 = (store.loopStart / store.buffer.duration) * w, x2 = (store.loopEnd / store.buffer.duration) * w;
+      ctx.fillStyle = "rgba(139,92,246,.3)";
+      ctx.fillRect(x1, 0, x2 - x1, h);
+    }
+    const S = this.state["deck" + which];
+    let pos = store.startOffset || 0;
+    if (S.playing && this._Tone) {
+      const elapsed = (this._Tone.now() - store.startedAt) * (S.rate || 1);
+      pos = (store.startOffset || 0) + elapsed;
+      if (store.player && store.player.loop && store.loopStart != null && store.loopEnd != null) {
+        const span = store.loopEnd - store.loopStart;
+        if (span > 0) pos = store.loopStart + (((pos - store.loopStart) % span) + span) % span;
+      } else if (pos >= store.buffer.duration) {
+        pos = store.buffer.duration;
+        this.setState(prev => ({ ["deck" + which]: { ...prev["deck" + which], playing: false } }));
+      }
+    }
+    const x = (pos / store.buffer.duration) * w;
+    ctx.strokeStyle = "#f6f3fb"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+  };
   TONE = { perfect: "var(--color-accent)", family: "var(--color-accent-700)", slant: "var(--color-neutral-700)", assonance: "var(--color-neutral-600)" };
 
   renderVals() {
     const S = this.state, fams = this.families(), self = this, E = this.E;
     const efam = E ? E.rhymeFamilies(S.lines.map(l => String(l).trim()), this.sens) : null;
-    const tabs = ["SONGS", "WRITE", "FLOW", "BOOTH"].map(n => {
+    const tabs = ["SONGS", "WRITE", "FLOW", "BOOTH", "SCREW"].map(n => {
       const id = n.toLowerCase(), on = S.tab === id;
       return { name: n, mark: on ? "var(--color-accent)" : "transparent", fg: on ? "var(--color-text)" : "var(--color-neutral-600)", onTap: () => this.setState({ tab: id, word: null, edit: -1, ammo: false }) };
     });
@@ -642,8 +859,29 @@ class Component extends DCLogic {
       name: n, bg: S.beatMode === n ? "var(--color-text)" : "transparent", fg: S.beatMode === n ? "var(--color-bg)" : "var(--color-text)",
       onTap: () => this.setState({ beatMode: n })
     }));
-    const crumbs = { songs: "BARWORK", write: "VERSE 1 · 82 BPM", flow: "MAP OF THE CITY", booth: "MAP OF THE CITY" };
-    const heads = { songs: "SONGS", write: "MAP OF THE CITY", flow: "FLOW", booth: "BOOTH" };
+    const crumbs = { songs: "BARWORK", write: "VERSE 1 · 82 BPM", flow: "MAP OF THE CITY", booth: "MAP OF THE CITY", screw: "CHOP & SCREW" };
+    const heads = { songs: "SONGS", write: "MAP OF THE CITY", flow: "FLOW", booth: "BOOTH", screw: "SCREW" };
+    const deckProps = (which) => {
+      const D = S["deck" + which];
+      return {
+        ["deck" + which + "Name"]: D.fileName,
+        ["deck" + which + "PlayLabel"]: D.playing ? "PAUSE" : "PLAY",
+        ["deck" + which + "PlayBg"]: D.playing ? "var(--color-accent)" : "transparent",
+        ["deck" + which + "PlayFg"]: D.playing ? "var(--color-bg)" : "var(--color-text)",
+        ["deck" + which + "LoopBg"]: D.loopOn ? "var(--color-accent)" : "transparent",
+        ["deck" + which + "LoopFg"]: D.loopOn ? "var(--color-bg)" : "var(--color-text)",
+        ["deck" + which + "ReverbBg"]: D.reverbOn ? "var(--color-accent)" : "transparent",
+        ["deck" + which + "ReverbFg"]: D.reverbOn ? "var(--color-bg)" : "var(--color-text)",
+        ["deck" + which + "Rate"]: D.rate,
+        ["deck" + which + "RateLabel"]: D.rate.toFixed(2) + "×",
+        ["loadDeck" + which]: () => this.loadDeck(which),
+        ["toggleDeck" + which + "Play"]: () => this.toggleDeckPlay(which),
+        ["toggleDeck" + which + "Loop"]: () => this.toggleLoopOn(which),
+        ["toggleDeck" + which + "Reverb"]: () => this.toggleDeckReverb(which),
+        ["onDeck" + which + "Rate"]: (e) => this.setDeckRate(which, parseFloat(e.target.value)),
+        ["onDeck" + which + "Click"]: (e) => this.onDeckCanvasClick(which, e),
+      };
+    };
 
     return {
       kb: S.edit >= 0,
@@ -658,7 +896,9 @@ class Component extends DCLogic {
       signOut: this.signOut,
       toggleAuthMode: () => this.setState({ authMode: S.authMode === "signup" ? "signin" : "signup", authError: "" }),
       crumb: crumbs[S.tab], heading: heads[S.tab],
-      isWrite: S.tab === "write", isFlow: S.tab === "flow", isBooth: S.tab === "booth", isSongs: S.tab === "songs",
+      isWrite: S.tab === "write", isFlow: S.tab === "flow", isBooth: S.tab === "booth", isSongs: S.tab === "songs", isScrew: S.tab === "screw",
+      ...deckProps("A"), ...deckProps("B"),
+      crossfade: S.crossfade, onCrossfade: (e) => this.setCrossfade(parseFloat(e.target.value)),
       tabs, bars, grid, sections, songs, takes, wave, beatModes,
       syncLabel: S.edit >= 0 ? "SAVED LOCALLY" : "SYNCED",
       syncTone: S.edit >= 0 ? "var(--color-neutral-600)" : "var(--color-accent-700)",
