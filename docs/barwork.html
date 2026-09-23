@@ -17,6 +17,19 @@
 <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" keyboard="{{ kb }}" hint-size="402px,874px">
 <div style="height:100%;position:relative;overflow:hidden;background:var(--color-bg);display:flex;flex-direction:column;font-family:var(--font-body)">
 
+<sc-if value="{{ !authed }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:32px 24px;box-sizing:border-box">
+<div style="font:800 28px var(--font-heading);letter-spacing:-.02em">BARWORK</div>
+<div style="font:12px var(--font-body);color:var(--color-neutral-600);margin-bottom:8px">Sign in — this app is private to your account.</div>
+<input value="{{ authEmail }}" onChange="{{ onAuthEmail }}" placeholder="email" type="email" style="border:1px solid var(--color-neutral-300);padding:14px 12px;font:14px var(--font-body);outline:none" />
+<input value="{{ authPassword }}" onChange="{{ onAuthPassword }}" placeholder="password" type="password" style="border:1px solid var(--color-neutral-300);padding:14px 12px;font:14px var(--font-body);outline:none" />
+<button onClick="{{ doAuth }}" style="border:0;background:var(--color-accent);color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:.1em;padding:14px;cursor:pointer">{{ authButtonLabel }}</button>
+<button onClick="{{ toggleAuthMode }}" style="border:0;background:transparent;color:var(--color-neutral-600);font:700 11px var(--font-heading);letter-spacing:.08em;padding:6px;cursor:pointer">{{ authToggleLabel }}</button>
+<div style="font:11px var(--font-body);color:var(--color-accent-700);min-height:14px">{{ authError }}</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ authed }}" hint-placeholder-val="{{ true }}">
 <div style="flex:none;padding:58px 16px 10px;border-bottom:2px solid var(--color-divider);display:flex;align-items:flex-end;justify-content:space-between;gap:12px;background:var(--color-bg)">
 <div style="min-width:0">
 <div style="font:700 10px var(--font-heading);letter-spacing:.14em;color:var(--color-accent);text-transform:uppercase">{{ crumb }}</div>
@@ -71,6 +84,18 @@
 <input value="{{ beatUrl }}" onChange="{{ onBeatUrl }}" placeholder="{{ beatPlaceholder }}" style="flex:1;min-width:0;border:0;background:var(--color-neutral-100);font-family:var(--font-body);font-size:13px;padding:14px 12px;outline:none" />
 <button onClick="{{ loadBeat }}" style="flex:none;min-height:48px;border:0;border-left:1px solid var(--color-neutral-300);background:transparent;font:800 10px var(--font-heading);letter-spacing:.1em;padding:0 14px;cursor:pointer" style-hover="background:var(--color-accent-100)">LOAD</button>
 </div>
+<sc-if value="{{ hasBeatFile }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ playBeat }}" style="width:100%;text-align:left;border:0;border-bottom:1px solid var(--color-neutral-300);background:var(--color-neutral-100);padding:12px 16px;font:800 11px var(--font-heading);letter-spacing:.1em;cursor:pointer" style-hover="background:var(--color-accent-100)">▶ PLAY BEAT</button>
+</sc-if>
+<div style="padding:12px 16px 6px;font:700 10px var(--font-heading);letter-spacing:.14em;border-bottom:1px solid var(--color-neutral-300)">STEMS</div>
+<sc-if value="{{ hasStems }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ stemsList }}" as="st" hint-placeholder-count="2">
+<button onClick="{{ st.onPlay }}" style="width:100%;text-align:left;border:0;border-bottom:1px solid var(--color-neutral-300);background:transparent;padding:10px 16px;cursor:pointer" style-hover="background:var(--color-accent-100)"><span style="display:block;font:700 10px var(--font-heading);letter-spacing:.1em;color:var(--color-neutral-600)">{{ st.label }}</span><span style="display:block;font:700 11px var(--font-heading);margin-top:2px">▶ PLAY</span></button>
+</sc-for>
+</sc-if>
+<sc-if value="{{ noStems }}" hint-placeholder-val="{{ true }}">
+<div style="padding:12px 16px;border-bottom:2px solid var(--color-divider);font:11px/1.5 var(--font-body);color:var(--color-neutral-600)">No stems yet — load a beat above, then run the local splitter on your computer (see README) to add vocals/instrumental tracks here.</div>
+</sc-if>
 <div style="display:flex;align-items:stretch;border-bottom:2px solid var(--color-divider)">
 <div style="flex:1;padding:10px 12px;border-right:1px solid var(--color-neutral-300)"><div style="font:700 9px var(--font-heading);letter-spacing:.12em;color:var(--color-neutral-600)">LOOP IN</div><div style="font:700 14px var(--font-heading);font-variant-numeric:tabular-nums">{{ loopIn }}</div></div>
 <div style="flex:1;padding:10px 12px;border-right:1px solid var(--color-neutral-300)"><div style="font:700 9px var(--font-heading);letter-spacing:.12em;color:var(--color-neutral-600)">LOOP OUT</div><div style="font:700 14px var(--font-heading);font-variant-numeric:tabular-nums">{{ loopOut }}</div></div>
@@ -218,7 +243,8 @@
 <span style="flex:none;width:52px;height:28px;border:2px solid var(--color-text);background:{{ t.track }};display:flex;align-items:center;justify-content:{{ t.pos }};padding:2px"><span style="width:20px;height:20px;background:{{ t.knob }};display:block"></span></span>
 </button>
 </sc-for>
-<div style="padding:16px;border-top:2px solid var(--color-divider);font:11px/1.5 var(--font-body);color:var(--color-neutral-600)">Accent: US English · Lyrics encrypted in transit · Audio never leaves the device</div>
+<button onClick="{{ signOut }}" style="width:100%;border:0;border-top:2px solid var(--color-divider);background:transparent;color:var(--color-accent-700);font:800 12px var(--font-heading);letter-spacing:.1em;text-align:left;padding:16px;cursor:pointer">SIGN OUT</button>
+<div style="padding:16px;border-top:1px solid var(--color-neutral-300);font:11px/1.5 var(--font-body);color:var(--color-neutral-600)">Accent: US English · Synced to your account · Audio uploads only after you sign in</div>
 <div style="height:34px"></div>
 </div>
 </sc-if>
@@ -228,6 +254,7 @@
 <button onClick="{{ t.onTap }}" style="flex:1;min-height:54px;border:0;border-right:1px solid var(--color-neutral-300);border-top:3px solid {{ t.mark }};background:transparent;color:{{ t.fg }};font:800 11px var(--font-heading);letter-spacing:.1em;cursor:pointer;padding:0 0 0 12px;text-align:left">{{ t.name }}</button>
 </sc-for>
 </div>
+</sc-if>
 </div>
 </x-import>
 </div>
@@ -310,6 +337,9 @@ class Component extends DCLogic {
     Lyrical:["Cartographer of corners with a pen for a compass","Every line a street sign, every verse an accomplice","Ink dries slower than the promise of an audience","Draw the whole borough in a notebook and it's motion","Half a hometown in a couplet, small and gritty","Keep a spare verse in the lining of the ledger","Patience is a pencil and the pencil getting steady","Rent on a rhyme is the only thing I paper"],
     Melodic:["I been writin' out the city on a page that won't hold it","Every rhyme is a window and the window stay open","Hummin' out the measure till the melody unfolded","Sing it to the ceiling till the ceiling give me motion","Been up in the studio, the studio get gritty","Left a note for the morning in the margin of a ledger","Slow down the tempo when the tempo ain't ready","Take it from the top like a hand on the paper"]
   };
+  SUPABASE_URL = "https://ekmtrlnjlpxornkeyzlz.supabase.co";
+  SUPABASE_KEY = "sb_publishable__f6iHjAypO7t6FEdKxXAIw_QqHtAWmy";
+  SONG_UUID = "11111111-1111-4111-8111-111111111111";
   state = {
     tab: "write",
     lines: [
@@ -324,11 +354,10 @@ class Component extends DCLogic {
     word: null, wordLine: -1, wordTok: -1, dtab: "RHYMES",
     ammo: false, settings: false, lane: "Trap",
     rec: false, secs: 0,
-    beatMode: "YOUTUBE LINK", beatUrl: "", beatLoaded: "hardluck_82bpm.wav · local file", loop: true, ab: "A",
-    takes: [
-      { bar: 2, len: "0:09", text: "Every line I stack it and the pattern get gritty" },
-      { bar: 5, len: "0:07", text: "Pen never sleep, keep the ledger in motion" }
-    ],
+    beatMode: "YOUTUBE LINK", beatUrl: "", beatLoaded: "no beat loaded", beatFileUrl: null, currentBeatId: null, loop: true, ab: "A",
+    takes: [],
+    stemsList: [],
+    session: null, authEmail: "", authPassword: "", authMode: "signin", authBusy: false, authError: "",
     sens: null, syll: null, section: "VERSE 1", songId: "s1", ai: 38
   };
   FAM = [
@@ -404,6 +433,7 @@ class Component extends DCLogic {
     const next = lines.slice();
     if (draft.trim() === "" && edit === next.length - 1) next.pop(); else next[edit] = draft;
     this.setState({ lines: next, edit: -1, draft: "" });
+    this.saveSong(next);
   };
   componentWillUnmount() { clearInterval(this._t); }
   componentDidMount() {
@@ -415,7 +445,118 @@ class Component extends DCLogic {
       fetch(new URL("slang-overlay.json", _rfBase).href).then(r => r.json()).then(j => E.registerSlang(j.entries)).catch(() => {})
         .then(() => { this.E = E; this.forceUpdate(); });
     }).catch(() => {});
+
+    import("https://esm.sh/@supabase/supabase-js@2").then(({ createClient }) => {
+      this.sb = createClient(this.SUPABASE_URL, this.SUPABASE_KEY);
+      this.sb.auth.getSession().then(({ data }) => {
+        this.setState({ session: data.session });
+        if (data.session) this.loadCloud();
+      });
+      this.sb.auth.onAuthStateChange((_evt, session) => {
+        this.setState({ session });
+        if (session) this.loadCloud();
+      });
+    }).catch(() => {});
   }
+
+  fmtLen = (secs) => { secs = Math.round(secs || 0); return Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0"); };
+  parseLen = (len) => { const p = String(len).split(":").map(Number); return (p[0] || 0) * 60 + (p[1] || 0); };
+
+  doAuth = async () => {
+    if (!this.sb) return;
+    this.setState({ authBusy: true, authError: "" });
+    const { authEmail: email, authPassword: password, authMode } = this.state;
+    const fn = authMode === "signup" ? "signUp" : "signInWithPassword";
+    const { data, error } = await this.sb.auth[fn]({ email, password });
+    if (error) { this.setState({ authBusy: false, authError: error.message }); return; }
+    if (authMode === "signup" && !data.session) {
+      this.setState({ authBusy: false, authError: "Check your email to confirm your account, then sign in.", authMode: "signin" });
+      return;
+    }
+    this.setState({ authBusy: false, authError: "" });
+  };
+  signOut = () => { if (this.sb) this.sb.auth.signOut(); this.setState({ session: null, settings: false, takes: [], stemsList: [], beatFileUrl: null, currentBeatId: null, beatLoaded: "no beat loaded" }); };
+
+  loadCloud = async () => {
+    if (!this.sb || !this.state.session) return;
+    const uid = this.state.session.user.id;
+    const { data: song } = await this.sb.from("songs").select("*").eq("id", this.SONG_UUID).maybeSingle();
+    if (song && song.meta) {
+      try { const parsed = JSON.parse(song.meta); if (parsed.lines && parsed.lines.length) this.setState({ lines: parsed.lines }); } catch (e) {}
+    } else {
+      await this.sb.from("songs").upsert({ id: this.SONG_UUID, user_id: uid, title: "MAP OF THE CITY", meta: JSON.stringify({ lines: this.state.lines }) });
+    }
+
+    const { data: beats } = await this.sb.from("beats").select("*").eq("song_id", this.SONG_UUID).order("created_at", { ascending: false }).limit(1);
+    if (beats && beats[0]) {
+      const b = beats[0];
+      if (b.storage_path) {
+        const { data: signed } = await this.sb.storage.from("beats").createSignedUrl(b.storage_path, 3600);
+        this.setState({ beatLoaded: (b.label || "beat") + " · cloud", beatFileUrl: signed ? signed.signedUrl : null, currentBeatId: b.id });
+      } else if (b.external_url) {
+        this.setState({ beatLoaded: b.external_url + " · streamed", currentBeatId: b.id });
+      }
+      this.loadStems(b.id);
+    }
+
+    const { data: takes } = await this.sb.from("takes").select("*").eq("song_id", this.SONG_UUID).order("created_at", { ascending: false });
+    if (takes) {
+      const withUrls = await Promise.all(takes.map(async (t) => {
+        const { data: signed } = await this.sb.storage.from("takes").createSignedUrl(t.storage_path, 3600);
+        return { id: t.id, bar: (t.bar_start ?? 0) + 1, len: this.fmtLen(t.duration_secs), text: this.state.lines[t.bar_start] || "", url: signed ? signed.signedUrl : null };
+      }));
+      this.setState({ takes: withUrls });
+    }
+  };
+
+  loadStems = async (beatId) => {
+    if (!this.sb || !beatId) return;
+    const { data: stems } = await this.sb.from("stems").select("*").eq("beat_id", beatId);
+    if (!stems) return;
+    const withUrls = await Promise.all(stems.map(async (s) => {
+      const { data: signed } = await this.sb.storage.from("stems").createSignedUrl(s.storage_path, 3600);
+      return { kind: s.kind, label: s.kind.toUpperCase(), url: signed ? signed.signedUrl : null };
+    }));
+    this.setState({ stemsList: withUrls });
+  };
+
+  saveSong = (lines) => {
+    if (!this.sb || !this.state.session) return;
+    const uid = this.state.session.user.id;
+    this.sb.from("songs").upsert({ id: this.SONG_UUID, user_id: uid, title: "MAP OF THE CITY", meta: JSON.stringify({ lines: lines || this.state.lines }) });
+  };
+
+  uploadBeat = async (file) => {
+    if (!this.sb || !this.state.session) return;
+    const uid = this.state.session.user.id;
+    const path = uid + "/" + this.SONG_UUID + "/" + Date.now() + "_" + file.name;
+    const { error } = await this.sb.storage.from("beats").upload(path, file, { upsert: true });
+    if (error) return;
+    const { data } = await this.sb.from("beats").insert({ user_id: uid, song_id: this.SONG_UUID, source_type: "upload", storage_path: path, label: file.name }).select().single();
+    if (data) this.setState({ currentBeatId: data.id, stemsList: [] });
+  };
+
+  uploadTake = async (blob, len, barIndex) => {
+    if (!this.sb || !this.state.session) return;
+    const uid = this.state.session.user.id;
+    const path = uid + "/" + this.SONG_UUID + "/" + Date.now() + ".webm";
+    const { error } = await this.sb.storage.from("takes").upload(path, blob);
+    if (error) return;
+    const { data } = await this.sb.from("takes").insert({ user_id: uid, song_id: this.SONG_UUID, storage_path: path, duration_secs: this.parseLen(len), bar_start: barIndex }).select().single();
+    if (data) {
+      const takes = this.state.takes.slice();
+      const idx = takes.findIndex(t => !t.id && t.len === len);
+      if (idx >= 0) takes[idx] = { ...takes[idx], id: data.id };
+      this.setState({ takes });
+    }
+  };
+
+  deleteTake = async (id) => {
+    if (!this.sb || !id) return;
+    const { data } = await this.sb.from("takes").select("storage_path").eq("id", id).single();
+    if (data) await this.sb.storage.from("takes").remove([data.storage_path]);
+    await this.sb.from("takes").delete().eq("id", id);
+  };
   TONE = { perfect: "var(--color-accent)", family: "var(--color-accent-700)", slant: "var(--color-neutral-700)", assonance: "var(--color-neutral-600)" };
 
   renderVals() {
@@ -532,7 +673,8 @@ class Component extends DCLogic {
     ];
     const takes = S.takes.map((t, i) => ({
       ...t, playBg: "transparent", playFg: "var(--color-text)",
-      onPlay: () => {}, onDelete: () => this.setState({ takes: S.takes.filter((_, j) => j !== i) })
+      onPlay: () => { if (t.url) new Audio(t.url).play(); },
+      onDelete: () => { this.setState({ takes: S.takes.filter((_, j) => j !== i) }); if (t.id) this.deleteTake(t.id); }
     }));
     const wave = Array.from({ length: 22 }, (_, i) => ({
       h: (S.rec ? 20 + Math.round(Math.abs(Math.sin((i + S.secs) * 0.9)) * 80) : 8 + (i % 5) * 4) + "%",
@@ -554,6 +696,16 @@ class Component extends DCLogic {
 
     return {
       kb: S.edit >= 0,
+      authed: !!S.session,
+      authEmail: S.authEmail, authPassword: S.authPassword,
+      onAuthEmail: (e) => this.setState({ authEmail: e.target.value }),
+      onAuthPassword: (e) => this.setState({ authPassword: e.target.value }),
+      authError: S.authError,
+      authButtonLabel: S.authBusy ? "…" : (S.authMode === "signup" ? "CREATE ACCOUNT" : "SIGN IN"),
+      authToggleLabel: S.authMode === "signup" ? "HAVE AN ACCOUNT? SIGN IN" : "NEW HERE? CREATE ACCOUNT",
+      doAuth: this.doAuth,
+      signOut: this.signOut,
+      toggleAuthMode: () => this.setState({ authMode: S.authMode === "signup" ? "signin" : "signup", authError: "" }),
       crumb: crumbs[S.tab], heading: heads[S.tab],
       isWrite: S.tab === "write", isFlow: S.tab === "flow", isBooth: S.tab === "booth", isSongs: S.tab === "songs",
       tabs, bars, grid, sections, songs, takes, wave, beatModes,
@@ -561,9 +713,30 @@ class Component extends DCLogic {
       syncTone: S.edit >= 0 ? "var(--color-neutral-600)" : "var(--color-accent-700)",
       beatSource: S.beatLoaded,
       beatUrl: S.beatUrl,
-      beatPlaceholder: S.beatMode === "MY FILE" ? "choose an MP3, WAV or M4A…" : "paste a YouTube link…",
+      beatFileUrl: S.beatFileUrl,
+      hasBeatFile: !!S.beatFileUrl,
+      playBeat: () => { if (S.beatFileUrl) new Audio(S.beatFileUrl).play(); },
+      stemsList: S.stemsList.map(st => ({ ...st, onPlay: () => { if (st.url) new Audio(st.url).play(); } })),
+      hasStems: S.stemsList.length > 0,
+      noStems: S.stemsList.length === 0,
+      beatPlaceholder: S.beatMode === "MY FILE" ? "tap LOAD to choose a file…" : "paste a YouTube link…",
       onBeatUrl: (e) => this.setState({ beatUrl: e.target.value }),
-      loadBeat: () => this.setState({ beatLoaded: S.beatUrl ? (S.beatMode === "MY FILE" ? S.beatUrl + " · local file" : S.beatUrl + " · streamed") : S.beatLoaded, beatUrl: "" }),
+      loadBeat: () => {
+        if (S.beatMode === "MY FILE") {
+          const inp = document.createElement("input");
+          inp.type = "file"; inp.accept = "audio/*,.mp3,.wav,.m4a";
+          inp.onchange = () => {
+            const file = inp.files && inp.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            this.setState({ beatLoaded: file.name + " · local file", beatFileUrl: url });
+            this.uploadBeat(file);
+          };
+          inp.click();
+        } else {
+          this.setState({ beatLoaded: S.beatUrl ? S.beatUrl + " · streamed" : S.beatLoaded, beatUrl: "" });
+        }
+      },
       loopIn: "0:00.0", loopOut: "0:08.4",
       loop: S.loop, loopLabel: S.loop ? "LOOP ON" : "LOOP OFF",
       loopBg: S.loop ? "var(--color-accent)" : "transparent", loopFg: S.loop ? "var(--color-bg)" : "var(--color-text)",
@@ -576,7 +749,7 @@ class Component extends DCLogic {
       onDraft: (e) => this.setState({ draft: e.target.value }),
       onKey: (e) => { if (e.key === "Enter") { e.preventDefault(); this.commit(); } },
       commit: this.commit,
-      addBar: () => this.setState({ lines: S.lines.concat([""]), edit: S.lines.length, draft: "", word: null }),
+      addBar: () => { const next = S.lines.concat([""]); this.setState({ lines: next, edit: S.lines.length, draft: "", word: null }); this.saveSong(next); },
       drawer: !!S.word, word: (S.word || "").toUpperCase(), wordSyl: wSyl,
       dtabs: ["RHYMES", "SWAPS", "MULTIS"].map(n => ({ name: n, bg: S.dtab === n ? "var(--color-text)" : "transparent", fg: S.dtab === n ? "var(--color-bg)" : "var(--color-text)", onTap: () => this.setState({ dtab: n }) })),
       picks: picks.map(p => ({ ...p, onTap: () => insert(p.w) })),
@@ -607,13 +780,30 @@ class Component extends DCLogic {
       }),
       recToggle: () => {
         if (S.rec) {
+          if (this._mediaRecorder && this._mediaRecorder.state !== "inactive") this._mediaRecorder.stop();
           clearInterval(this._t);
-          const len = String(Math.floor(S.secs / 60)) + ":" + String(S.secs % 60).padStart(2, "0");
-          this.setState({ rec: false, secs: 0, takes: [{ bar: 2, len, text: S.lines[1] || "" }].concat(S.takes) });
+          this.setState({ rec: false });
         } else {
-          clearInterval(this._t);
-          this._t = setInterval(() => this.setState(p => ({ secs: p.secs + 1 })), 1000);
-          this.setState({ rec: true, secs: 0 });
+          navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+            this._chunks = [];
+            const mr = new MediaRecorder(stream);
+            mr.ondataavailable = (e) => { if (e.data.size) this._chunks.push(e.data); };
+            mr.onstop = () => {
+              stream.getTracks().forEach(tr => tr.stop());
+              const blob = new Blob(this._chunks, { type: mr.mimeType || "audio/webm" });
+              const url = URL.createObjectURL(blob);
+              const barIdx = Math.min(1, this.state.lines.length - 1);
+              const len = this.fmtLen(this.state.secs);
+              const take = { bar: barIdx + 1, len, text: this.state.lines[barIdx] || "", url };
+              this.setState({ takes: [take].concat(this.state.takes), secs: 0 });
+              this.uploadTake(blob, len, barIdx);
+            };
+            this._mediaRecorder = mr;
+            mr.start();
+            clearInterval(this._t);
+            this._t = setInterval(() => this.setState(p => ({ secs: p.secs + 1 })), 1000);
+            this.setState({ rec: true, secs: 0 });
+          }).catch(() => { alert("Microphone access is needed to record a take."); });
         }
       }
     };

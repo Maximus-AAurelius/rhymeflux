@@ -46,8 +46,23 @@ import(new URL("rhyme-engine.js", document.baseURI).href)
 fetch(new URL("slang-overlay.json", document.baseURI).href)
 ```
 
-## What works in this build
+## Account setup (one time)
 
-- Working in the page: lyric editor, sections, undo/redo, autosave to this browser (localStorage), rhyme marks and suggestions from the on-device dictionary, syllable estimates, beat playback from a local file, Quick Capture audio recording (kept in the tab only).
-- Depends on the browser: dictation (Web Speech API).
-- Not connected yet: cloud sync, transcription, AI, stem separation. See the Backend Spec for the plan.
+`barwork.html` is gated by a login screen — it's private to your account, backed by a free Supabase project (`rhymeflux`, under the same Supabase org as the other projects).
+
+1. Open the app, tap **NEW HERE? CREATE ACCOUNT**, enter your real email + a password.
+2. Supabase emails you a confirmation link — click it.
+3. Come back and sign in normally.
+4. Optional but recommended, so no one else can register an account: in the [Supabase dashboard](https://supabase.com/dashboard/project/ekmtrlnjlpxornkeyzlz) → Authentication → Sign In / Providers → Email, turn off "Allow new users to sign up." (Your data is already private either way — every table is row-level-secured to your own user id — this just tidies up the login screen.)
+5. Free-tier note: this Supabase project pauses itself after 7 days with no activity. It isn't deleted — just open the dashboard link above and click Resume if the app ever fails to load your songs.
+
+## Beats, takes, and stems — what's real now
+
+- **BEAT (FLOW tab) → MY FILE**: tap LOAD, pick an actual MP3/WAV/M4A from your device. It plays for real and uploads to your account, so it's there next time on any device.
+- **BOOTH**: RECORD actually captures audio from your mic (`MediaRecorder`) and uploads each take; takes list, plays, and deletes for real, synced to your account.
+- **STEMS**: the app only *displays and plays* stems — it doesn't generate them (real vocal/instrumental separation needs real compute, which isn't free to run instantly from a phone). To add stems:
+  1. Load the beat in the app first (step above) so there's a cloud record to attach to.
+  2. On your computer, from the repo root (one level up from this `docs/` folder): `pip install demucs supabase`, then `python scripts\split_stems.py path\to\that-same-beat.mp3`. It signs in with your Rhymeflux email/password, runs Demucs locally (free, a few minutes on CPU, first run also downloads the ~80MB model), and uploads the vocal/instrumental stems.
+  3. Reopen FLOW on any device — the stems now show up under STEMS with a PLAY button.
+- **WRITE**: bars autosave to your account as you edit — same song follows you between your phone and your computer.
+- Still not connected: transcription, the AI co-writer, and full multi-song cloud sync (only the one open song persists right now). See the Backend Spec for the longer-term plan.
