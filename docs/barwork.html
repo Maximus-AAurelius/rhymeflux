@@ -66,10 +66,16 @@ input[type=range]{accent-color:var(--color-accent)}
 </div>
 
 <sc-if value="{{ hasBeatFile }}" hint-placeholder-val="{{ false }}">
-<div style="flex:none;display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100)">
+<div style="flex:none;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 16px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100)">
 <button onClick="{{ toggleBeatPlay }}" style="flex:none;width:30px;height:30px;border:0;border-radius:50%;background:var(--color-accent);color:var(--color-bg);cursor:pointer;font:800 11px var(--font-heading);display:flex;align-items:center;justify-content:center;padding:0">{{ beatPlayIcon }}</button>
+<button onClick="{{ stopBeat }}" style="flex:none;width:30px;height:30px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);cursor:pointer;font:11px var(--font-heading);display:flex;align-items:center;justify-content:center;padding:0">■</button>
+<button onClick="{{ recToggle }}" style="flex:none;width:30px;height:30px;border-radius:50%;border:0;background:{{ transportRecBg }};color:#fff;cursor:pointer;font:11px var(--font-heading);display:flex;align-items:center;justify-content:center;padding:0">●</button>
 <div style="flex:none;font:700 10px var(--font-heading);font-variant-numeric:tabular-nums;color:var(--color-neutral-600);white-space:nowrap">{{ beatPosLabel }} / {{ beatDurLabel }}</div>
-<input type="range" min="0" max="{{ beatDur }}" step="0.1" value="{{ beatPos }}" onChange="{{ seekBeat }}" style="flex:1;min-width:0" />
+<input type="range" min="0" max="{{ beatDur }}" step="0.1" value="{{ beatPos }}" onChange="{{ seekBeat }}" style="flex:1 1 120px;min-width:60px" />
+<div style="flex:none;display:flex;align-items:center;gap:6px">
+<span style="font:700 9px var(--font-heading);letter-spacing:.06em;color:var(--color-neutral-600);white-space:nowrap">TEMPO {{ beatRateLabel }}</span>
+<input type="range" min="0.5" max="1.5" step="0.01" value="{{ beatRate }}" onChange="{{ onBeatRate }}" style="width:80px" />
+</div>
 <button onClick="{{ toggleBeatLoop }}" style="flex:none;padding:6px 10px;border:1px solid var(--color-divider);background:{{ beatLoopBg }};color:{{ beatLoopFg }};font:800 9px var(--font-heading);letter-spacing:.08em;cursor:pointer">LOOP</button>
 </div>
 </sc-if>
@@ -387,7 +393,7 @@ class Component extends DCLogic {
     ammo: false, settings: false, lane: "Trap",
     rec: false, secs: 0,
     beatMode: "YOUTUBE LINK", beatUrl: "", beatLoaded: "no beat loaded", beatFileUrl: null, currentBeatId: null, loop: true, ab: "A",
-    beatPlaying: false, beatPos: 0, beatDur: 0, beatLoop: false,
+    beatPlaying: false, beatPos: 0, beatDur: 0, beatLoop: false, beatRate: 1,
     beatVol: 1, beatMuted: false, beatSolo: false, vocalVol: 1, vocalMuted: false, vocalSolo: false,
     takes: [],
     stemsList: [],
@@ -699,6 +705,7 @@ class Component extends DCLogic {
   getBeatAudio = () => {
     if (!this._beatAudio) {
       const a = new Audio();
+      a.preservesPitch = true; a.mozPreservesPitch = true; a.webkitPreservesPitch = true;
       a.addEventListener("timeupdate", () => this.setState({ beatPos: a.currentTime }));
       a.addEventListener("loadedmetadata", () => this.setState({ beatDur: a.duration || 0 }));
       a.addEventListener("play", () => this.setState({ beatPlaying: true }));
@@ -712,8 +719,23 @@ class Component extends DCLogic {
   setBeatSrc = (url) => {
     const a = this.getBeatAudio();
     a.src = url;
+    a.playbackRate = 1;
     this.applyBeatAudio();
-    this.setState({ beatPlaying: false, beatPos: 0, beatDur: 0 });
+    this.setState({ beatPlaying: false, beatPos: 0, beatDur: 0, beatRate: 1 });
+  };
+
+  stopBeat = () => {
+    const a = this.getBeatAudio();
+    if (!a.src) return;
+    a.pause();
+    a.currentTime = 0;
+    this.setState({ beatPos: 0 });
+  };
+
+  setBeatRate = (r) => {
+    const a = this.getBeatAudio();
+    a.playbackRate = r;
+    this.setState({ beatRate: r });
   };
 
   toggleBeatPlay = () => {
@@ -1118,6 +1140,10 @@ class Component extends DCLogic {
       beatPos: S.beatPos, beatDur: S.beatDur || 0.01,
       seekBeat: this.seekBeat,
       toggleBeatPlay: this.toggleBeatPlay,
+      stopBeat: this.stopBeat,
+      beatRate: S.beatRate, beatRateLabel: S.beatRate.toFixed(2) + "×",
+      onBeatRate: (e) => this.setBeatRate(parseFloat(e.target.value)),
+      transportRecBg: S.rec ? "#ef4444" : "rgba(239,68,68,.65)",
       toggleBeatLoop: this.toggleBeatLoop,
       beatLoopBg: S.beatLoop ? "var(--color-accent)" : "transparent",
       beatLoopFg: S.beatLoop ? "var(--color-bg)" : "var(--color-text)",
