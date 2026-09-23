@@ -252,6 +252,45 @@ input[type=range]{accent-color:var(--color-accent)}
 </div></div>
 </sc-if>
 
+<sc-if value="{{ isBeats }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;min-height:0;overflow:auto"><div style="padding:0 0 40px">
+<div style="padding:12px 16px;border-bottom:2px solid var(--color-divider);display:flex;align-items:center;gap:12px">
+<button onClick="{{ toggleSequencer }}" style="flex:none;padding:10px 16px;border:0;background:{{ seqPlayBg }};color:{{ seqPlayFg }};font:800 11px var(--font-heading);letter-spacing:.1em;cursor:pointer">{{ seqPlayLabel }}</button>
+<div style="flex:none;font:700 9px var(--font-heading);letter-spacing:.08em;color:var(--color-neutral-600)">BPM</div>
+<input type="range" min="60" max="180" step="1" value="{{ seqBpm }}" onChange="{{ onSeqBpm }}" style="flex:1" />
+<div style="flex:none;font:800 14px var(--font-heading);font-variant-numeric:tabular-nums;min-width:34px;text-align:right">{{ seqBpm }}</div>
+</div>
+
+<div style="padding:12px 16px 6px;font:700 10px var(--font-heading);letter-spacing:.14em;color:var(--color-neutral-600)">PADS — tap to play, trigger from your MIDI keyboard (notes 36–43), or LOAD a sound below</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 16px 12px">
+<sc-for list="{{ pads }}" as="p" hint-placeholder-count="8">
+<button onClick="{{ p.onTrigger }}" style="aspect-ratio:1;border:1px solid var(--color-divider);background:{{ p.bg }};color:{{ p.fg }};font:800 10px var(--font-heading);letter-spacing:.04em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px;text-align:center">
+<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">{{ p.name }}</span>
+<span style="font:700 8px var(--font-heading);color:{{ p.hintColor }}">{{ p.hint }}</span>
+</button>
+</sc-for>
+</div>
+<div style="padding:0 16px 16px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:2px solid var(--color-divider)">
+<sc-for list="{{ pads }}" as="p2" hint-placeholder-count="8">
+<button onClick="{{ p2.onLoad }}" style="padding:6px 10px;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-600);font:700 9px var(--font-heading);cursor:pointer">LOAD {{ p2.num }}</button>
+</sc-for>
+</div>
+
+<div style="padding:12px 16px 8px;font:700 10px var(--font-heading);letter-spacing:.14em">SEQUENCER · 16 STEPS</div>
+<sc-for list="{{ seqRows }}" as="row" hint-placeholder-count="8">
+<div style="display:flex;align-items:center;gap:6px;padding:4px 16px">
+<div style="flex:none;width:70px;font:700 9px var(--font-heading);color:var(--color-neutral-600);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ row.name }}</div>
+<div style="flex:1;display:grid;grid-template-columns:repeat(16,1fr);gap:3px">
+<sc-for list="{{ row.steps }}" as="s" hint-placeholder-count="16">
+<button onClick="{{ s.onToggle }}" style="aspect-ratio:1;border:0;background:{{ s.bg }};cursor:pointer;padding:0"></button>
+</sc-for>
+</div>
+</div>
+</sc-for>
+<div style="padding:14px 16px;font:11px/1.5 var(--font-body);color:var(--color-neutral-600)">Load a sound onto each pad, tap steps to build a pattern, hit PLAY PATTERN. Plug in your Oxygen 25 (Settings → MIDI Devices) and its keys trigger the same pads live.</div>
+</div></div>
+</sc-if>
+
 <sc-if value="{{ isSongs }}" hint-placeholder-val="{{ false }}">
 <div style="flex:1;min-height:0;overflow:auto"><div style="padding:0 0 120px">
 <div style="display:flex;border-bottom:2px solid var(--color-divider)">
@@ -402,10 +441,14 @@ class Component extends DCLogic {
     crossfade: 0,
     session: null, authEmail: "", authPassword: "", authMode: "signin", authBusy: false, authError: "",
     sens: null, syll: null, section: "VERSE 1", ai: 38,
-    library: [], midiSupported: null, midiDevices: []
+    library: [], midiSupported: null, midiDevices: [],
+    pads: Array.from({ length: 8 }, () => ({ name: "", loaded: false, hit: false })),
+    sequencerSteps: Array.from({ length: 8 }, () => Array(16).fill(false)),
+    seqPlaying: false, seqBpm: 90, seqStep: -1
   };
   _deckA = {};
   _deckB = {};
+  _pads = [];
   FAM = [
     { bg: "var(--color-accent)", fg: "var(--color-bg)", fw: 600 },
     { bg: "var(--color-neutral-900)", fg: "var(--color-bg)", fw: 600 },
@@ -485,6 +528,7 @@ class Component extends DCLogic {
     clearInterval(this._t);
     if (this._deckA.raf) cancelAnimationFrame(this._deckA.raf);
     if (this._deckB.raf) cancelAnimationFrame(this._deckB.raf);
+    if (this._Tone) { try { this._Tone.getTransport().stop(); } catch (e) {} }
   }
   componentDidMount() {
     // The engine loads async and the editor never waits on it: until it lands,
@@ -683,14 +727,15 @@ class Component extends DCLogic {
   };
 
   initMidi = async () => {
-    if (this._midiAccess) { this.refreshMidi(); return; }
+    if (this._midiAccess) { this.refreshMidi(); this.attachMidiListeners(); return; }
     if (!navigator.requestMIDIAccess) { this.setState({ midiSupported: false }); return; }
     try {
       const access = await navigator.requestMIDIAccess();
       this._midiAccess = access;
-      access.onstatechange = () => this.refreshMidi();
+      access.onstatechange = () => { this.refreshMidi(); this.attachMidiListeners(); };
       this.setState({ midiSupported: true });
       this.refreshMidi();
+      this.attachMidiListeners();
     } catch (e) {
       this.setState({ midiSupported: false });
     }
@@ -700,6 +745,93 @@ class Component extends DCLogic {
     if (!this._midiAccess) return;
     const names = Array.from(this._midiAccess.inputs.values()).map(i => i.name);
     this.setState({ midiDevices: names });
+  };
+
+  attachMidiListeners = () => {
+    if (!this._midiAccess) return;
+    this._midiAccess.inputs.forEach((input) => {
+      input.onmidimessage = (msg) => {
+        const [status, note, velocity] = msg.data;
+        if ((status & 0xf0) === 0x90 && velocity > 0) {
+          const padIndex = note - 36;
+          if (padIndex >= 0 && padIndex < 8) this.triggerPad(padIndex);
+        }
+      };
+    });
+  };
+
+  loadPad = (i) => {
+    const inp = document.createElement("input");
+    inp.type = "file"; inp.accept = "audio/*,.mp3,.wav,.m4a";
+    inp.onchange = async () => {
+      const file = inp.files && inp.files[0];
+      if (!file) return;
+      const T = await this.ensureScrewLibs();
+      const arrayBuf = await file.arrayBuffer();
+      const audioBuf = await T.getContext().rawContext.decodeAudioData(arrayBuf);
+      this._pads[i] = audioBuf;
+      const pads = this.state.pads.slice();
+      pads[i] = { name: file.name.replace(/\.[^.]+$/, ""), loaded: true, hit: false };
+      this.setState({ pads });
+    };
+    inp.click();
+  };
+
+  triggerPad = (i, time) => {
+    const buf = this._pads[i];
+    if (!buf) return;
+    if (this._Tone) {
+      const ctx = this._Tone.getContext().rawContext;
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(ctx.destination);
+      src.start(time || ctx.currentTime);
+      this.flashPad(i);
+    } else {
+      this.ensureScrewLibs().then(async (T) => { await T.start(); this.triggerPad(i, time); });
+    }
+  };
+
+  flashPad = (i) => {
+    const pads = this.state.pads.slice();
+    if (!pads[i]) return;
+    pads[i] = { ...pads[i], hit: true };
+    this.setState({ pads });
+    setTimeout(() => {
+      const p2 = this.state.pads.slice();
+      if (p2[i]) { p2[i] = { ...p2[i], hit: false }; this.setState({ pads: p2 }); }
+    }, 100);
+  };
+
+  toggleStep = (padIdx, stepIdx) => {
+    const steps = this.state.sequencerSteps.map(row => row.slice());
+    steps[padIdx][stepIdx] = !steps[padIdx][stepIdx];
+    this.setState({ sequencerSteps: steps });
+  };
+
+  setSeqBpm = (bpm) => {
+    this.setState({ seqBpm: bpm });
+    if (this._Tone) this._Tone.getTransport().bpm.value = bpm;
+  };
+
+  toggleSequencer = async () => {
+    const T = await this.ensureScrewLibs();
+    const transport = T.getTransport();
+    if (this.state.seqPlaying) {
+      transport.stop();
+      this.setState({ seqPlaying: false, seqStep: -1 });
+    } else {
+      await T.start();
+      transport.bpm.value = this.state.seqBpm;
+      if (!this._seq) {
+        this._seq = new T.Sequence((time, step) => {
+          this.state.sequencerSteps.forEach((row, padIdx) => { if (row[step]) this.triggerPad(padIdx, time); });
+          T.getDraw().schedule(() => this.setState({ seqStep: step }), time);
+        }, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "16n").start(0);
+      }
+      transport.start();
+      this.setState({ seqPlaying: true });
+    }
   };
 
   getBeatAudio = () => {
@@ -944,7 +1076,7 @@ class Component extends DCLogic {
   renderVals() {
     const S = this.state, fams = this.families(), self = this, E = this.E;
     const efam = E ? E.rhymeFamilies(S.lines.map(l => String(l).trim()), this.sens) : null;
-    const tabs = ["SONGS", "WRITE", "FLOW", "BOOTH", "SCREW"].map(n => {
+    const tabs = ["SONGS", "WRITE", "FLOW", "BOOTH", "SCREW", "BEATS"].map(n => {
       const id = n.toLowerCase(), on = S.tab === id;
       return { name: n, mark: on ? "var(--color-accent)" : "transparent", fg: on ? "var(--color-text)" : "var(--color-neutral-600)", onTap: () => this.setState({ tab: id, word: null, edit: -1, ammo: false }) };
     });
@@ -1084,8 +1216,26 @@ class Component extends DCLogic {
       name: n, bg: S.beatMode === n ? "var(--color-text)" : "transparent", fg: S.beatMode === n ? "var(--color-bg)" : "var(--color-text)",
       onTap: () => this.setState({ beatMode: n })
     }));
-    const crumbs = { songs: "BARWORK", write: "VERSE 1 · 82 BPM", flow: "MAP OF THE CITY", booth: "MAP OF THE CITY", screw: "CHOP & SCREW" };
-    const heads = { songs: "SONGS", write: "MAP OF THE CITY", flow: "FLOW", booth: "BOOTH", screw: "SCREW" };
+    const crumbs = { songs: "BARWORK", write: "VERSE 1 · 82 BPM", flow: "MAP OF THE CITY", booth: "MAP OF THE CITY", screw: "CHOP & SCREW", beats: "BEAT MAKER" };
+    const heads = { songs: "SONGS", write: "MAP OF THE CITY", flow: "FLOW", booth: "BOOTH", screw: "SCREW", beats: "BEATS" };
+    const pads = S.pads.map((p, i) => ({
+      name: p.name || ("PAD " + (i + 1)), num: i + 1,
+      hint: p.loaded ? "MIDI " + (36 + i) : "EMPTY",
+      hintColor: p.loaded ? "var(--color-accent-700)" : "var(--color-neutral-500)",
+      bg: p.hit ? "var(--color-accent)" : (p.loaded ? "var(--color-neutral-100)" : "transparent"),
+      fg: p.hit ? "var(--color-bg)" : "var(--color-text)",
+      onTrigger: () => this.triggerPad(i),
+      onLoad: () => this.loadPad(i),
+    }));
+    const seqRows = S.pads.map((p, padIdx) => ({
+      name: p.name || ("PAD " + (padIdx + 1)),
+      steps: S.sequencerSteps[padIdx].map((on, stepIdx) => ({
+        onToggle: () => this.toggleStep(padIdx, stepIdx),
+        bg: on
+          ? (S.seqStep === stepIdx && S.seqPlaying ? "var(--color-accent-300)" : "var(--color-accent)")
+          : (S.seqStep === stepIdx && S.seqPlaying ? "var(--color-neutral-300)" : "var(--color-neutral-100)"),
+      })),
+    }));
     const deckProps = (which) => {
       const D = S["deck" + which];
       return {
@@ -1121,7 +1271,12 @@ class Component extends DCLogic {
       signOut: this.signOut,
       toggleAuthMode: () => this.setState({ authMode: S.authMode === "signup" ? "signin" : "signup", authError: "" }),
       crumb: crumbs[S.tab], heading: heads[S.tab],
-      isWrite: S.tab === "write", isFlow: S.tab === "flow", isBooth: S.tab === "booth", isSongs: S.tab === "songs", isScrew: S.tab === "screw",
+      isWrite: S.tab === "write", isFlow: S.tab === "flow", isBooth: S.tab === "booth", isSongs: S.tab === "songs", isScrew: S.tab === "screw", isBeats: S.tab === "beats",
+      pads, seqRows,
+      seqPlaying: S.seqPlaying, seqPlayLabel: S.seqPlaying ? "STOP" : "PLAY PATTERN",
+      seqPlayBg: S.seqPlaying ? "var(--color-accent-700)" : "var(--color-accent)", seqPlayFg: "var(--color-bg)",
+      seqBpm: S.seqBpm, onSeqBpm: (e) => this.setSeqBpm(parseInt(e.target.value, 10)),
+      toggleSequencer: this.toggleSequencer,
       ...deckProps("A"), ...deckProps("B"),
       crossfade: S.crossfade, onCrossfade: (e) => this.setCrossfade(parseFloat(e.target.value)),
       tabs, bars, grid, sections, takes, wave, beatModes,
