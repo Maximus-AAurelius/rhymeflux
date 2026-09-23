@@ -64,6 +64,15 @@ input[type=range]{accent-color:var(--color-accent)}
 </div>
 </div>
 
+<sc-if value="{{ hasBeatFile }}" hint-placeholder-val="{{ false }}">
+<div style="flex:none;display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100)">
+<button onClick="{{ toggleBeatPlay }}" style="flex:none;width:30px;height:30px;border:0;border-radius:50%;background:var(--color-accent);color:var(--color-bg);cursor:pointer;font:800 11px var(--font-heading);display:flex;align-items:center;justify-content:center;padding:0">{{ beatPlayIcon }}</button>
+<div style="flex:none;font:700 10px var(--font-heading);font-variant-numeric:tabular-nums;color:var(--color-neutral-600);white-space:nowrap">{{ beatPosLabel }} / {{ beatDurLabel }}</div>
+<input type="range" min="0" max="{{ beatDur }}" step="0.1" value="{{ beatPos }}" onChange="{{ seekBeat }}" style="flex:1;min-width:0" />
+<button onClick="{{ toggleBeatLoop }}" style="flex:none;padding:6px 10px;border:1px solid var(--color-divider);background:{{ beatLoopBg }};color:{{ beatLoopFg }};font:800 9px var(--font-heading);letter-spacing:.08em;cursor:pointer">LOOP</button>
+</div>
+</sc-if>
+
 <sc-if value="{{ isWrite }}" hint-placeholder-val="{{ true }}">
 <div style="flex:1;min-height:0;display:flex;flex-direction:column">
 <div style="flex:none;display:flex;align-items:stretch;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100)">
@@ -119,11 +128,6 @@ input[type=range]{accent-color:var(--color-accent)}
 <sc-if value="{{ noStems }}" hint-placeholder-val="{{ true }}">
 <div style="padding:12px 16px;border-bottom:2px solid var(--color-divider);font:11px/1.5 var(--font-body);color:var(--color-neutral-600)">No stems yet — load a beat above, then run the local splitter on your computer (see README) to add vocals/instrumental tracks here.</div>
 </sc-if>
-<div style="display:flex;align-items:stretch;border-bottom:2px solid var(--color-divider)">
-<div style="flex:1;padding:10px 12px;border-right:1px solid var(--color-neutral-300)"><div style="font:700 9px var(--font-heading);letter-spacing:.12em;color:var(--color-neutral-600)">LOOP IN</div><div style="font:700 14px var(--font-heading);font-variant-numeric:tabular-nums">{{ loopIn }}</div></div>
-<div style="flex:1;padding:10px 12px;border-right:1px solid var(--color-neutral-300)"><div style="font:700 9px var(--font-heading);letter-spacing:.12em;color:var(--color-neutral-600)">LOOP OUT</div><div style="font:700 14px var(--font-heading);font-variant-numeric:tabular-nums">{{ loopOut }}</div></div>
-<button onClick="{{ toggleLoop }}" style="flex:none;width:96px;border:0;background:{{ loopBg }};color:{{ loopFg }};font:800 11px var(--font-heading);letter-spacing:.1em;text-align:left;padding:0 12px;cursor:pointer">{{ loopLabel }}</button>
-</div>
 <div style="padding:12px 16px;border-bottom:2px solid var(--color-divider);display:flex;justify-content:space-between;align-items:baseline"><div style="font:700 10px var(--font-heading);letter-spacing:.14em">4/4 BEAT GRID</div><div style="font:11px var(--font-body);color:var(--color-neutral-600)">16 slots per bar</div></div>
 <sc-for list="{{ grid }}" as="g" hint-placeholder-count="6">
 <div style="padding:10px 16px;border-bottom:1px solid var(--color-neutral-300)">
@@ -155,6 +159,24 @@ input[type=range]{accent-color:var(--color-accent)}
 
 <sc-if value="{{ isBooth }}" hint-placeholder-val="{{ false }}">
 <div style="flex:1;min-height:0;overflow:auto"><div style="padding:0 0 120px">
+<div style="display:flex;border-bottom:2px solid var(--color-divider)">
+<div style="flex:1;padding:14px 16px;border-right:1px solid var(--color-neutral-300);display:flex;flex-direction:column;gap:10px">
+<div style="font:800 10px var(--font-heading);letter-spacing:.12em">BEAT</div>
+<input type="range" min="0" max="1" step="0.01" value="{{ beatVol }}" onChange="{{ onBeatVol }}" />
+<div style="display:flex;gap:6px">
+<button onClick="{{ toggleBeatMute }}" style="flex:1;min-height:32px;border:1px solid var(--color-divider);background:{{ beatMuteBg }};color:{{ beatMuteFg }};font:800 10px var(--font-heading);cursor:pointer">M</button>
+<button onClick="{{ toggleBeatSolo }}" style="flex:1;min-height:32px;border:1px solid var(--color-divider);background:{{ beatSoloBg }};color:{{ beatSoloFg }};font:800 10px var(--font-heading);cursor:pointer">S</button>
+</div>
+</div>
+<div style="flex:1;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+<div style="font:800 10px var(--font-heading);letter-spacing:.12em">VOCAL</div>
+<input type="range" min="0" max="1" step="0.01" value="{{ vocalVol }}" onChange="{{ onVocalVol }}" />
+<div style="display:flex;gap:6px">
+<button onClick="{{ toggleVocalMute }}" style="flex:1;min-height:32px;border:1px solid var(--color-divider);background:{{ vocalMuteBg }};color:{{ vocalMuteFg }};font:800 10px var(--font-heading);cursor:pointer">M</button>
+<button onClick="{{ toggleVocalSolo }}" style="flex:1;min-height:32px;border:1px solid var(--color-divider);background:{{ vocalSoloBg }};color:{{ vocalSoloFg }};font:800 10px var(--font-heading);cursor:pointer">S</button>
+</div>
+</div>
+</div>
 <div style="padding:20px 16px;border-bottom:2px solid var(--color-divider)">
 <div style="font:700 10px var(--font-heading);letter-spacing:.14em;color:var(--color-neutral-600)">TAKE ON</div>
 <div style="font:800 20px/1.15 var(--font-heading);letter-spacing:-.02em;margin-top:4px">{{ boothLine }}</div>
@@ -347,6 +369,8 @@ class Component extends DCLogic {
     ammo: false, settings: false, lane: "Trap",
     rec: false, secs: 0,
     beatMode: "YOUTUBE LINK", beatUrl: "", beatLoaded: "no beat loaded", beatFileUrl: null, currentBeatId: null, loop: true, ab: "A",
+    beatPlaying: false, beatPos: 0, beatDur: 0, beatLoop: false,
+    beatVol: 1, beatMuted: false, beatSolo: false, vocalVol: 1, vocalMuted: false, vocalSolo: false,
     takes: [],
     stemsList: [],
     deckA: { fileName: "no file", loaded: false, playing: false, rate: 1, reverbOn: false, loopOn: false },
@@ -494,6 +518,7 @@ class Component extends DCLogic {
       if (b.storage_path) {
         const { data: signed } = await this.sb.storage.from("beats").createSignedUrl(b.storage_path, 3600);
         this.setState({ beatLoaded: (b.label || "beat") + " · cloud", beatFileUrl: signed ? signed.signedUrl : null, currentBeatId: b.id });
+        if (signed) this.setBeatSrc(signed.signedUrl);
       } else if (b.external_url) {
         this.setState({ beatLoaded: b.external_url + " · streamed", currentBeatId: b.id });
       }
@@ -558,6 +583,60 @@ class Component extends DCLogic {
     if (data) await this.sb.storage.from("takes").remove([data.storage_path]);
     await this.sb.from("takes").delete().eq("id", id);
   };
+
+  fmtTime = (s) => { s = Math.floor(s || 0); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+
+  getBeatAudio = () => {
+    if (!this._beatAudio) {
+      const a = new Audio();
+      a.addEventListener("timeupdate", () => this.setState({ beatPos: a.currentTime }));
+      a.addEventListener("loadedmetadata", () => this.setState({ beatDur: a.duration || 0 }));
+      a.addEventListener("play", () => this.setState({ beatPlaying: true }));
+      a.addEventListener("pause", () => this.setState({ beatPlaying: false }));
+      a.addEventListener("ended", () => this.setState({ beatPlaying: false }));
+      this._beatAudio = a;
+    }
+    return this._beatAudio;
+  };
+
+  setBeatSrc = (url) => {
+    const a = this.getBeatAudio();
+    a.src = url;
+    this.applyBeatAudio();
+    this.setState({ beatPlaying: false, beatPos: 0, beatDur: 0 });
+  };
+
+  toggleBeatPlay = () => {
+    const a = this.getBeatAudio();
+    if (!a.src) return;
+    if (this.state.beatPlaying) a.pause(); else a.play();
+  };
+
+  toggleBeatLoop = () => {
+    const a = this.getBeatAudio();
+    a.loop = !this.state.beatLoop;
+    this.setState({ beatLoop: a.loop });
+  };
+
+  seekBeat = (e) => {
+    const a = this.getBeatAudio();
+    a.currentTime = parseFloat(e.target.value);
+    this.setState({ beatPos: a.currentTime });
+  };
+
+  applyBeatAudio = () => {
+    if (!this._beatAudio) return;
+    const S = this.state;
+    this._beatAudio.muted = S.beatMuted || (S.vocalSolo && !S.beatSolo);
+    this._beatAudio.volume = S.beatVol;
+  };
+
+  setBeatVol = (v) => { this.setState({ beatVol: v }); this._beatAudio && (this._beatAudio.volume = v); };
+  toggleBeatMute = () => { this.setState({ beatMuted: !this.state.beatMuted }); setTimeout(this.applyBeatAudio, 0); };
+  toggleBeatSolo = () => { this.setState({ beatSolo: !this.state.beatSolo }); setTimeout(this.applyBeatAudio, 0); };
+  setVocalVol = (v) => { this.setState({ vocalVol: v }); };
+  toggleVocalMute = () => { this.setState({ vocalMuted: !this.state.vocalMuted }); setTimeout(this.applyBeatAudio, 0); };
+  toggleVocalSolo = () => { this.setState({ vocalSolo: !this.state.vocalSolo }); setTimeout(this.applyBeatAudio, 0); };
 
   ensureScrewLibs = async () => {
     if (this._Tone) return this._Tone;
@@ -844,7 +923,14 @@ class Component extends DCLogic {
     ];
     const takes = S.takes.map((t, i) => ({
       ...t, playBg: "transparent", playFg: "var(--color-text)",
-      onPlay: () => { if (t.url) new Audio(t.url).play(); },
+      onPlay: () => {
+        if (!t.url) return;
+        const effMuted = S.vocalMuted || (S.beatSolo && !S.vocalSolo);
+        if (effMuted) return;
+        const a = new Audio(t.url);
+        a.volume = S.vocalVol;
+        a.play();
+      },
       onDelete: () => { this.setState({ takes: S.takes.filter((_, j) => j !== i) }); if (t.id) this.deleteTake(t.id); }
     }));
     const wave = Array.from({ length: 22 }, (_, i) => ({
@@ -909,7 +995,26 @@ class Component extends DCLogic {
       beatUrl: S.beatUrl,
       beatFileUrl: S.beatFileUrl,
       hasBeatFile: !!S.beatFileUrl,
-      playBeat: () => { if (S.beatFileUrl) new Audio(S.beatFileUrl).play(); },
+      playBeat: this.toggleBeatPlay,
+      beatPlaying: S.beatPlaying,
+      beatPlayIcon: S.beatPlaying ? "❚❚" : "▶",
+      beatPosLabel: this.fmtTime(S.beatPos), beatDurLabel: this.fmtTime(S.beatDur),
+      beatPos: S.beatPos, beatDur: S.beatDur || 0.01,
+      seekBeat: this.seekBeat,
+      toggleBeatPlay: this.toggleBeatPlay,
+      toggleBeatLoop: this.toggleBeatLoop,
+      beatLoopBg: S.beatLoop ? "var(--color-accent)" : "transparent",
+      beatLoopFg: S.beatLoop ? "var(--color-bg)" : "var(--color-text)",
+      beatVol: S.beatVol, onBeatVol: (e) => this.setBeatVol(parseFloat(e.target.value)),
+      beatMuted: S.beatMuted, toggleBeatMute: this.toggleBeatMute,
+      beatSolo: S.beatSolo, toggleBeatSolo: this.toggleBeatSolo,
+      beatMuteBg: S.beatMuted ? "var(--color-accent)" : "transparent", beatMuteFg: S.beatMuted ? "var(--color-bg)" : "var(--color-text)",
+      beatSoloBg: S.beatSolo ? "var(--color-accent)" : "transparent", beatSoloFg: S.beatSolo ? "var(--color-bg)" : "var(--color-text)",
+      vocalVol: S.vocalVol, onVocalVol: (e) => this.setVocalVol(parseFloat(e.target.value)),
+      vocalMuted: S.vocalMuted, toggleVocalMute: this.toggleVocalMute,
+      vocalSolo: S.vocalSolo, toggleVocalSolo: this.toggleVocalSolo,
+      vocalMuteBg: S.vocalMuted ? "var(--color-accent)" : "transparent", vocalMuteFg: S.vocalMuted ? "var(--color-bg)" : "var(--color-text)",
+      vocalSoloBg: S.vocalSolo ? "var(--color-accent)" : "transparent", vocalSoloFg: S.vocalSolo ? "var(--color-bg)" : "var(--color-text)",
       stemsList: S.stemsList.map(st => ({ ...st, onPlay: () => { if (st.url) new Audio(st.url).play(); } })),
       hasStems: S.stemsList.length > 0,
       noStems: S.stemsList.length === 0,
@@ -924,6 +1029,7 @@ class Component extends DCLogic {
             if (!file) return;
             const url = URL.createObjectURL(file);
             this.setState({ beatLoaded: file.name + " · local file", beatFileUrl: url });
+            this.setBeatSrc(url);
             this.uploadBeat(file);
           };
           inp.click();
@@ -931,10 +1037,6 @@ class Component extends DCLogic {
           this.setState({ beatLoaded: S.beatUrl ? S.beatUrl + " · streamed" : S.beatLoaded, beatUrl: "" });
         }
       },
-      loopIn: "0:00.0", loopOut: "0:08.4",
-      loop: S.loop, loopLabel: S.loop ? "LOOP ON" : "LOOP OFF",
-      loopBg: S.loop ? "var(--color-accent)" : "transparent", loopFg: S.loop ? "var(--color-bg)" : "var(--color-text)",
-      toggleLoop: () => this.setState({ loop: !S.loop }),
       barCount: String(S.lines.length).padStart(2, "0"),
       avgSyl: syls.length ? Math.round(syls.reduce((a, b) => a + b, 0) / syls.length) : 0,
       sensLabel: this.sens.toUpperCase(), sectionLabel: S.section + " · " + S.lines.length + " BARS",
