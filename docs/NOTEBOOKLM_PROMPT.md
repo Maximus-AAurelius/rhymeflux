@@ -40,10 +40,12 @@ in one or two sentences (DJ Screw, Houston, chopped and screwed, why
 slowing a turntable drops the pitch) then walk through its worked example
 step by step: loading two decks, the SCREW SPEED slider, SYRUP reverb,
 setting a loop with two clicks and hitting CHOP, and the crossfader. Then
-cover PACKS using its worked example: splitting a whole song into vocals,
-drums, bass, guitar, piano, other, and a computed instrumental by running
-one command on a computer, and assigning those pieces onto BEATS pads
-with a single tap. Then cover BEATS: building a pattern on the 16-step
+cover PACKS using its worked example: starting the background helper
+once, then splitting a whole song into vocals, drums, bass, guitar,
+piano, other, and a computed instrumental with a single click (QUICK or
+FULL SPLIT) - no commands to copy after the helper is running - and
+assigning those pieces onto BEATS pads with a single tap. Then cover
+BEATS: building a pattern on the 16-step
 sequencer, and connecting a MIDI keyboard (like an M-Audio Oxygen 25) so
 its keys trigger the pads live - mention this needs Chrome or Edge on a
 computer, not a phone. Make clear that pad assignments are saved, so a
@@ -311,20 +313,27 @@ This is the tab dedicated to taking one finished song and breaking it
 into every instrument that went into it, ready to load onto the BEATS
 pads. It has two sections.
 
-**1. SPLIT A SONG** lists every file already sitting in SONGS. Tapping
-**SPLIT FULL STEMS** on one links it as the active beat and pops up the
-exact command to run on the user's own computer. That command runs
-Demucs's 6-stem separation model — a real, free, open-source AI model —
-which needs real CPU power a phone or browser tab can't provide for
-free, so it's one line typed into a terminal rather than a button that
-works instantly in the browser. It produces six files: **vocals**,
-**drums**, **bass**, **guitar**, **piano**, and **other** (anything that
-doesn't fit the first five categories) — plus the app computes a
-seventh file, a mixed-down **instrumental**, by combining every
-non-vocal stem back together into one track. (Guitar and piano are the
-least reliable of the six to separate cleanly — even Demucs's own
-documentation calls that pair experimental — so those two may carry
-more artifacts than the drums, bass, vocals, and instrumental stems.)
+**1. SPLIT A SONG** lists every file already sitting in SONGS, each with
+two buttons: **QUICK SPLIT** and **FULL SPLIT**. Neither one runs
+anything instantly in the browser — clicking either just queues a job.
+A small background helper program, started once on the user's own
+computer, is constantly watching for new jobs on that account; the
+moment one appears, it downloads the source file, runs Demucs (Meta's
+real, free, open-source separation model) locally, and uploads the
+results back automatically. QUICK SPLIT produces just **vocals** and
+**instrumental**, fast. FULL SPLIT runs Demucs's 6-stem model and
+produces **vocals**, **drums**, **bass**, **guitar**, **piano**, and
+**other** (anything that doesn't fit the first five) — plus the app
+computes a seventh file, a mixed-down **instrumental**, by combining
+every non-vocal stem back together into one track. (Guitar and piano
+are the least reliable of the six to separate cleanly — even Demucs's
+own documentation calls that pair experimental.) While a job runs, the
+row shows a live status line — queued, then "splitting on your
+computer," then done — because the app is quietly checking on that job
+every few seconds. This does mean the computer running the helper has
+to actually be turned on and connected for anything to happen; it's
+real audio processing, not a browser trick, so it has to happen
+somewhere with real CPU power.
 
 **2. YOUR SOUND PACKS** lists every stem that's ever been split, across
 every song, each with a PLAY button to preview it and eight small
@@ -334,18 +343,22 @@ account from that point on, so it's still loaded the next time BEATS is
 opened, even on a different device.
 
 **Worked example:** A producer has a fully mixed reference track they
-love the drum sound on. They upload it in SONGS, rename it "Reference
-Track," switch to PACKS, and tap SPLIT FULL STEMS. They copy the
-command shown, paste it into a terminal on their computer, and wait a
-few minutes while Demucs downloads its 6-stem model (a one-time cost)
-and processes the song. Back in PACKS, six rows now appear — VOCALS,
-DRUMS, BASS, GUITAR, PIANO, OTHER — plus INSTRUMENTAL. They preview the
-DRUMS stem with PLAY, like what they hear, and tap pad button **1** on
-that row: it's now loaded onto BEATS pad 1, ready to trigger by tapping
-it or playing the note on a connected MIDI keyboard. They do the same
-for the BASS stem onto pad 2. Both choices are remembered — closing the
-browser and coming back the next day, pads 1 and 2 are still loaded
-with those exact sounds.
+love the drum sound on. The first time they ever use this feature, they
+open a terminal on their computer and start the background helper —
+after that, they never touch a terminal again for this. They upload the
+track in SONGS, rename it "Reference Track," switch to PACKS, and tap
+FULL SPLIT. The row updates to "queued," then a few seconds later to
+"splitting on your computer" as the helper (still running from earlier)
+picks the job up. A few minutes later — Demucs also has to download its
+6-stem model the very first time, a one-time cost — the row says "done,"
+and six new rows appear under YOUR SOUND PACKS: VOCALS, DRUMS, BASS,
+GUITAR, PIANO, OTHER, plus INSTRUMENTAL. They preview the DRUMS stem
+with PLAY, like what they hear, and tap pad button **1** on that row:
+it's now loaded onto BEATS pad 1, ready to trigger by tapping it or
+playing the note on a connected MIDI keyboard. They do the same for the
+BASS stem onto pad 2. Both choices are remembered — closing the browser
+and coming back the next day, pads 1 and 2 are still loaded with those
+exact sounds.
 
 ## BEATS — the pad sampler and step sequencer
 
