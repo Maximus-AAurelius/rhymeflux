@@ -33,10 +33,11 @@ input[type=range]{accent-color:var(--color-accent)}
 #brand-panel .bp-tag{margin-top:18px;font:16px/1.6 var(--font-body);color:rgba(241,236,247,.55);max-width:420px}
 #brand-panel .bp-rule{width:64px;height:3px;background:linear-gradient(90deg,#8b5cf6,#c9a4ff);margin-top:32px}
 #brand-panel .bp-glow{position:absolute;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,.32),transparent 70%);top:-120px;right:-160px;pointer-events:none}
+#brand-panel .bp-portrait{position:absolute;bottom:-40px;right:-30px;width:420px;max-width:55%;mix-blend-mode:multiply;opacity:.85;pointer-events:none;filter:sepia(1) saturate(400%) hue-rotate(220deg) brightness(.8)}
 </style></helmet>
 <div id="app-shell">
 <sc-if value="{{ !authed }}" hint-placeholder-val="{{ false }}">
-<div id="brand-panel"><div class="bp-glow"></div><div class="bp-word chrome-text">BARWORK</div><div class="bp-rule"></div><div class="bp-tag">A rap writing studio. Rhymes, syllables, beats, and takes — all in one place, saved to your account.</div></div>
+<div id="brand-panel"><div class="bp-glow"></div><img class="bp-portrait" src="assets/trill.png" /><div class="bp-word chrome-text">BARWORK</div><div class="bp-rule"></div><div class="bp-tag">A rap writing studio. Rhymes, syllables, beats, and takes — all in one place, saved to your account.</div></div>
 </sc-if>
 <div id="app-card">
 
@@ -248,20 +249,28 @@ input[type=range]{accent-color:var(--color-accent)}
 <sc-if value="{{ isSongs }}" hint-placeholder-val="{{ false }}">
 <div style="flex:1;min-height:0;overflow:auto"><div style="padding:0 0 120px">
 <div style="display:flex;border-bottom:2px solid var(--color-divider)">
-<button style="flex:1;padding:14px 16px;border:0;background:var(--color-accent);color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:.1em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-600)">+ NEW SONG</button>
-<button style="flex:none;width:96px;padding:14px 12px;border:0;border-left:1px solid var(--color-accent-700);background:transparent;font:800 12px var(--font-heading);letter-spacing:.1em;text-align:left;cursor:pointer" style-hover="background:rgba(32,30,29,.07)">FOLDERS</button>
+<button onClick="{{ uploadToLibrary }}" style="flex:1;padding:14px 16px;border:0;background:var(--color-accent);color:var(--color-bg);font:800 12px var(--font-heading);letter-spacing:.1em;text-align:left;cursor:pointer" style-hover="background:var(--color-accent-600)">+ UPLOAD FILE</button>
 </div>
-<sc-for list="{{ songs }}" as="s" hint-placeholder-count="4">
-<button onClick="{{ s.onTap }}" style="width:100%;display:block;text-align:left;border:0;border-bottom:1px solid var(--color-neutral-300);background:{{ s.bg }};padding:14px 16px;cursor:pointer" style-hover="background:var(--color-accent-100)">
+<sc-if value="{{ hasLibrary }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ library }}" as="f" hint-placeholder-count="4">
+<div style="border-bottom:1px solid var(--color-neutral-300);padding:14px 16px">
 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
-<span style="flex:1;min-width:0;font:800 17px/1.2 var(--font-heading);letter-spacing:-.02em;color:{{ s.fg }}">{{ s.title }}</span>
-<span style="flex:none;padding-top:3px;font:700 10px var(--font-heading);letter-spacing:.1em;color:var(--color-neutral-600)">{{ s.when }}</span>
+<input value="{{ f.name }}" onChange="{{ f.onRename }}" style="flex:1;min-width:0;border:0;background:transparent;font:800 16px var(--font-heading);letter-spacing:-.01em;color:var(--color-text);padding:0;outline:none" />
+<span style="flex:none;padding-top:3px;font:700 10px var(--font-heading);letter-spacing:.1em;color:var(--color-neutral-600)">{{ f.when }}</span>
 </div>
-<div style="font:12px var(--font-body);color:var(--color-neutral-700);margin-top:3px">{{ s.meta }}</div>
-<div style="font:12px/1.4 var(--font-body);color:var(--color-neutral-600);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.first }}</div>
-</button>
+<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+<button onClick="{{ f.onSetBeat }}" style="padding:8px 12px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);font:800 9px var(--font-heading);letter-spacing:.08em;cursor:pointer">SET AS BEAT</button>
+<button onClick="{{ f.onDeckA }}" style="padding:8px 12px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);font:800 9px var(--font-heading);letter-spacing:.08em;cursor:pointer">→ DECK A</button>
+<button onClick="{{ f.onDeckB }}" style="padding:8px 12px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);font:800 9px var(--font-heading);letter-spacing:.08em;cursor:pointer">→ DECK B</button>
+<button onClick="{{ f.onExtract }}" style="padding:8px 12px;border:1px solid var(--color-divider);background:transparent;color:var(--color-accent-700);font:800 9px var(--font-heading);letter-spacing:.08em;cursor:pointer">EXTRACT STEMS</button>
+<button onClick="{{ f.onDelete }}" style="padding:8px 12px;border:0;background:transparent;color:var(--color-neutral-600);font:800 9px var(--font-heading);letter-spacing:.08em;cursor:pointer">DELETE</button>
+</div>
+</div>
 </sc-for>
-<div style="padding:16px;font:11px/1.5 var(--font-body);color:var(--color-neutral-600)">Everything is saved as you type and synced across your devices.</div>
+</sc-if>
+<sc-if value="{{ noLibrary }}" hint-placeholder-val="{{ true }}">
+<div style="padding:16px;font:11px/1.5 var(--font-body);color:var(--color-neutral-600)">Nothing here yet — upload an MP3 or WAV to build your project folder. From here you can set a file as your beat, load it onto a SCREW deck, or extract stems from it.</div>
+</sc-if>
 </div></div>
 </sc-if>
 
@@ -326,6 +335,15 @@ input[type=range]{accent-color:var(--color-accent)}
 <span style="flex:none;width:52px;height:28px;border:2px solid var(--color-text);background:{{ t.track }};display:flex;align-items:center;justify-content:{{ t.pos }};padding:2px"><span style="width:20px;height:20px;background:{{ t.knob }};display:block"></span></span>
 </button>
 </sc-for>
+<div style="padding:14px 16px 6px;font:700 10px var(--font-heading);letter-spacing:.14em;color:var(--color-neutral-600);border-top:2px solid var(--color-divider)">MIDI DEVICES</div>
+<sc-if value="{{ hasMidi }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ midiDevices }}" as="d" hint-placeholder-count="1">
+<div style="display:flex;align-items:center;gap:8px;padding:8px 16px;font:13px var(--font-body)"><span style="width:8px;height:8px;border-radius:50%;background:var(--color-accent);flex:none"></span>{{ d }}</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ midiStatusLine }}" hint-placeholder-val="{{ true }}">
+<div style="padding:0 16px 14px;font:12px/1.5 var(--font-body);color:var(--color-neutral-600)">{{ midiStatusLine }}</div>
+</sc-if>
 <button onClick="{{ signOut }}" style="width:100%;border:0;border-top:2px solid var(--color-divider);background:transparent;color:var(--color-accent-700);font:800 12px var(--font-heading);letter-spacing:.1em;text-align:left;padding:16px;cursor:pointer">SIGN OUT</button>
 <div style="padding:16px;border-top:1px solid var(--color-neutral-300);font:11px/1.5 var(--font-body);color:var(--color-neutral-600)">Accent: US English · Synced to your account · Audio uploads only after you sign in</div>
 <div style="height:34px"></div>
@@ -377,7 +395,8 @@ class Component extends DCLogic {
     deckB: { fileName: "no file", loaded: false, playing: false, rate: 1, reverbOn: false, loopOn: false },
     crossfade: 0,
     session: null, authEmail: "", authPassword: "", authMode: "signin", authBusy: false, authError: "",
-    sens: null, syll: null, section: "VERSE 1", songId: "s1", ai: 38
+    sens: null, syll: null, section: "VERSE 1", ai: 38,
+    library: [], midiSupported: null, midiDevices: []
   };
   _deckA = {};
   _deckB = {};
@@ -504,6 +523,7 @@ class Component extends DCLogic {
 
   loadCloud = async () => {
     if (!this.sb || !this.state.session) return;
+    this.loadLibrary();
     const uid = this.state.session.user.id;
     const { data: song } = await this.sb.from("songs").select("*").eq("id", this.SONG_UUID).maybeSingle();
     if (song && song.meta) {
@@ -585,6 +605,96 @@ class Component extends DCLogic {
   };
 
   fmtTime = (s) => { s = Math.floor(s || 0); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+
+  uploadToLibrary = () => {
+    const inp = document.createElement("input");
+    inp.type = "file"; inp.accept = "audio/*,.mp3,.wav,.m4a"; inp.multiple = true;
+    inp.onchange = () => { Array.from(inp.files || []).forEach(f => this.addLibraryFile(f)); };
+    inp.click();
+  };
+
+  addLibraryFile = async (file) => {
+    if (!this.sb || !this.state.session) return;
+    const uid = this.state.session.user.id;
+    const path = uid + "/library/" + Date.now() + "_" + file.name;
+    const { error } = await this.sb.storage.from("beats").upload(path, file);
+    if (error) return;
+    await this.sb.from("library").insert({ user_id: uid, name: file.name.replace(/\.[^.]+$/, ""), storage_path: path });
+    this.loadLibrary();
+  };
+
+  loadLibrary = async () => {
+    if (!this.sb || !this.state.session) return;
+    const { data } = await this.sb.from("library").select("*").order("created_at", { ascending: false });
+    if (!data) return;
+    const withUrls = await Promise.all(data.map(async (row) => {
+      const { data: signed } = await this.sb.storage.from("beats").createSignedUrl(row.storage_path, 3600);
+      return { ...row, url: signed ? signed.signedUrl : null };
+    }));
+    this.setState({ library: withUrls });
+  };
+
+  renameLibraryItem = (id, name) => {
+    this.setState({ library: this.state.library.map(f => f.id === id ? { ...f, name } : f) });
+    if (this.sb) this.sb.from("library").update({ name }).eq("id", id);
+  };
+
+  deleteLibraryItem = async (id) => {
+    const item = this.state.library.find(f => f.id === id);
+    this.setState({ library: this.state.library.filter(f => f.id !== id) });
+    if (!this.sb || !item) return;
+    await this.sb.storage.from("beats").remove([item.storage_path]);
+    await this.sb.from("library").delete().eq("id", id);
+  };
+
+  linkAsBeatRow = async (item) => {
+    if (!this.sb || !this.state.session) return null;
+    const uid = this.state.session.user.id;
+    const { data } = await this.sb.from("beats").insert({ user_id: uid, song_id: this.SONG_UUID, source_type: "upload", storage_path: item.storage_path, label: item.name }).select().single();
+    if (data) { this.setState({ currentBeatId: data.id, stemsList: [] }); this.loadStems(data.id); }
+    return data;
+  };
+
+  setAsBeat = (item) => {
+    if (!item.url) return;
+    this.setState({ beatLoaded: item.name + " · cloud", beatFileUrl: item.url, tab: "flow" });
+    this.setBeatSrc(item.url);
+    this.linkAsBeatRow(item);
+  };
+
+  extractStems = async (item) => {
+    await this.linkAsBeatRow(item);
+    alert("Linked \"" + item.name + "\" as the active beat.\n\nNow on your computer, run:\npython scripts\\split_stems.py <path to your local copy of this file>\n\n(needs the actual file on your machine — Demucs runs locally, not in the browser)");
+  };
+
+  loadDeckFromLibrary = async (which, item) => {
+    if (!item.url) return;
+    const res = await fetch(item.url);
+    const blob = await res.blob();
+    const file = new File([blob], item.name, { type: blob.type || "audio/mpeg" });
+    this.setState({ tab: "screw" });
+    await this.mountDeck(which, file);
+  };
+
+  initMidi = async () => {
+    if (this._midiAccess) { this.refreshMidi(); return; }
+    if (!navigator.requestMIDIAccess) { this.setState({ midiSupported: false }); return; }
+    try {
+      const access = await navigator.requestMIDIAccess();
+      this._midiAccess = access;
+      access.onstatechange = () => this.refreshMidi();
+      this.setState({ midiSupported: true });
+      this.refreshMidi();
+    } catch (e) {
+      this.setState({ midiSupported: false });
+    }
+  };
+
+  refreshMidi = () => {
+    if (!this._midiAccess) return;
+    const names = Array.from(this._midiAccess.inputs.values()).map(i => i.name);
+    this.setState({ midiDevices: names });
+  };
 
   getBeatAudio = () => {
     if (!this._beatAudio) {
@@ -937,12 +1047,16 @@ class Component extends DCLogic {
       h: (S.rec ? 20 + Math.round(Math.abs(Math.sin((i + S.secs) * 0.9)) * 80) : 8 + (i % 5) * 4) + "%",
       bg: S.rec ? "var(--color-accent)" : "var(--color-neutral-400)"
     }));
-    const songs = [
-      { id: "s1", title: "MAP OF THE CITY", when: "NOW", meta: S.lines.length + " bars · 82 bpm · Verse 1, Hook", first: S.lines[0] || "" },
-      { id: "s2", title: "LEDGER", when: "2 DAYS", meta: "24 bars · 74 bpm · 3 takes", first: "Balance every line like it owe me a reason" },
-      { id: "s3", title: "SHIFT WORK", when: "LAST WK", meta: "16 bars · 91 bpm · draft", first: "Clocked in on a Tuesday with a notebook and a lighter" },
-      { id: "s4", title: "UNTITLED 04", when: "AUG", meta: "4 bars · no beat", first: "Idea only — hook shape, no verse yet" }
-    ].map(s => ({ ...s, bg: S.songId === s.id ? "var(--color-neutral-200)" : "transparent", fg: S.songId === s.id ? "var(--color-accent-700)" : "var(--color-text)", onTap: () => this.setState({ tab: "write", songId: s.id }) }));
+    const library = S.library.map(f => ({
+      id: f.id, name: f.name,
+      when: f.created_at ? new Date(f.created_at).toLocaleDateString() : "",
+      onRename: (e) => this.renameLibraryItem(f.id, e.target.value),
+      onSetBeat: () => this.setAsBeat(f),
+      onDeckA: () => this.loadDeckFromLibrary("A", f),
+      onDeckB: () => this.loadDeckFromLibrary("B", f),
+      onExtract: () => this.extractStems(f),
+      onDelete: () => this.deleteLibraryItem(f.id),
+    }));
 
     const beatModes = ["YOUTUBE LINK", "MY FILE"].map(n => ({
       name: n, bg: S.beatMode === n ? "var(--color-text)" : "transparent", fg: S.beatMode === n ? "var(--color-bg)" : "var(--color-text)",
@@ -988,7 +1102,9 @@ class Component extends DCLogic {
       isWrite: S.tab === "write", isFlow: S.tab === "flow", isBooth: S.tab === "booth", isSongs: S.tab === "songs", isScrew: S.tab === "screw",
       ...deckProps("A"), ...deckProps("B"),
       crossfade: S.crossfade, onCrossfade: (e) => this.setCrossfade(parseFloat(e.target.value)),
-      tabs, bars, grid, sections, songs, takes, wave, beatModes,
+      tabs, bars, grid, sections, takes, wave, beatModes,
+      library, hasLibrary: S.library.length > 0, noLibrary: S.library.length === 0,
+      uploadToLibrary: this.uploadToLibrary,
       syncLabel: S.edit >= 0 ? "SAVED LOCALLY" : "SYNCED",
       syncTone: S.edit >= 0 ? "var(--color-neutral-600)" : "var(--color-accent-700)",
       beatSource: S.beatLoaded,
@@ -1057,7 +1173,9 @@ class Component extends DCLogic {
       rewrite: () => this.setState({ ammo: false, edit: S.lines.length - 1, draft: S.lines[S.lines.length - 1] || "", ai: Math.max(0, S.ai - 1) }),
       godPrompt: () => this.setState({ ammo: false, tab: "songs" }),
       ammoNote: "Ammo writes in the " + S.lane + " lane and stays inside your syllable range. Nothing is inserted until you tap it.",
-      settings: S.settings, openSettings: () => this.setState({ settings: true }), closeSettings: () => this.setState({ settings: false }),
+      settings: S.settings, openSettings: () => { this.setState({ settings: true }); this.initMidi(); }, closeSettings: () => this.setState({ settings: false }),
+      midiSupported: S.midiSupported, midiDevices: S.midiDevices, hasMidi: S.midiDevices.length > 0,
+      midiStatusLine: S.midiSupported === false ? "Not supported in this browser — use Chrome or Edge." : S.midiSupported === null ? "Checking…" : S.midiDevices.length ? "" : "No MIDI devices found — plug in your Oxygen 25 via USB.",
       sensOpts, toggles,
       sensNote: this.sens === "Off" ? "No colouring — plain page." : this.sens === "Strict" ? "Perfect rhymes only." : this.sens === "Rap" ? "Perfect and slant, the way rappers pair them. Recommended." : this.sens === "Loose" ? "Matches on the vowel plus a hint of the tail." : "Every shared vowel sound lights up.",
       boothLine: S.lines[Math.min(1, S.lines.length - 1)] || "Add a bar first",

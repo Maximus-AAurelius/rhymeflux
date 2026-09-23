@@ -58,11 +58,18 @@ fetch(new URL("slang-overlay.json", document.baseURI).href)
 
 ## Beats, takes, and stems — what's real now
 
-- **BEAT (FLOW tab) → MY FILE**: tap LOAD, pick an actual MP3/WAV/M4A from your device. It plays for real and uploads to your account, so it's there next time on any device.
-- **BOOTH**: RECORD actually captures audio from your mic (`MediaRecorder`) and uploads each take; takes list, plays, and deletes for real, synced to your account.
+- **SONGS is your project folder**: tap **+ UPLOAD FILE** to drop in any MP3/WAV — it uploads to your account and shows up as a row you can rename inline. Each file gets action buttons:
+  - **SET AS BEAT** — makes it the active beat (plays in the persistent transport bar, shows up in FLOW).
+  - **→ DECK A / → DECK B** — loads it straight into a SCREW deck.
+  - **EXTRACT STEMS** — links it as the active beat, then tells you the exact command to run locally (see below) to add vocal/instrumental stems.
+  - **DELETE** — removes it from your account.
+- **BEAT (FLOW tab) → MY FILE**: tap LOAD, pick an actual MP3/WAV/M4A from your device. It plays for real and uploads to your account, so it's there next time on any device. (Uploading via SONGS does the same thing, plus keeps a reusable, renameable copy.)
+- **Transport bar**: whenever a beat is loaded, a play/pause + scrub + loop strip sits under the header on every tab — control it from Write, Booth, wherever.
+- **BOOTH**: a real BEAT/VOCAL mixer (volume, mute, solo — both wired to actual playback) sits above the take recorder. RECORD actually captures audio from your mic (`MediaRecorder`) and uploads each take; takes list, plays, and deletes for real, synced to your account.
 - **STEMS**: the app only *displays and plays* stems — it doesn't generate them (real vocal/instrumental separation needs real compute, which isn't free to run instantly from a phone). To add stems:
-  1. Load the beat in the app first (step above) so there's a cloud record to attach to.
-  2. On your computer, from the repo root (one level up from this `docs/` folder): `pip install demucs supabase`, then `python scripts\split_stems.py path\to\that-same-beat.mp3`. It signs in with your Rhymeflux email/password, runs Demucs locally (free, a few minutes on CPU, first run also downloads the ~80MB model), and uploads the vocal/instrumental stems.
+  1. Load a beat via SONGS → EXTRACT STEMS (or FLOW → MY FILE) so there's a cloud record to attach to.
+  2. On your computer, from the repo root (one level up from this `docs/` folder): `pip install demucs supabase`, then `python scripts\split_stems.py path\to\that-same-file.mp3`. It signs in with your Rhymeflux email/password, runs Demucs locally (free, a few minutes on CPU, first run also downloads the ~80MB model), and uploads the vocal/instrumental stems.
   3. Reopen FLOW on any device — the stems now show up under STEMS with a PLAY button.
+- **MIDI**: Settings shows a MIDI DEVICES panel — plug in your Oxygen 25 (or any class-compliant MIDI controller) via USB and open Settings in Chrome or Edge on your computer; it lists connected devices. (Not supported in Safari or on mobile.) This is groundwork for the upcoming Beat Maker/sampler — nothing triggers sounds from it yet.
 - **WRITE**: bars autosave to your account as you edit — same song follows you between your phone and your computer.
-- Still not connected: transcription, the AI co-writer, and full multi-song cloud sync (only the one open song persists right now). See the Backend Spec for the longer-term plan.
+- Still not connected: transcription, the AI co-writer, the step sequencer/sampler, and full multi-song cloud sync (only the one open song's lyrics persist right now — SONGS is a file library, separate from the lyrics document). See the Backend Spec for the longer-term plan.
