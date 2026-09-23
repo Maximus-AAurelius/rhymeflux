@@ -8,12 +8,40 @@
 </head>
 <body>
 <x-dc>
-<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="stylesheet" href="_ds/modernist-f96d09d9-5145-4426-9bcd-92e8738bf153/styles.css"><script src="_ds/modernist-f96d09d9-5145-4426-9bcd-92e8738bf153/_ds_bundle.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap"><style>html,body{margin:0;height:100%;background:#e7e5e4;font-family:var(--font-body,system-ui)}#app-shell{min-height:100dvh;display:flex;justify-content:center}#app-card{width:100%;max-width:480px;min-height:100dvh;background:var(--color-bg);display:flex;flex-direction:column;position:relative}@media (min-width:560px){#app-shell{align-items:center;padding:40px 0;box-sizing:border-box}#app-card{min-height:0;height:844px;max-height:calc(100dvh - 80px);border-radius:20px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.22),0 0 0 1px rgba(0,0,0,.06)}}</style></helmet>
-<div id="app-shell"><div id="app-card">
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="stylesheet" href="_ds/modernist-f96d09d9-5145-4426-9bcd-92e8738bf153/styles.css"><script src="_ds/modernist-f96d09d9-5145-4426-9bcd-92e8738bf153/_ds_bundle.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap"><style>
+:root{
+  --color-bg:#150f1f; --color-surface:#1f1730; --color-text:#f1ecf7;
+  --color-accent:#8b5cf6; --color-accent-2:#c9a4ff; --color-divider:rgba(216,198,247,.16);
+  --color-neutral-100:#221a30; --color-neutral-200:#2a2140; --color-neutral-300:#3c3155;
+  --color-neutral-400:#5b4b7d; --color-neutral-500:#8577a3; --color-neutral-600:#a99cc7;
+  --color-neutral-700:#c1b6dc; --color-neutral-800:#ded7ee; --color-neutral-900:#f6f3fb;
+  --color-accent-100:#241a3d; --color-accent-200:#2f2050; --color-accent-300:#6b4bb0;
+  --color-accent-400:#9d72e8; --color-accent-500:#8b5cf6; --color-accent-600:#7c4ded;
+  --color-accent-700:#c9a4ff; --color-accent-800:#4a2d80; --color-accent-900:#2c1a4d;
+}
+html,body{margin:0;height:100%;background:#0a0712;font-family:var(--font-body,system-ui)}
+.chrome-text{background:linear-gradient(180deg,#fdfbff 0%,#cbb8ef 30%,#8b5cf6 52%,#cbb8ef 78%,#fdfbff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 2px 14px rgba(139,92,246,.4)}
+#app-shell{min-height:100dvh;display:flex;justify-content:center}
+#app-card{width:100%;max-width:480px;min-height:100dvh;background:var(--color-bg);display:flex;flex-direction:column;position:relative}
+#brand-panel{display:none}
+@media (min-width:560px){#app-shell{align-items:center;padding:40px 0;box-sizing:border-box}#app-card{min-height:0;height:844px;max-height:calc(100dvh - 80px);border-radius:20px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 0 1px rgba(201,164,255,.14)}}
+@media (min-width:900px){
+  #app-shell{gap:0}
+  #brand-panel{display:flex;flex-direction:column;justify-content:center;width:400px;flex:none;padding:0 56px;box-sizing:border-box;height:844px;max-height:calc(100dvh - 80px);margin:40px 0;border-radius:20px 0 0 20px;overflow:hidden;position:relative;background:radial-gradient(120% 90% at 22% 18%,#3a2160 0%,#150f1f 62%),linear-gradient(180deg,#1c1330,#0a0712)}
+  #app-card{border-radius:0 20px 20px 0;margin:40px 0 40px -1px}
+}
+#brand-panel .bp-word{font:800 44px/1.05 var(--font-heading);letter-spacing:-.02em}
+#brand-panel .bp-tag{margin-top:14px;font:13px/1.6 var(--font-body);color:rgba(241,236,247,.55);max-width:280px}
+#brand-panel .bp-rule{width:56px;height:3px;background:linear-gradient(90deg,#8b5cf6,#c9a4ff);margin-top:26px}
+#brand-panel .bp-glow{position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,.35),transparent 70%);top:-80px;right:-120px;pointer-events:none}
+</style></helmet>
+<div id="app-shell">
+<div id="brand-panel"><div class="bp-glow"></div><div class="bp-word chrome-text">BARWORK</div><div class="bp-rule"></div><div class="bp-tag">A rap writing studio. Rhymes, syllables, beats, and takes — all in one place, saved to your account.</div></div>
+<div id="app-card">
 
 <sc-if value="{{ !authed }}" hint-placeholder-val="{{ false }}">
 <div style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:32px 24px;box-sizing:border-box">
-<div style="font:800 28px var(--font-heading);letter-spacing:-.02em">BARWORK</div>
+<div class="chrome-text" style="font:800 28px var(--font-heading);letter-spacing:-.02em">BARWORK</div>
 <div style="font:12px var(--font-body);color:var(--color-neutral-600);margin-bottom:8px">Sign in — this app is private to your account.</div>
 <input value="{{ authEmail }}" onChange="{{ onAuthEmail }}" placeholder="email" type="email" style="border:1px solid var(--color-neutral-300);padding:14px 12px;font:14px var(--font-body);outline:none" />
 <input value="{{ authPassword }}" onChange="{{ onAuthPassword }}" placeholder="password" type="password" style="border:1px solid var(--color-neutral-300);padding:14px 12px;font:14px var(--font-body);outline:none" />
