@@ -7,7 +7,7 @@ Write it. Chop it. Make it yours.
 The app loads `rhyme-engine.js` and `slang-overlay.json` next to `index.html`, so open it through a local server, not by double-clicking:
 
 ```
-cd dist
+cd docs
 npx serve .          # or: python -m http.server 8080
 ```
 
@@ -20,11 +20,13 @@ git init
 git add .
 git commit -m "BporchProduction$ pass 1: Write screen"
 git branch -M main
-git remote add origin https://github.com/<you>/bporchproduction.git
+git remote add origin https://github.com/<you>/rhymeflux.git
 git push -u origin main
 ```
 
-On GitHub, go to Settings → Pages → Deploy from branch → `main` / root. The site is served over HTTPS, so recording works on your iPhone as well.
+On GitHub, go to Settings → Pages → Deploy from branch → `main` / `docs`. The site is served over HTTPS, so recording works on your iPhone as well.
+
+Live: https://maximus-aaurelius.github.io/rhymeflux/
 
 ## What works in this build
 
