@@ -1,6 +1,10 @@
-# BporchProduction$ — pass 1 (Write screen)
+# Barwork (BporchProduction$) — a rap writing studio
 
 Write it. Chop it. Make it yours.
+
+**Two builds live here:**
+- `barwork.html` — the feature-complete prototype: SONGS / WRITE / FLOW / BOOTH tabs, rhyme drawer, AI-ammo panel, sensitivity settings, Free/Pro/Lifetime pricing. This is the one to use.
+- `index.html` — the earlier "pass 1" Write-screen-only build, kept for reference.
 
 ## Run it locally
 
@@ -26,11 +30,12 @@ git push -u origin main
 
 On GitHub, go to Settings → Pages → Deploy from branch → `main` / `docs`. The site is served over HTTPS, so recording works on your iPhone as well.
 
-Live: https://maximus-aaurelius.github.io/rhymeflux/
+Live: https://maximus-aaurelius.github.io/rhymeflux/barwork.html (flagship build)
+Also live: https://maximus-aaurelius.github.io/rhymeflux/ (pass-1 Write screen)
 
 ## Known source issue
 
-The Write screen and Engine Bench components both load `rhyme-engine.js`/`slang-overlay.json` with a bare relative `import()`/`fetch()`. Because those components run from a `blob:` URL inside the dc-runtime canvas, the relative path never resolves once the page is exported and self-hosted — the rhyme panel just spins on "Loading the rhyme dictionary..." forever with no console error. This repo's `docs/index.html` and `workspace/*.dc.html` have been patched to resolve against `document.baseURI` instead, but **every fresh export from Claude Design will reset this** since the bug lives in the canvas source itself. Fix at the source: in both `componentDidMount()`s, replace
+The Write screen, Barwork App, and Engine Bench components all load `rhyme-engine.js`/`slang-overlay.json` with a bare relative `import()`/`fetch()`. Because those components run from a `blob:` URL inside the dc-runtime canvas, the relative path never resolves once the page is exported and self-hosted — the rhyme panel/editor just spins or silently never gets the engine, with no console error. This repo's `docs/*.html` and `workspace/*.dc.html` have been patched to resolve against `document.baseURI` instead, but **every fresh export from Claude Design will reset this** since the bug lives in the canvas source itself. Fix at the source: in each affected `componentDidMount()`, replace
 ```js
 import("./rhyme-engine.js")
 fetch("slang-overlay.json")
