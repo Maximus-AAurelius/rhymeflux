@@ -35,16 +35,20 @@ what to click, what they'll see, and why it helps.
 ```
 Make this a friendly, practical tutorial video for a rapper who already
 knows the basics of Barwork (writing, beats, recording) and wants to learn
-the production tools: the SCREW tab and the BEATS tab. Explain the history
+the production tools: SCREW, PACKS, and BEATS. Explain the SCREW history
 in one or two sentences (DJ Screw, Houston, chopped and screwed, why
-slowing a turntable drops the pitch) then walk through the worked example
-in the source material step by step: loading two decks, the SCREW SPEED
-slider, SYRUP reverb, setting a loop with two clicks and hitting CHOP, and
-the crossfader. Then cover BEATS using its worked example: loading sounds
-onto pads, building a pattern on the 16-step sequencer, and connecting a
-MIDI keyboard (like an M-Audio Oxygen 25) so its keys trigger the pads
-live - mention this needs Chrome or Edge on a computer, not a phone. Keep
-it under 10 minutes. Assume the viewer is a musician, not a programmer.
+slowing a turntable drops the pitch) then walk through its worked example
+step by step: loading two decks, the SCREW SPEED slider, SYRUP reverb,
+setting a loop with two clicks and hitting CHOP, and the crossfader. Then
+cover PACKS using its worked example: splitting a whole song into vocals,
+drums, bass, guitar, piano, other, and a computed instrumental by running
+one command on a computer, and assigning those pieces onto BEATS pads
+with a single tap. Then cover BEATS: building a pattern on the 16-step
+sequencer, and connecting a MIDI keyboard (like an M-Audio Oxygen 25) so
+its keys trigger the pads live - mention this needs Chrome or Edge on a
+computer, not a phone. Make clear that pad assignments are saved, so a
+sound pack built once is there on every future visit. Keep it under 12
+minutes. Assume the viewer is a musician, not a programmer.
 ```
 
 ---
@@ -127,13 +131,13 @@ Each row has four actions:
   two SCREW tab turntables, switching to that tab automatically.
 - **EXTRACT STEMS** — marks this file as the active beat, then shows a
   message with the exact command to type on the user's own computer to
-  split it into a vocal track and an instrumental track. This uses
-  Demucs, a real, free, open-source AI audio-separation tool — but
-  Demucs needs real CPU power to run, more than a phone or a browser
-  tab can provide for free, so it runs as a one-line command on the
-  user's own computer rather than automatically in the browser. Once
-  that command finishes, the separated tracks upload automatically and
-  show up back in the app's FLOW tab.
+  split it into every instrument (see the PACKS tab below for the full
+  workflow this feeds into). This uses Demucs, a real, free, open-source
+  AI audio-separation tool — but Demucs needs real CPU power to run, more
+  than a phone or a browser tab can provide for free, so it runs as a
+  one-line command on the user's own computer rather than automatically
+  in the browser. Once that command finishes, the separated tracks
+  upload automatically.
 - **DELETE** — removes the file and its storage for good.
 
 **Worked example:** A writer has an a cappella idea and an instrumental
@@ -301,6 +305,48 @@ record by hand. Everything here plays live in the browser; nothing
 about this tab uploads or saves the mixed result anywhere — it's a
 performance and reference tool, not a file exporter (yet).
 
+## PACKS — splitting a whole song into sound packs
+
+This is the tab dedicated to taking one finished song and breaking it
+into every instrument that went into it, ready to load onto the BEATS
+pads. It has two sections.
+
+**1. SPLIT A SONG** lists every file already sitting in SONGS. Tapping
+**SPLIT FULL STEMS** on one links it as the active beat and pops up the
+exact command to run on the user's own computer. That command runs
+Demucs's 6-stem separation model — a real, free, open-source AI model —
+which needs real CPU power a phone or browser tab can't provide for
+free, so it's one line typed into a terminal rather than a button that
+works instantly in the browser. It produces six files: **vocals**,
+**drums**, **bass**, **guitar**, **piano**, and **other** (anything that
+doesn't fit the first five categories) — plus the app computes a
+seventh file, a mixed-down **instrumental**, by combining every
+non-vocal stem back together into one track. (Guitar and piano are the
+least reliable of the six to separate cleanly — even Demucs's own
+documentation calls that pair experimental — so those two may carry
+more artifacts than the drums, bass, vocals, and instrumental stems.)
+
+**2. YOUR SOUND PACKS** lists every stem that's ever been split, across
+every song, each with a PLAY button to preview it and eight small
+numbered buttons — one per BEATS pad. Tapping a number assigns that
+exact stem to that pad immediately, and it's saved to the user's
+account from that point on, so it's still loaded the next time BEATS is
+opened, even on a different device.
+
+**Worked example:** A producer has a fully mixed reference track they
+love the drum sound on. They upload it in SONGS, rename it "Reference
+Track," switch to PACKS, and tap SPLIT FULL STEMS. They copy the
+command shown, paste it into a terminal on their computer, and wait a
+few minutes while Demucs downloads its 6-stem model (a one-time cost)
+and processes the song. Back in PACKS, six rows now appear — VOCALS,
+DRUMS, BASS, GUITAR, PIANO, OTHER — plus INSTRUMENTAL. They preview the
+DRUMS stem with PLAY, like what they hear, and tap pad button **1** on
+that row: it's now loaded onto BEATS pad 1, ready to trigger by tapping
+it or playing the note on a connected MIDI keyboard. They do the same
+for the BASS stem onto pad 2. Both choices are remembered — closing the
+browser and coming back the next day, pads 1 and 2 are still loaded
+with those exact sounds.
+
 ## BEATS — the pad sampler and step sequencer
 
 An 8-pad grid, arranged four across, two down. Tapping **LOAD** under
@@ -324,9 +370,10 @@ low-octave mapping drum machines and samplers use (so a controller's
 lower keys just work as pads with no extra configuration).
 
 **Worked example:** A producer drags a kick drum sample onto pad 1, a
-snare onto pad 2, and a hi-hat one-shot onto pad 3 (all loaded straight
-from files on their computer — sounds extracted earlier via SONGS →
-EXTRACT STEMS work well here too). They set BPM to 92, then build a
+snare onto pad 2, and a hi-hat one-shot onto pad 3 (loaded straight from
+files on their computer — sound packs split earlier in the PACKS tab
+work the same way, just assigned with a tap instead of a file picker).
+They set BPM to 92, then build a
 simple boom-bap pattern by tapping steps 1 and 9 on the kick row, step 5
 and 13 on the snare row, and every other step on the hi-hat row, then
 hit PLAY PATTERN and hear it loop. Wanting to add a live-played bassline
@@ -366,13 +413,16 @@ A writer sits down with an idea and an instrumental they like. They:
    to WRITE to trim it down.
 5. Go to BOOTH, balance the BEAT/VOCAL mixer, and record two takes of
    the verse, comparing them with A/B before deleting the weaker one.
-6. Later, on a computer, run the EXTRACT STEMS command on the beat to
-   pull an instrumental-only version for a rough mix.
-7. For fun, load the instrumental into SCREW, drop the speed to 0.7x
+6. Later, on a computer, go to PACKS and run the SPLIT FULL STEMS
+   command on the beat, pulling out vocals, drums, bass, guitar, piano,
+   other, and a computed instrumental.
+7. Back in PACKS, tap pad numbers to send the drums and bass stems onto
+   BEATS pads 1 and 2 — saved there for good.
+8. For fun, load the instrumental into SCREW, drop the speed to 0.7x
    with SYRUP on, and chop the hook for a slowed teaser clip.
-8. Open BEATS, sketch a quick drum pattern for a different song idea
-   using the sequencer, playing a bassline live from a connected MIDI
-   keyboard.
+9. Open BEATS, sketch a quick drum pattern for a different song idea
+   using those same drum and bass pads on the sequencer, playing a
+   melody live on top from a connected MIDI keyboard.
 
 All of it — the verse, the takes, the beat, the settings — is exactly
 where it was left the next time that account signs in, on any device.
@@ -380,13 +430,14 @@ where it was left the next time that account signs in, on any device.
 ## What's honestly not built yet
 
 There is no generative AI co-writer — the AMMO panel offers curated,
-rhyme-verified starter lines, not AI-written ones. Pad sounds loaded in
-BEATS don't persist between sessions yet; they need to be reloaded each
-time for now. Real stem separation (splitting a song into vocals and
-instrumental) requires running a short command on a computer rather
-than happening automatically in the browser, because that kind of audio
-processing needs more computing power than a phone or a browser tab can
-provide for free. Only one song's lyrics persist at a time right now —
+rhyme-verified starter lines, not AI-written ones. Real stem separation
+(splitting a song into its instruments) requires running a short command
+on a computer rather than happening automatically in the browser,
+because that kind of audio processing needs more computing power than a
+phone or a browser tab can provide for free — and even then, guitar and
+piano separation is the least reliable of the six stems, something
+Demucs's own team calls experimental. Only one song's lyrics persist at
+a time right now —
 the SONGS library holds audio files and is a separate concept from the
 single lyrics document in WRITE. The SCREW tab doesn't yet export a
 mixed-down file — everything there plays live but isn't saved as a
