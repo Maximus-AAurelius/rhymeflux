@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="_ds/modernist-f96d09d9-5145-4426-9bcd-92e8738bf153/styles.css"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap"><script src="./doc-page.js"></script><style>doc-page:not(:defined){visibility:hidden}body{margin:0}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent)}</style></helmet>
+<doc-page margin="0.8in">
+<div slot="header" style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--color-divider);padding-bottom:6px;font:700 9px var(--font-heading);letter-spacing:.14em;color:var(--color-neutral-600)"><span>BARWORK — BACKEND SPECIFICATION</span><span>v1 · SEPT 2026</span></div>
+
+<h1 style="font:800 40px/1.03 var(--font-heading);letter-spacing:-.03em;color:var(--color-text);margin:8px 0 10px">Barwork backend specification</h1>
+<p style="font:400 16px/1.6 var(--font-body);color:var(--color-neutral-800);margin:0 0 6px;max-width:34em">What the client already does, what has to move server-side, and the order to build it in. The prototype is a working reference implementation of the hard part — the rhyme engine in <code style="font:600 14px var(--font-body);background:var(--color-neutral-200);padding:1px 4px">rhyme-engine.js</code> is the algorithm, not a mock, and the service below is that file promoted to a real dictionary and a cache.</p>
+
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider);margin:20px 0 26px">
+<div style="padding:12px 14px 12px 0;border-right:1px solid var(--color-neutral-300)"><div style="font:700 9px var(--font-heading);letter-spacing:.12em;color:var(--color-neutral-600)">CLIENT KEEPS</div><div style="font:400 13px/1.5 var(--font-body);margin-top:4px">Typing, colouring, syllable counts, beat grid, recording</div></div>
+<div style="padding:12px 14px;border-right:1px solid var(--color-neutral-300)"><div style="font:700 9px var(--font-heading);letter-spacing:.12em;color:var(--color-neutral-600)">SERVER OWNS</div><div style="font:400 13px/1.5 var(--font-body);margin-top:4px">Songs, sync, dictionary, AI, entitlements, audio storage</div></div>
+<div style="padding:12px 0 12px 14px"><div style="font:700 9px var(--font-heading);letter-spacing:.12em;color:var(--color-neutral-600)">HARD CONSTRAINT</div><div style="font:400 13px/1.5 var(--font-body);margin-top:4px">Writing must work fully offline; nothing blocks a keystroke</div></div>
+</div>
+
+<h2 style="font:800 22px var(--font-heading);letter-spacing:-.02em;margin:0 0 8px">1. Architecture</h2>
+<p style="font:400 15px/1.65 var(--font-body);margin:0 0 10px;max-width:34em">Four services behind one gateway. The split is drawn on latency budget: anything a keystroke can trigger has to answer in under 50 ms or run locally.</p>
+<table class="table" style="width:100%;border-collapse:collapse;font-family:var(--font-body);margin:0 0 22px">
+<thead><tr style="border-bottom:2px solid var(--color-divider)"><th style="text-align:left;font:700 9px var(--font-heading);letter-spacing:.12em;padding:8px 8px 8px 0">SERVICE</th><th style="text-align:left;font:700 9px var(--font-heading);letter-spacing:.12em;padding:8px">RESPONSIBILITY</th><th style="text-align:left;font:700 9px var(--font-heading);letter-spacing:.12em;padding:8px">STACK</th><th style="text-align:left;font:700 9px var(--font-heading);letter-spacing:.12em;padding:8px 0 8px 8px">BUDGET</th></tr></thead>
+<tbody>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:600 13px var(--font-body)">core-api</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">Auth, songs, sections, bars, takes, folders, sync log, entitlements</td><td style="padding:9px 8px;font:13px var(--font-body)">Node/TS + Postgres</td><td style="padding:9px 0 9px 8px;font:600 13px var(--font-body)">p95 120 ms</td></tr>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:600 13px var(--font-body)">rhyme-svc</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">CMUdict + slang overlay, phonemisation, scoring, ranked lookup</td><td style="padding:9px 8px;font:13px var(--font-body)">Node/TS + Redis</td><td style="padding:9px 0 9px 8px;font:600 13px var(--font-body)">p95 40 ms</td></tr>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:600 13px var(--font-body)">ai-svc</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">Lane prompts, generation, rhyme-lock verification, quota metering</td><td style="padding:9px 8px;font:13px var(--font-body)">Node/TS + LLM API</td><td style="padding:9px 0 9px 8px;font:600 13px var(--font-body)">stream, 8 s cap</td></tr>
+<tr><td style="padding:9px 8px 9px 0;font:600 13px var(--font-body)">media-svc</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">Signed upload URLs, transcode to AAC 96k, waveform peaks, retention</td><td style="padding:9px 8px;font:13px var(--font-body)">S3 + queue worker</td><td style="padding:9px 0 9px 8px;font:600 13px var(--font-body)">async</td></tr>
+</tbody></table>
+
+<h2 style="font:800 22px var(--font-heading);letter-spacing:-.02em;margin:0 0 8px">2. Data model</h2>
+<p style="font:400 15px/1.65 var(--font-body);margin:0 0 12px;max-width:34em">A bar is the unit of everything — colouring, syllable counts, takes and AI all address a bar. Store bars as rows, not as a text blob: the beat grid, per-bar takes and per-bar AI history all need a stable id, and a blob forces a full-document diff on every keystroke.</p>
+<pre style="font:500 11.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--color-neutral-200);border-left:2px solid var(--color-accent);padding:14px 16px;margin:0 0 8px;white-space:pre-wrap;break-inside:avoid">users            id, email, display_name, accent (default 'us'), created_at
+subscriptions    user_id, tier ('free'|'pro'), period_end, store_receipt, ai_used, ai_period_start
+folders          id, user_id, name, position
+songs            id, user_id, folder_id, title, bpm, time_sig (default '4/4'),
+                 beat_asset_id, updated_at, deleted_at, rev (bigint)
+sections         id, song_id, kind ('verse'|'hook'|'bridge'|'intro'|'outro'),
+                 label, position
+bars             id, section_id, position, text, syllables (int, cached),
+                 updated_at, rev
+takes            id, bar_id, user_id, asset_id, duration_ms, created_at
+assets           id, user_id, kind ('take'|'beat'), s3_key, bytes, peaks (jsonb),
+                 status ('pending'|'ready'|'failed')
+ai_events        id, user_id, song_id, lane, kind ('next_bar'|'rewrite'|'verse'),
+                 prompt_hash, accepted bool, tokens, created_at
+sync_log         id (bigserial), user_id, entity, entity_id, op, payload jsonb, rev</pre>
+<p style="font:400 13px/1.55 var(--font-body);color:var(--color-neutral-700);margin:0 0 20px;max-width:34em">Notes: <b>rev</b> is a per-user monotonic counter (Postgres sequence) — the client stores the highest rev it has seen and pulls deltas above it. Soft-delete songs; hard-delete bars. <code style="font:600 12px var(--font-body);background:var(--color-neutral-200);padding:1px 4px">syllables</code> is a cache the server recomputes on write so the library can show flow stats without loading text.</p>
+
+<h2 style="font:800 22px var(--font-heading);letter-spacing:-.02em;margin:0 0 8px">3. API surface</h2>
+<table class="table" style="width:100%;border-collapse:collapse;font-family:var(--font-body);margin:0 0 10px">
+<thead><tr style="border-bottom:2px solid var(--color-divider)"><th style="text-align:left;font:700 9px var(--font-heading);letter-spacing:.12em;padding:8px 8px 8px 0;width:41%">ENDPOINT</th><th style="text-align:left;font:700 9px var(--font-heading);letter-spacing:.12em;padding:8px">BEHAVIOUR</th></tr></thead>
+<tbody>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:600 12px/1.4 ui-monospace,Menlo,monospace">POST /v1/sync</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">The only write path. Body: <code>{since: rev, ops: [...]}</code>. Returns applied revs plus every op above <code>since</code>. Idempotent on client-generated op ids.</td></tr>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:600 12px/1.4 ui-monospace,Menlo,monospace">GET /v1/songs</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">Library rows: title, bpm, bar count, avg syllables, take count, first bar, updated_at.</td></tr>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:600 12px/1.4 ui-monospace,Menlo,monospace">GET /v1/songs/:id</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">Full document — sections, bars, takes, beat asset.</td></tr>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:600 12px/1.4 ui-monospace,Menlo,monospace">GET /v1/rhymes?q=&amp;tier=&amp;pool=&amp;limit=</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)"><code>tier</code> one of perfect / family / slant / assonance; <code>pool</code> words or phrases. Returns <code>{word, score, tier, syllables, phonemes}</code> ranked. Cacheable 24 h, ETag on dictionary version.</td></tr>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:600 12px/1.4 ui-monospace,Menlo,monospace">POST /v1/analyze</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">Body <code>{lines[], sensitivity}</code>. Returns syllable counts and rhyme-family assignments per token. Server-authoritative version of the client's local pass; used for imported text and cross-device consistency.</td></tr>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:600 12px/1.4 ui-monospace,Menlo,monospace">POST /v1/ai/next-bar</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">Body <code>{song_id, lane, context_bars, target_syllables, lock_word}</code>. Streams candidates; each is verified against <code>lock_word</code> before it is emitted, and unverified lines are labelled, never silently shipped. Decrements quota on accept, not on generate.</td></tr>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:600 12px/1.4 ui-monospace,Menlo,monospace">POST /v1/ai/rewrite · /verse</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">Same contract; <code>/verse</code> is Pro-gated and returns 402 with the entitlement payload when free.</td></tr>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:600 12px/1.4 ui-monospace,Menlo,monospace">POST /v1/takes/upload-url</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">Signed PUT for the raw recording. Client uploads direct to S3; worker transcodes and writes peaks, then the take flips to ready over the sync channel.</td></tr>
+<tr><td style="padding:9px 8px 9px 0;font:600 12px/1.4 ui-monospace,Menlo,monospace">GET /v1/entitlements</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">Tier, AI actions remaining, per-song take cap, free-tier colouring cap. Client renders every gate from this, so limits change without a release.</td></tr>
+</tbody></table>
+<p style="font:400 13px/1.55 var(--font-body);color:var(--color-neutral-700);margin:0 0 20px;max-width:34em">Auth is bearer JWT, 15-minute access token with a rotating refresh token. Rate-limit <code style="font:600 12px var(--font-body);background:var(--color-neutral-200);padding:1px 4px">/rhymes</code> generously (it fires on every word tap) and <code style="font:600 12px var(--font-body);background:var(--color-neutral-200);padding:1px 4px">/ai/*</code> tightly.</p>
+
+<h2 style="font:800 22px var(--font-heading);letter-spacing:-.02em;margin:0 0 8px">4. Rhyme service</h2>
+<p style="font:400 15px/1.65 var(--font-body);margin:0 0 10px;max-width:34em">Port <code style="font:600 14px var(--font-body);background:var(--color-neutral-200);padding:1px 4px">rhyme-engine.js</code> as-is; it already exports the full surface — <code style="font:600 13px var(--font-body)">getRhymes</code>, <code style="font:600 13px var(--font-body)">getSyllableCount</code>, <code style="font:600 13px var(--font-body)">score</code>, <code style="font:600 13px var(--font-body)">verifyRhyme</code>, <code style="font:600 13px var(--font-body)">rhymeFamilies</code>, <code style="font:600 13px var(--font-body)">registerSlang</code>. Four changes turn the prototype into the service:</p>
+<div style="border-top:2px solid var(--color-divider);margin:0 0 22px">
+<div style="display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--color-neutral-300);break-inside:avoid"><div style="flex:none;width:22px;font:700 12px var(--font-heading);color:var(--color-accent)">01</div><div style="font:400 14px/1.55 var(--font-body)"><b>Real dictionary.</b> Swap the curated lexicon for CMUdict (~134k entries) loaded into memory as a prefix-keyed map; keep the grapheme-to-phoneme fallback for anything missing, which is what makes slang and coined words work at all.</div></div>
+<div style="display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--color-neutral-300);break-inside:avoid"><div style="flex:none;width:22px;font:700 12px var(--font-heading);color:var(--color-accent)">02</div><div style="font:400 14px/1.55 var(--font-body)"><b>Inverted rhyme index.</b> Scoring every candidate pairwise is O(n) per query and fine at 400 words, not at 134k. Key each entry by its rhyme tail (last stressed vowel onward) and by vowel nucleus; a query scores only its two buckets, then ranks.</div></div>
+<div style="display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--color-neutral-300);break-inside:avoid"><div style="flex:none;width:22px;font:700 12px var(--font-heading);color:var(--color-accent)">03</div><div style="font:400 14px/1.55 var(--font-body)"><b>Redis where the Map is.</b> The engine's in-process cache is already isolated behind one accessor. Key on <code>word|tier|pool|dictVersion</code> so a dictionary bump invalidates cleanly.</div></div>
+<div style="display:flex;gap:14px;padding:11px 0;border-bottom:2px solid var(--color-divider);break-inside:avoid"><div style="flex:none;width:22px;font:700 12px var(--font-heading);color:var(--color-accent)">04</div><div style="font:400 14px/1.55 var(--font-body)"><b>Slang as data.</b> <code>slang-overlay.json</code> becomes a table with an editorial review flag, hot-reloaded on a version bump. This is the file that needs a submission path from users eventually.</div></div>
+</div>
+<p style="font:400 13px/1.55 var(--font-body);color:var(--color-neutral-700);margin:-8px 0 20px;max-width:34em">Ship the same module to the client as a WASM or JS bundle with a trimmed 20k-word dictionary, so colouring and counting keep working with no network. The server pass is the authority; the client pass is the one that has to be instant.</p>
+
+<h2 style="font:800 22px var(--font-heading);letter-spacing:-.02em;margin:0 0 8px">5. Offline and conflicts</h2>
+<p style="font:400 15px/1.65 var(--font-body);margin:0 0 10px;max-width:34em">Writing is single-author, so full CRDTs are overkill. Bars are addressed by client-generated UUID and ordered by fractional position keys, which makes insert and reorder commutative — the two operations that would otherwise collide. Resolution is last-write-wins per bar on <code style="font:600 14px var(--font-body);background:var(--color-neutral-200);padding:1px 4px">updated_at</code>, with the loser retained in <code style="font:600 14px var(--font-body);background:var(--color-neutral-200);padding:1px 4px">sync_log</code> so a "restore this version" screen is possible later. Takes never conflict: they are append-only and immutable.</p>
+
+<h2 style="font:800 22px var(--font-heading);letter-spacing:-.02em;margin:0 0 8px">6. Billing and gates</h2>
+<p style="font:400 15px/1.65 var(--font-body);margin:0 0 10px;max-width:34em">StoreKit 2 and Google Play Billing, verified server-side; the receipt is the source of truth and <code style="font:600 14px var(--font-body);background:var(--color-neutral-200);padding:1px 4px">subscriptions</code> is a cache refreshed on webhook. Every limit in the paywall screen is a server value: colouring cap (12 bars free), AI actions (15 free / 500 Pro, reset on <code style="font:600 14px var(--font-body);background:var(--color-neutral-200);padding:1px 4px">ai_period_start</code>), takes per song (3 free), full-verse generation (Pro only). Enforce all four server-side and treat the client checks as UI only.</p>
+
+<h2 style="font:800 22px var(--font-heading);letter-spacing:-.02em;margin:0 0 8px">7. Build order</h2>
+<table class="table" style="width:100%;border-collapse:collapse;font-family:var(--font-body);margin:0 0 14px">
+<thead><tr style="border-bottom:2px solid var(--color-divider)"><th style="text-align:left;font:700 9px var(--font-heading);letter-spacing:.12em;padding:8px 8px 8px 0;width:16%">PHASE</th><th style="text-align:left;font:700 9px var(--font-heading);letter-spacing:.12em;padding:8px">SHIPS</th><th style="text-align:left;font:700 9px var(--font-heading);letter-spacing:.12em;padding:8px 0 8px 8px;width:20%">UNBLOCKS</th></tr></thead>
+<tbody>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:700 13px var(--font-heading)">1</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">Auth, songs/sections/bars, <code>/sync</code>, local engine bundle</td><td style="padding:9px 0 9px 8px;font:13px var(--font-body)">Real writing on device</td></tr>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:700 13px var(--font-heading)">2</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">rhyme-svc with CMUdict, inverted index, Redis, <code>/analyze</code></td><td style="padding:9px 0 9px 8px;font:13px var(--font-body)">Drawer at full vocabulary</td></tr>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:700 13px var(--font-heading)">3</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">media-svc, upload URLs, transcode, peaks</td><td style="padding:9px 0 9px 8px;font:13px var(--font-body)">Booth takes sync</td></tr>
+<tr style="border-bottom:1px solid var(--color-neutral-300)"><td style="padding:9px 8px 9px 0;font:700 13px var(--font-heading)">4</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">ai-svc, lane prompts, rhyme-lock verification, quota metering</td><td style="padding:9px 0 9px 8px;font:13px var(--font-body)">AI Ammo</td></tr>
+<tr><td style="padding:9px 8px 9px 0;font:700 13px var(--font-heading)">5</td><td style="padding:9px 8px;font:13px/1.45 var(--font-body)">Store receipts, entitlements, paywall enforcement</td><td style="padding:9px 0 9px 8px;font:13px var(--font-body)">Revenue</td></tr>
+</tbody></table>
+<p style="font:400 13px/1.55 var(--font-body);color:var(--color-neutral-700);margin:0;max-width:34em">The one decision worth making before phase 1: bars as rows versus one text blob per song. Everything above assumes rows. Changing it later is a migration through every feature that addresses a bar.</p>
+</doc-page>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas"><link rel="stylesheet" href="_ds/modernist-f96d09d9-5145-4426-9bcd-92e8738bf153/styles.css"><script src="_ds/modernist-f96d09d9-5145-4426-9bcd-92e8738bf153/_ds_bundle.js"></script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap"><style>body{margin:0;background:#07050A;font-family:Archivo,system-ui,sans-serif;color:#F5F0FA}a{color:#C5A1F0}a:hover{color:#DEC7FF}:focus-visible{outline:2px solid #DEC7FF;outline-offset:2px}input::placeholder,textarea::placeholder{color:#9C8DAE}::selection{background:rgba(197,161,240,.35)}@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}</style></helmet>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#1C1326"></rect><text x="30" y="66" font-family="Archivo,Arial" font-weight="800" font-size="40" fill="#D8D8E0">B$</text><rect x="30" y="72" width="40" height="3" fill="#C5A1F0"></rect></svg></template>
+<section id="t1" style="padding:44px 48px 56px;border-bottom:2px solid #2A1F36;background:#07050A;min-height:100vh;box-sizing:border-box;color:#F5F0FA">
+<div style="display:flex;align-items:baseline;gap:12px"><a href="#t1" style="font:700 11px Archivo;padding:4px 8px;background:#C5A1F0;color:#160D20;text-decoration:none;letter-spacing:.06em">1</a><span style="font:700 15px Archivo;letter-spacing:-.01em;color:#F5F0FA">BporchProduction$ — Write, pass 1 (desktop + iPhone, one shared document)</span></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:18px;max-width:1440px;border-top:2px solid #40304F;border-bottom:2px solid #40304F">
+<div style="padding:12px 16px 14px 0;border-right:1px solid #40304F"><div style="font:700 10px Archivo;letter-spacing:.14em;color:#C5A1F0">WORKS IN THIS PAGE</div><div style="font:13px/1.55 Archivo;color:#BDB0CA;margin-top:6px">Typing, sections (add / rename / reorder / resize / delete), undo and redo, autosave to this browser, rhyme marks and suggestions from an on-device dictionary ({{ lexCount }} words), syllable estimates, beat playback from a file on this device, Quick Capture recording kept in this tab.</div></div>
+<div style="padding:12px 16px 14px;border-right:1px solid #40304F"><div style="font:700 10px Archivo;letter-spacing:.14em;color:#D5AA69">DEPENDS ON THE BROWSER</div><div style="font:13px/1.55 Archivo;color:#BDB0CA;margin-top:6px">Dictation uses the browser's speech service: generally available in desktop Chrome and Edge, unreliable in an iPhone home-screen app. Where it isn't available, the panel says so.</div></div>
+<div style="padding:12px 16px 14px;border-right:1px solid #40304F"><div style="font:700 10px Archivo;letter-spacing:.14em;color:#D8D8E0">DESIGNED, NOT BUILT YET</div><div style="font:13px/1.55 Archivo;color:#BDB0CA;margin-top:6px">Home, Projects, Voice Notebook, Idea Inbox, Stem Studio, Sample Lab, Settings, AI assist. They're greyed out in the navigation until their own pass.</div></div>
+<div style="padding:12px 0 14px 16px"><div style="font:700 10px Archivo;letter-spacing:.14em;color:#FF747D">NOT CONNECTED</div><div style="font:13px/1.55 Archivo;color:#BDB0CA;margin-top:6px">Cloud sync, transcription, AI models, stem separation. Nothing in the interface reports those as succeeding.</div></div>
+</div>
+<input type="file" accept="audio/*" ref="{{ fileRef }}" onChange="{{ onBeatFile }}" style="display:none" />
+<div style="display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start;margin-top:30px">
+
+<div id="1a" style="flex:none;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:baseline;gap:10px;font:12px Archivo;color:#BDB0CA"><a href="#1a" style="font:700 11px Archivo;padding:4px 8px;background:#291C36;color:#F5F0FA;text-decoration:none">1a</a>Windows desktop — 1440 × 900. Type in either layout; both edit the same song.</div>
+<div style="width:1440px;height:900px;position:relative;overflow:hidden;background:#0D0912;display:grid;grid-template-columns:84px minmax(0,1fr);box-shadow:0 30px 80px rgba(0,0,0,.55);border:1px solid #40304F">
+
+<nav style="background:#130D1B;border-right:1px solid #40304F;display:flex;flex-direction:column;align-items:stretch;padding:14px 0 12px">
+<div style="width:48px;height:48px;margin:0 auto 18px;position:relative;background:linear-gradient(160deg,#3A2750 0%,#1C1326 70%);border:1px solid #8E8A9C;box-shadow:inset 0 1px 0 rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center"><span style="font:800 26px/1 Archivo;font-stretch:62%;letter-spacing:-.02em;background:linear-gradient(180deg,#FFFFFF 0%,#D8D8E0 40%,#8E8A9C 55%,#ECE9F2 70%,#B7B2C4 100%);-webkit-background-clip:text;background-clip:text;color:transparent">B$</span><span style="position:absolute;left:8px;right:8px;bottom:6px;height:2px;background:#C5A1F0"></span></div>
+<sc-for list="{{ navD }}" as="n" hint-placeholder-count="8">
+<div title="{{ n.title }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 0;opacity:{{ n.op }};background:{{ n.bg }};color:{{ n.fg }}">
+<svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="{{ n.d }}"></path></svg>
+<span style="font:600 10px Archivo;letter-spacing:.04em">{{ n.name }}</span>
+</div>
+</sc-for>
+<div style="margin-top:auto;padding:0 10px;font:10px/1.4 Archivo;color:#9C8DAE">Dimmed screens arrive in later passes</div>
+</nav>
+
+<div style="display:grid;grid-template-rows:64px minmax(0,1fr) 84px;min-width:0;min-height:0">
+
+<header style="display:flex;align-items:center;gap:18px;padding:0 18px 0 22px;border-bottom:2px solid #40304F;background:#130D1B;min-width:0">
+<div style="flex:none;display:flex;flex-direction:column;line-height:1"><span style="font:800 22px/1 Archivo;font-stretch:62%;letter-spacing:.01em;background:linear-gradient(180deg,#FFFFFF 0%,#D8D8E0 40%,#8E8A9C 56%,#ECE9F2 70%,#B7B2C4 100%);-webkit-background-clip:text;background-clip:text;color:transparent">BPORCH</span><span style="font:700 8px Archivo;letter-spacing:.32em;color:#C5A1F0;margin-top:3px">PRODUCTION$</span></div>
+<div style="width:1px;align-self:stretch;margin:14px 0;background:#40304F"></div>
+<input value="{{ title }}" onChange="{{ onTitle }}" aria-label="Song title" style="flex:0 1 340px;min-width:120px;border:0;border-bottom:1px solid transparent;background:transparent;color:#F5F0FA;font:700 20px Archivo;letter-spacing:-.01em;padding:4px 0;outline:none" style-focus="border-bottom:1px solid #DEC7FF" />
+<label style="flex:none;display:flex;align-items:center;gap:6px;font:700 10px Archivo;letter-spacing:.12em;color:#BDB0CA">BPM<input value="{{ bpm }}" onChange="{{ onBpm }}" inputMode="numeric" style="width:48px;height:32px;box-sizing:border-box;border:1px solid #6E5B84;background:#1C1326;color:#F5F0FA;font:600 14px Archivo;font-variant-numeric:tabular-nums;padding:0 8px;outline:none" style-focus="border-color:#DEC7FF" /></label>
+<label style="flex:none;display:flex;align-items:center;gap:6px;font:700 10px Archivo;letter-spacing:.12em;color:#BDB0CA">KEY<input value="{{ keySig }}" onChange="{{ onKey }}" style="width:92px;height:32px;box-sizing:border-box;border:1px solid #6E5B84;background:#1C1326;color:#F5F0FA;font:600 14px Archivo;padding:0 8px;outline:none" style-focus="border-color:#DEC7FF" /></label>
+<div style="flex:1"></div>
+<div style="flex:0 1 auto;display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;overflow:hidden"><span style="display:flex;align-items:center;gap:6px;font:600 12px Archivo;color:{{ saveColor }};white-space:nowrap"><span style="width:7px;height:7px;background:{{ saveColor }};display:block"></span>{{ saveLabel }}</span><span style="font:11px Archivo;color:#9C8DAE;white-space:nowrap">Cloud sync not connected</span></div>
+<div style="flex:none;display:flex;gap:0;border:1px solid #6E5B84">
+<button onClick="{{ undo }}" disabled="{{ noUndo }}" title="Undo (Ctrl+Z)" style="width:40px;height:36px;border:0;border-right:1px solid #6E5B84;background:transparent;color:#F5F0FA;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0" style-hover="background:#291C36"><svg viewBox="0 0 24 24" style="width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
+<button onClick="{{ redo }}" disabled="{{ noRedo }}" title="Redo (Ctrl+Shift+Z)" style="width:40px;height:36px;border:0;background:transparent;color:#F5F0FA;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0" style-hover="background:#291C36"><svg viewBox="0 0 24 24" style="width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="m15 14 5-5-5-5"></path><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"></path></svg></button>
+</div>
+<button onClick="{{ capOpenD }}" title="Quick Capture — record an audio idea" style="flex:none;height:40px;display:flex;align-items:center;gap:9px;padding:0 14px 0 12px;border:1px solid #FF747D;background:{{ capBtnBg }};color:#F5F0FA;font:700 12px Archivo;letter-spacing:.06em;cursor:pointer;white-space:nowrap" style-hover="background:#3A1E2A"><span style="width:12px;height:12px;border-radius:50%;background:#FF747D;display:block"></span>{{ capBtnLabel }}</button>
+</header>
+
+<div style="display:grid;grid-template-columns:248px minmax(0,1fr) 344px;min-height:0">
+
+<aside style="border-right:1px solid #40304F;background:#130D1B;display:flex;flex-direction:column;min-height:0">
+<div style="padding:16px 16px 10px;display:flex;justify-content:space-between;align-items:baseline"><span style="font:700 10px Archivo;letter-spacing:.14em;color:#BDB0CA">SECTIONS</span><span style="font:600 11px Archivo;color:#9C8DAE;font-variant-numeric:tabular-nums;white-space:nowrap">{{ songBars }}</span></div>
+<div style="flex:1;min-height:0;overflow:auto;border-top:1px solid #40304F">
+<sc-for list="{{ secs }}" as="s" hint-placeholder-count="5">
+<div style="border-bottom:1px solid #2A1F36;background:{{ s.bg }}">
+<sc-if value="{{ s.renaming }}" hint-placeholder-val="{{ false }}"><div style="padding:10px 12px"><input value="{{ s.name }}" onChange="{{ s.onRename }}" onKeyDown="{{ s.onRenameKey }}" onBlur="{{ s.endRename }}" autoFocus="{{ true }}" aria-label="Section name" style="width:100%;box-sizing:border-box;height:36px;border:1px solid #DEC7FF;background:#0D0912;color:#F5F0FA;font:700 15px Archivo;padding:0 10px;outline:none" /></div></sc-if>
+<sc-if value="{{ s.notRenaming }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ s.onSelect }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 16px;border:0;background:transparent;cursor:pointer;text-align:left" style-hover="background:#1C1326">
+<span style="min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font:700 9px Archivo;letter-spacing:.14em;color:{{ s.kc }}">{{ s.kindUp }}</span><span style="font:700 15px Archivo;color:{{ s.fg }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.name }}</span></span>
+<span style="flex:none;font:600 12px Archivo;color:#BDB0CA;font-variant-numeric:tabular-nums">{{ s.count }}</span>
+</button>
+</sc-if>
+<sc-if value="{{ s.active }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #2A1F36">
+<button onClick="{{ s.startRename }}" style="height:34px;border:0;border-right:1px solid #2A1F36;background:transparent;color:#BDB0CA;font:600 11px Archivo;cursor:pointer" style-hover="color:#F5F0FA;background:#291C36">Rename</button>
+<button onClick="{{ s.up }}" disabled="{{ s.first }}" title="Move up" style="height:34px;border:0;border-right:1px solid #2A1F36;background:transparent;color:#BDB0CA;font:600 13px Archivo;cursor:pointer" style-hover="color:#F5F0FA;background:#291C36">↑</button>
+<button onClick="{{ s.down }}" disabled="{{ s.last }}" title="Move down" style="height:34px;border:0;border-right:1px solid #2A1F36;background:transparent;color:#BDB0CA;font:600 13px Archivo;cursor:pointer" style-hover="color:#F5F0FA;background:#291C36">↓</button>
+<button onClick="{{ s.remove }}" style="height:34px;border:0;background:transparent;color:#BDB0CA;font:600 11px Archivo;cursor:pointer" style-hover="color:#FF747D;background:#291C36">Delete</button>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px 10px 16px;border-top:1px solid #2A1F36"><span style="font:600 11px Archivo;color:#BDB0CA;white-space:nowrap">Bar count</span><span style="display:flex;align-items:center;border:1px solid #6E5B84"><button onClick="{{ s.less }}" disabled="{{ s.noLess }}" title="{{ s.lessTitle }}" style="width:30px;height:28px;border:0;border-right:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:700 14px Archivo;cursor:pointer" style-hover="background:#291C36">−</button><span style="width:36px;text-align:center;font:700 13px Archivo;font-variant-numeric:tabular-nums">{{ s.target }}</span><button onClick="{{ s.more }}" title="Add a bar" style="width:30px;height:28px;border:0;border-left:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:700 14px Archivo;cursor:pointer" style-hover="background:#291C36">+</button></span></div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+<div style="border-top:2px solid #40304F">
+<button onClick="{{ toggleAdd }}" style="width:100%;height:44px;border:0;background:transparent;color:#C5A1F0;font:700 12px Archivo;letter-spacing:.08em;text-align:left;padding:0 16px;cursor:pointer" style-hover="background:#1C1326">+ ADD SECTION</button>
+<sc-if value="{{ addOpen }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #2A1F36"><sc-for list="{{ kinds }}" as="k" hint-placeholder-count="6"><button onClick="{{ k.onAdd }}" style="height:38px;border:0;border-right:1px solid #2A1F36;border-bottom:1px solid #2A1F36;background:#1C1326;color:#F5F0FA;font:600 12px Archivo;cursor:pointer;text-align:left;padding:0 10px" style-hover="background:#291C36">{{ k.name }}</button></sc-for></div></sc-if>
+</div>
+</aside>
+
+<main style="display:flex;flex-direction:column;min-width:0;min-height:0;position:relative">
+<div style="flex:none;display:flex;align-items:center;gap:14px;padding:14px 24px 12px;border-bottom:1px solid #40304F">
+<div style="min-width:0;flex:1"><div style="font:700 10px Archivo;letter-spacing:.14em;color:#C5A1F0">{{ edKicker }}</div><div style="font:800 26px/1.15 Archivo;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ edTitle }}</div></div>
+<div style="flex:none;display:flex;border:1px solid #6E5B84">
+<sc-for list="{{ toggles }}" as="t" hint-placeholder-count="4"><button onClick="{{ t.onTap }}" aria-pressed="{{ t.on }}" style="height:34px;padding:0 12px;border:0;border-right:1px solid #6E5B84;background:{{ t.bg }};color:{{ t.fg }};font:600 12px Archivo;cursor:pointer;white-space:nowrap">{{ t.name }}</button></sc-for>
+</div>
+<button onClick="{{ dictStartD }}" title="Speak into the bar at your cursor" style="flex:none;height:36px;display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:600 12px Archivo;cursor:pointer;white-space:nowrap" style-hover="background:#291C36"><svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:#C5A1F0;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><path d="M12 19v3"></path></svg>Dictate</button>
+</div>
+<sc-if value="{{ sylNote }}" hint-placeholder-val="{{ true }}"><div style="flex:none;display:flex;align-items:center;gap:12px;padding:9px 24px;background:#1C1326;border-bottom:1px solid #40304F"><span style="flex:1;font:12px/1.45 Archivo;color:#BDB0CA">Syllable counts are estimates from the dictionary. Whether a bar fits is decided by how you deliver it on the beat. Underlines and the letters in the margin mark end-rhyme families.</span><button onClick="{{ dismissNote }}" style="flex:none;height:28px;padding:0 10px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:600 11px Archivo;cursor:pointer" style-hover="background:#291C36">Dismiss</button></div></sc-if>
+<div style="flex:1;min-height:0;overflow:auto;padding:4px 24px 40px">
+<sc-for list="{{ groupsD }}" as="g" hint-placeholder-count="1">
+<div style="margin-top:14px">
+<sc-if value="{{ g.showHead }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:baseline;gap:10px;padding:10px 0 6px;border-bottom:2px solid #40304F"><span style="font:700 9px Archivo;letter-spacing:.14em;color:{{ g.kc }}">{{ g.kindUp }}</span><span style="font:800 17px Archivo">{{ g.name }}</span><span style="font:12px Archivo;color:#9C8DAE">{{ g.count }}</span></div></sc-if>
+<sc-for list="{{ g.bars }}" as="b" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:40px minmax(0,1fr) 30px 46px;align-items:center;border-bottom:1px solid #2A1F36;background:{{ b.rowBg }}">
+<div style="font:600 12px Archivo;color:#9C8DAE;font-variant-numeric:tabular-nums;padding-left:2px">{{ b.n }}</div>
+<div style="position:relative;height:46px;min-width:0">
+<div aria-hidden="true" style="position:absolute;left:0;right:0;top:0;bottom:0;padding:0 12px;font:400 19px/46px Archivo,sans-serif;white-space:pre;overflow:hidden;color:transparent;pointer-events:none"><sc-for list="{{ b.toks }}" as="tk" hint-placeholder-count="1"><span style="text-decoration:{{ tk.deco }};text-decoration-thickness:2px;text-underline-offset:7px;background:{{ tk.bg }}">{{ tk.t }}</span></sc-for></div>
+<input value="{{ b.text }}" placeholder="{{ b.ph }}" aria-label="{{ b.aria }}" ref="{{ b.ref }}" onChange="{{ b.onChange }}" onFocus="{{ b.onFocus }}" onSelect="{{ b.onSelect }}" onKeyDown="{{ b.onKeyDown }}" spellCheck="{{ false }}" autoComplete="off" style="position:absolute;left:0;top:0;width:100%;height:100%;box-sizing:border-box;padding:0 12px;border:0;background:transparent;color:#F5F0FA;font:400 19px/46px Archivo,sans-serif;outline:none;caret-color:#DEC7FF" />
+</div>
+<div style="font:800 13px Archivo;color:{{ b.lc }};text-align:center">{{ b.letter }}</div>
+<div style="font:600 12px Archivo;color:#BDB0CA;font-variant-numeric:tabular-nums;text-align:right;padding-right:2px">{{ b.syl }}</div>
+</div>
+</sc-for>
+</div>
+</sc-for>
+<div style="margin-top:16px;font:11px Archivo;color:#9C8DAE">Enter moves to the next bar · Ctrl+Z undo · Ctrl+Shift+Z redo · the rhyme panel follows your cursor</div>
+</div>
+
+<sc-if value="{{ dictD }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;right:24px;top:62px;width:380px;background:#291C36;border:1px solid #8E8A9C;box-shadow:0 18px 40px rgba(0,0,0,.5);z-index:5">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #40304F"><div><div style="font:700 13px Archivo">Dictate into the lyrics</div><div style="font:11px Archivo;color:#BDB0CA">Speech to text at your cursor — not an audio take</div></div><button onClick="{{ dictClose }}" aria-label="Close" style="width:32px;height:32px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;cursor:pointer;font:600 14px Archivo">×</button></div>
+<div style="padding:14px">
+<sc-if value="{{ dListening }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:8px;font:700 12px Archivo;color:#C5A1F0"><span style="width:8px;height:8px;border-radius:50%;background:#C5A1F0;display:block"></span>Listening — speak your line</div><div style="min-height:44px;margin-top:10px;font:16px/1.45 Archivo;color:#F5F0FA">{{ dText }}</div><button onClick="{{ dictStop }}" style="margin-top:10px;height:36px;padding:0 14px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:600 12px Archivo;cursor:pointer">Stop listening</button></sc-if>
+<sc-if value="{{ dReview }}" hint-placeholder-val="{{ false }}"><div style="font:600 11px Archivo;color:#BDB0CA;margin-bottom:6px">Check the words, then insert. Nothing is changed until you do.</div><textarea value="{{ dText }}" onChange="{{ dictEdit }}" rows="3" style="width:100%;box-sizing:border-box;border:1px solid #6E5B84;background:#0D0912;color:#F5F0FA;font:16px/1.45 Archivo;padding:8px 10px;resize:none;outline:none"></textarea><div style="display:flex;gap:8px;margin-top:10px"><button onClick="{{ dictInsert }}" style="flex:1;height:38px;border:0;background:#C5A1F0;color:#160D20;font:700 12px Archivo;text-align:left;padding:0 12px;cursor:pointer" style-hover="background:#DEC7FF">{{ dInsertLabel }}</button><button onClick="{{ dictClose }}" style="height:38px;padding:0 12px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:600 12px Archivo;cursor:pointer">Discard</button></div></sc-if>
+<sc-if value="{{ dMsgShow }}" hint-placeholder-val="{{ false }}"><div style="font:13px/1.5 Archivo;color:#F5F0FA">{{ dMsg }}</div><sc-if value="{{ dRetry }}" hint-placeholder-val="{{ false }}"><button onClick="{{ dictStartD }}" style="margin-top:10px;height:34px;padding:0 12px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:600 12px Archivo;cursor:pointer">Try again</button></sc-if></sc-if>
+</div>
+</div>
+</sc-if>
+</main>
+
+<aside style="border-left:1px solid #40304F;background:#130D1B;display:flex;flex-direction:column;min-height:0">
+<div style="padding:16px 18px 14px;border-bottom:1px solid #40304F">
+<div style="font:700 10px Archivo;letter-spacing:.14em;color:#BDB0CA">RHYMES FOR</div>
+<div style="font:800 30px/1.1 Archivo;letter-spacing:-.02em;margin-top:4px;color:#F5F0FA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ qShow }}</div>
+<div style="font:12px/1.5 Archivo;color:#BDB0CA;margin-top:4px">{{ qMeta }}</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);border-bottom:2px solid #40304F">
+<sc-for list="{{ ptabs }}" as="p" hint-placeholder-count="3"><button onClick="{{ p.onTap }}" style="height:40px;border:0;border-right:1px solid #40304F;border-bottom:2px solid {{ p.mark }};margin-bottom:-2px;background:transparent;color:{{ p.fg }};font:700 12px Archivo;text-align:left;padding:0 12px;cursor:pointer">{{ p.label }}</button></sc-for>
+</div>
+<div style="flex:1;min-height:0;overflow:auto">
+<sc-for list="{{ picks }}" as="p" hint-placeholder-count="8">
+<div style="display:flex;align-items:center;gap:10px;padding:0 10px 0 18px;min-height:46px;border-bottom:1px solid #2A1F36">
+<span style="flex:1;min-width:0;font:500 16px Archivo;color:#F5F0FA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.w }}</span>
+<span style="flex:none;font:600 11px Archivo;color:#9C8DAE;font-variant-numeric:tabular-nums">{{ p.meta }}</span>
+<button onClick="{{ p.onInsert }}" style="flex:none;height:30px;padding:0 10px;border:1px solid #6E5B84;background:transparent;color:#C5A1F0;font:700 11px Archivo;cursor:pointer" style-hover="background:#C5A1F0;color:#160D20">Insert</button>
+</div>
+</sc-for>
+<sc-if value="{{ noPicks }}" hint-placeholder-val="{{ false }}"><div style="padding:18px;font:13px/1.55 Archivo;color:#BDB0CA">{{ noPicksMsg }}</div></sc-if>
+</div>
+<div style="padding:12px 18px;border-top:1px solid #40304F;font:11px/1.5 Archivo;color:#9C8DAE">{{ panelFoot }}</div>
+</aside>
+</div>
+
+<footer style="display:grid;grid-template-columns:auto auto 220px minmax(0,1fr) auto;align-items:center;gap:16px;padding:0 22px;border-top:2px solid #40304F;background:#130D1B">
+<button onClick="{{ pickBeat }}" style="height:40px;display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:600 12px Archivo;cursor:pointer" style-hover="background:#291C36"><svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m17 8-5-5-5 5"></path><path d="M12 3v12"></path></svg>{{ beatBtn }}</button>
+<button onClick="{{ beatToggle }}" disabled="{{ noBeat }}" aria-label="{{ playLabel }}" style="width:48px;height:48px;border:1px solid #D8D8E0;background:linear-gradient(180deg,#3A2750,#1C1326);color:#F5F0FA;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.15)"><sc-if value="{{ playing }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></sc-if><sc-if value="{{ paused }}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor"><path d="M7 4v16l13-8z"></path></svg></sc-if></button>
+<div style="min-width:0"><div style="font:600 13px Archivo;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ beatName }}</div><div style="font:600 12px Archivo;color:#BDB0CA;font-variant-numeric:tabular-nums;margin-top:2px">{{ beatTime }}</div></div>
+<div onClick="{{ seek }}" style="height:44px;display:flex;align-items:center;gap:2px;cursor:{{ seekCursor }};min-width:0;position:relative">
+<sc-for list="{{ wave }}" as="w" hint-placeholder-count="1"><div style="flex:1;height:{{ w.h }};background:{{ w.bg }}"></div></sc-for>
+<sc-if value="{{ waveEmpty }}" hint-placeholder-val="{{ true }}"><div style="flex:1;border-top:1px dashed #6E5B84;padding-top:6px;font:12px Archivo;color:#9C8DAE">{{ waveMsg }}</div></sc-if>
+</div>
+<button onClick="{{ loopToggle }}" aria-pressed="{{ loop }}" style="height:36px;padding:0 12px;border:1px solid #6E5B84;background:{{ loopBg }};color:{{ loopFg }};font:600 12px Archivo;cursor:pointer">Loop</button>
+</footer>
+</div>
+
+<sc-if value="{{ capD }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;right:18px;top:72px;width:360px;background:#291C36;border:1px solid #8E8A9C;box-shadow:0 22px 50px rgba(0,0,0,.6);z-index:20">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #40304F"><div><div style="font:700 14px Archivo">Quick Capture</div><div style="font:11px Archivo;color:#BDB0CA">Audio take — your lyrics stay open behind this</div></div><button onClick="{{ capClose }}" aria-label="Close" style="width:32px;height:32px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;cursor:pointer;font:600 14px Archivo">×</button></div>
+<div style="padding:14px">
+<sc-if value="{{ cIdle }}" hint-placeholder-val="{{ true }}"><button onClick="{{ capStart }}" style="width:100%;height:52px;display:flex;align-items:center;gap:12px;border:0;background:#FF747D;color:#160D20;font:800 13px Archivo;letter-spacing:.06em;text-align:left;padding:0 14px;cursor:pointer" style-hover="background:#FF9299"><span style="width:16px;height:16px;border-radius:50%;background:#160D20;display:block"></span>START RECORDING</button><div style="font:11px/1.5 Archivo;color:#BDB0CA;margin-top:8px">Records your voice as audio. To type with your voice, use Dictate in the editor.</div></sc-if>
+<sc-if value="{{ cAsking }}" hint-placeholder-val="{{ false }}"><div style="font:13px Archivo;color:#F5F0FA">Waiting for microphone permission…</div></sc-if>
+<sc-if value="{{ cLive }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:baseline;justify-content:space-between"><span style="display:flex;align-items:center;gap:8px;font:700 11px Archivo;letter-spacing:.12em;color:{{ cStateColor }}"><span style="width:9px;height:9px;border-radius:50%;background:{{ cStateColor }};display:block"></span>{{ cStateLabel }}</span><span style="font:800 32px Archivo;font-variant-numeric:tabular-nums;letter-spacing:-.02em">{{ cTime }}</span></div>
+<div style="display:flex;gap:3px;height:16px;margin:10px 0 12px"><sc-for list="{{ meter }}" as="m" hint-placeholder-count="16"><div style="flex:1;background:{{ m.bg }}"></div></sc-for></div>
+<div style="display:flex;gap:8px"><button onClick="{{ capPause }}" style="flex:1;height:42px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:700 12px Archivo;text-align:left;padding:0 12px;cursor:pointer" style-hover="background:#1C1326">{{ cPauseLabel }}</button><button onClick="{{ capStop }}" style="flex:1;height:42px;border:0;background:#F5F0FA;color:#160D20;font:700 12px Archivo;text-align:left;padding:0 12px;cursor:pointer">Stop</button></div>
+<div style="font:11px/1.5 Archivo;color:#BDB0CA;margin-top:8px">On iPhone, locking the screen or switching apps can stop a browser recording.</div>
+</sc-if>
+<sc-if value="{{ cReview }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:8px;align-items:center"><button onClick="{{ capPlay }}" style="flex:none;width:42px;height:42px;border:1px solid #D8D8E0;background:#1C1326;color:#F5F0FA;cursor:pointer;font:700 12px Archivo">{{ cPlayGlyph }}</button><input value="{{ cName }}" onChange="{{ capRename }}" aria-label="Take name" style="flex:1;min-width:0;height:42px;box-sizing:border-box;border:1px solid #6E5B84;background:#0D0912;color:#F5F0FA;font:600 14px Archivo;padding:0 10px;outline:none" /><span style="flex:none;font:600 13px Archivo;font-variant-numeric:tabular-nums">{{ cTime }}</span></div>
+<div style="font:700 10px Archivo;letter-spacing:.12em;color:#BDB0CA;margin:12px 0 6px">SAVE TO</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid #6E5B84"><sc-for list="{{ dests }}" as="d" hint-placeholder-count="2"><button onClick="{{ d.onTap }}" style="height:36px;border:0;border-right:1px solid #6E5B84;background:{{ d.bg }};color:{{ d.fg }};font:600 12px Archivo;cursor:pointer;text-align:left;padding:0 10px">{{ d.name }}</button></sc-for></div>
+<div style="font:11px Archivo;color:#9C8DAE;margin-top:8px">Transcription: not connected</div>
+<div style="display:flex;gap:8px;margin-top:12px"><button onClick="{{ capSave }}" style="flex:1;height:42px;border:0;background:#C5A1F0;color:#160D20;font:700 12px Archivo;text-align:left;padding:0 12px;cursor:pointer" style-hover="background:#DEC7FF">Keep take</button><button onClick="{{ capDiscard }}" style="height:42px;padding:0 12px;border:1px solid #6E5B84;background:transparent;color:#FF747D;font:600 12px Archivo;cursor:pointer">Delete</button></div>
+</sc-if>
+<sc-if value="{{ cProblem }}" hint-placeholder-val="{{ false }}"><div style="font:13px/1.5 Archivo;color:#F5F0FA">{{ cProblemMsg }}</div><button onClick="{{ capStart }}" style="margin-top:10px;height:36px;padding:0 12px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:600 12px Archivo;cursor:pointer">Try again</button></sc-if>
+<sc-if value="{{ cMsgShow }}" hint-placeholder-val="{{ false }}"><div style="margin-top:10px;padding:8px 10px;background:#1C1326;border:1px solid #40304F;font:12px/1.45 Archivo;color:#D5AA69">{{ cMsg }}</div></sc-if>
+</div>
+<sc-if value="{{ hasMemos }}" hint-placeholder-val="{{ false }}"><div style="border-top:1px solid #40304F"><div style="padding:10px 14px 4px;font:700 10px Archivo;letter-spacing:.12em;color:#BDB0CA">KEPT IN THIS TAB · NOT UPLOADED</div><sc-for list="{{ memos }}" as="m" hint-placeholder-count="1"><div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:1px solid #2A1F36"><button onClick="{{ m.onPlay }}" style="flex:none;width:32px;height:32px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;cursor:pointer;font:700 11px Archivo">{{ m.glyph }}</button><span style="flex:1;min-width:0"><span style="display:block;font:600 13px Archivo;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.name }}</span><span style="display:block;font:11px Archivo;color:#9C8DAE">{{ m.meta }}</span></span></div></sc-for></div></sc-if>
+</div>
+</sc-if>
+</div>
+</div>
+
+<div id="1b" style="flex:none;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:baseline;gap:10px;font:12px Archivo;color:#BDB0CA;max-width:402px"><a href="#1b" style="font:700 11px Archivo;padding:4px 8px;background:#291C36;color:#F5F0FA;text-decoration:none">1b</a>iPhone — tap a bar to bring up the keyboard; the editor shrinks above it.</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" keyboard="{{ mKb }}" hint-size="402px,874px">
+<div style="height:100%;position:relative;overflow:hidden;background:#0D0912;display:flex;flex-direction:column;font-family:Archivo,sans-serif;color:#F5F0FA">
+<div style="flex:none;padding:56px 14px 10px 16px;background:#130D1B;border-bottom:1px solid #40304F;display:flex;align-items:center;gap:10px">
+<div style="flex:1;min-width:0"><div style="font:700 17px/1.2 Archivo;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ title }}</div><div style="display:flex;align-items:center;gap:6px;font:600 11px Archivo;color:#BDB0CA;margin-top:2px;font-variant-numeric:tabular-nums"><span>{{ bpm }} BPM · {{ keySig }}</span><span style="width:5px;height:5px;background:{{ saveColor }};display:block"></span><span style="color:{{ saveColor }}">{{ saveShort }}</span></div></div>
+<button onClick="{{ undo }}" disabled="{{ noUndo }}" aria-label="Undo" style="width:44px;height:44px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></button>
+<button onClick="{{ redo }}" disabled="{{ noRedo }}" aria-label="Redo" style="width:44px;height:44px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer"><svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="m15 14 5-5-5-5"></path><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"></path></svg></button>
+</div>
+<div style="flex:none;display:flex;gap:6px;overflow-x:auto;padding:10px 14px;border-bottom:1px solid #40304F;background:#130D1B;scrollbar-width:none">
+<sc-for list="{{ mTabs }}" as="t" hint-placeholder-count="5"><button onClick="{{ t.onTap }}" style="flex:none;height:36px;padding:0 12px;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};font:700 13px Archivo;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:6px">{{ t.name }}<span style="font:600 11px Archivo;color:{{ t.sub }};font-variant-numeric:tabular-nums">{{ t.count }}</span></button></sc-for>
+<button onClick="{{ toggleAdd }}" aria-label="Add section" style="flex:none;width:36px;height:36px;border:1px dashed #6E5B84;background:transparent;color:#C5A1F0;font:700 16px Archivo;cursor:pointer">+</button>
+</div>
+<sc-if value="{{ addOpen }}" hint-placeholder-val="{{ false }}"><div style="flex:none;display:grid;grid-template-columns:repeat(3,1fr);background:#1C1326;border-bottom:1px solid #40304F"><sc-for list="{{ kinds }}" as="k" hint-placeholder-count="6"><button onClick="{{ k.onAdd }}" style="height:44px;border:0;border-right:1px solid #2A1F36;border-bottom:1px solid #2A1F36;background:transparent;color:#F5F0FA;font:600 13px Archivo;text-align:left;padding:0 12px;cursor:pointer">+ {{ k.name }}</button></sc-for></div></sc-if>
+<div style="flex:none;display:flex;align-items:center;gap:8px;padding:6px 8px 6px 16px;border-bottom:1px solid #40304F">
+<span style="flex:1;min-width:0;font:700 10px Archivo;letter-spacing:.12em;color:#C5A1F0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ edKickerM }}</span>
+<button onClick="{{ mSecToolsToggle }}" style="flex:none;height:36px;padding:0 10px;border:0;background:transparent;color:#BDB0CA;font:600 12px Archivo;cursor:pointer">Section</button>
+<button onClick="{{ mAnToggle }}" aria-pressed="{{ mAn }}" style="flex:none;height:36px;padding:0 10px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:600 12px Archivo;cursor:pointer">{{ mAnLabel }}</button>
+</div>
+<sc-if value="{{ mSecTools }}" hint-placeholder-val="{{ false }}"><div style="flex:none;background:#1C1326;border-bottom:1px solid #40304F">
+<sc-if value="{{ mRenaming }}" hint-placeholder-val="{{ false }}"><div style="padding:8px 14px"><input value="{{ actName }}" onChange="{{ actRename }}" onKeyDown="{{ actRenameKey }}" aria-label="Section name" style="width:100%;box-sizing:border-box;height:44px;border:1px solid #DEC7FF;background:#0D0912;color:#F5F0FA;font:700 16px Archivo;padding:0 10px;outline:none" /></div></sc-if>
+<div style="display:grid;grid-template-columns:repeat(6,1fr)">
+<button onClick="{{ actStartRename }}" style="height:44px;border:0;border-right:1px solid #2A1F36;background:transparent;color:#F5F0FA;font:600 12px Archivo;cursor:pointer">Name</button>
+<button onClick="{{ actUp }}" disabled="{{ actFirst }}" aria-label="Move section earlier" style="height:44px;border:0;border-right:1px solid #2A1F36;background:transparent;color:#F5F0FA;font:600 14px Archivo;cursor:pointer">←</button>
+<button onClick="{{ actDown }}" disabled="{{ actLast }}" aria-label="Move section later" style="height:44px;border:0;border-right:1px solid #2A1F36;background:transparent;color:#F5F0FA;font:600 14px Archivo;cursor:pointer">→</button>
+<button onClick="{{ actLess }}" disabled="{{ actNoLess }}" aria-label="Fewer bars" style="height:44px;border:0;border-right:1px solid #2A1F36;background:transparent;color:#F5F0FA;font:600 14px Archivo;cursor:pointer">−</button>
+<button onClick="{{ actMore }}" aria-label="More bars" style="height:44px;border:0;border-right:1px solid #2A1F36;background:transparent;color:#F5F0FA;font:600 14px Archivo;cursor:pointer">+</button>
+<button onClick="{{ actRemove }}" style="height:44px;border:0;background:transparent;color:#FF747D;font:600 12px Archivo;cursor:pointer">Delete</button>
+</div></div></sc-if>
+<div ref="{{ mScrollRef }}" style="flex:1;min-height:0;overflow:auto;padding:0 12px 24px 8px">
+<sc-for list="{{ groupsM }}" as="g" hint-placeholder-count="1">
+<div>
+<sc-if value="{{ g.showHead }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:baseline;gap:8px;padding:14px 0 6px 8px;border-bottom:2px solid #40304F"><span style="font:800 15px Archivo">{{ g.name }}</span><span style="font:11px Archivo;color:#9C8DAE">{{ g.count }}</span></div></sc-if>
+<sc-for list="{{ g.bars }}" as="b" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:30px minmax(0,1fr) {{ b.gut }};align-items:start;border-bottom:1px solid #2A1F36;background:{{ b.rowBg }}">
+<div style="font:600 11px/24px Archivo;color:#9C8DAE;font-variant-numeric:tabular-nums;padding:12px 0 0 6px">{{ b.n }}</div>
+<div style="position:relative;min-width:0">
+<div aria-hidden="true" style="min-height:48px;box-sizing:border-box;padding:12px 6px;font:400 17px/24px Archivo,sans-serif;white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;color:transparent;pointer-events:none"><sc-for list="{{ b.toks }}" as="tk" hint-placeholder-count="1"><span style="text-decoration:{{ tk.deco }};text-decoration-thickness:2px;text-underline-offset:6px;background:{{ tk.bg }}">{{ tk.t }}</span></sc-for>&#8203;</div>
+<textarea value="{{ b.text }}" placeholder="{{ b.ph }}" aria-label="{{ b.aria }}" ref="{{ b.ref }}" onChange="{{ b.onChange }}" onFocus="{{ b.onFocus }}" onBlur="{{ b.onBlur }}" onSelect="{{ b.onSelect }}" onKeyDown="{{ b.onKeyDown }}" spellCheck="{{ false }}" autoComplete="off" autoCapitalize="sentences" rows="1" style="position:absolute;left:0;top:0;width:100%;height:100%;box-sizing:border-box;padding:12px 6px;border:0;background:transparent;color:#F5F0FA;font:400 17px/24px Archivo,sans-serif;white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;outline:none;resize:none;overflow:hidden;caret-color:#DEC7FF"></textarea>
+</div>
+<sc-if value="{{ b.showGut }}" hint-placeholder-val="{{ true }}"><div style="display:flex;justify-content:flex-end;align-items:center;gap:6px;padding:12px 2px 0 0;line-height:24px"><span style="font:800 12px Archivo;color:{{ b.lc }}">{{ b.letter }}</span><span style="font:600 11px Archivo;color:#BDB0CA;font-variant-numeric:tabular-nums;min-width:22px;text-align:right">{{ b.syl }}</span></div></sc-if>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+
+<sc-if value="{{ mDrawer }}" hint-placeholder-val="{{ false }}">
+<div onMouseDown="{{ keep }}" style="flex:none;max-height:260px;display:flex;flex-direction:column;background:#291C36;border-top:1px solid #8E8A9C">
+<div style="flex:none;display:flex;align-items:center;gap:10px;padding:10px 8px 8px 16px"><div style="flex:1;min-width:0"><span style="font:800 20px Archivo;letter-spacing:-.02em">{{ qShow }}</span><span style="font:600 11px Archivo;color:#BDB0CA;margin-left:8px">{{ qMetaShort }}</span></div><button onClick="{{ drawerClose }}" aria-label="Close rhymes" style="width:44px;height:44px;border:0;background:transparent;color:#F5F0FA;font:600 18px Archivo;cursor:pointer">×</button></div>
+<div style="flex:none;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #40304F;border-bottom:1px solid #40304F"><sc-for list="{{ ptabs }}" as="p" hint-placeholder-count="3"><button onClick="{{ p.onTap }}" style="height:40px;border:0;border-right:1px solid #40304F;border-bottom:2px solid {{ p.mark }};background:transparent;color:{{ p.fg }};font:700 12px Archivo;text-align:left;padding:0 12px;cursor:pointer">{{ p.label }}</button></sc-for></div>
+<div style="flex:1;min-height:0;overflow:auto;padding:10px 12px 12px;display:flex;flex-wrap:wrap;align-content:flex-start;gap:8px">
+<sc-for list="{{ picks }}" as="p" hint-placeholder-count="8"><button onClick="{{ p.onInsert }}" aria-label="{{ p.aria }}" style="height:44px;padding:0 12px;border:1px solid #6E5B84;background:#1C1326;color:#F5F0FA;font:500 15px Archivo;cursor:pointer;display:flex;align-items:center;gap:8px">{{ p.w }}<span style="font:600 10px Archivo;color:#9C8DAE">{{ p.syl }}</span></button></sc-for>
+<sc-if value="{{ noPicks }}" hint-placeholder-val="{{ false }}"><div style="font:13px/1.5 Archivo;color:#BDB0CA">{{ noPicksMsg }}</div></sc-if>
+</div>
+<div style="flex:none;padding:0 16px 8px;font:11px Archivo;color:#9C8DAE">Tap a word to put it in place of “{{ qShow }}”. Undo is at the top.</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ dictM }}" hint-placeholder-val="{{ false }}">
+<div onMouseDown="{{ keepSoft }}" style="flex:none;background:#291C36;border-top:1px solid #8E8A9C;padding:12px 16px">
+<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font:700 14px Archivo">Dictate</div><div style="font:11px Archivo;color:#BDB0CA">Speech to text at your cursor — not an audio take</div></div><button onClick="{{ dictClose }}" aria-label="Close" style="width:44px;height:44px;border:0;background:transparent;color:#F5F0FA;font:600 18px Archivo;cursor:pointer">×</button></div>
+<sc-if value="{{ dListening }}" hint-placeholder-val="{{ false }}"><div style="font:16px/1.45 Archivo;min-height:24px;margin:6px 0">{{ dText }}</div><button onClick="{{ dictStop }}" style="height:44px;padding:0 14px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:600 13px Archivo;cursor:pointer">Stop listening</button></sc-if>
+<sc-if value="{{ dReview }}" hint-placeholder-val="{{ false }}"><textarea value="{{ dText }}" onChange="{{ dictEdit }}" rows="2" style="width:100%;box-sizing:border-box;margin-top:6px;border:1px solid #6E5B84;background:#0D0912;color:#F5F0FA;font:16px/1.45 Archivo;padding:8px 10px;resize:none;outline:none"></textarea><div style="display:flex;gap:8px;margin-top:8px"><button onClick="{{ dictInsert }}" style="flex:1;height:44px;border:0;background:#C5A1F0;color:#160D20;font:700 13px Archivo;text-align:left;padding:0 12px;cursor:pointer">{{ dInsertLabel }}</button><button onClick="{{ dictClose }}" style="height:44px;padding:0 12px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:600 13px Archivo;cursor:pointer">Discard</button></div></sc-if>
+<sc-if value="{{ dMsgShow }}" hint-placeholder-val="{{ false }}"><div style="font:13px/1.5 Archivo;margin-top:4px">{{ dMsg }}</div></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ mKb }}" hint-placeholder-val="{{ false }}">
+<div onMouseDown="{{ keep }}" style="flex:none;display:flex;align-items:stretch;border-top:1px solid #40304F;background:#130D1B;height:48px">
+<button onClick="{{ drawerOpen }}" style="flex:1;min-width:0;border:0;border-right:1px solid #40304F;background:transparent;color:#F5F0FA;font:600 13px Archivo;text-align:left;padding:0 14px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Rhymes for <span style="color:#C5A1F0">“{{ qShow }}”</span></button>
+<button onClick="{{ dictStartM }}" aria-label="Dictate into this bar" style="flex:none;width:52px;border:0;border-right:1px solid #40304F;background:transparent;color:#C5A1F0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><svg viewBox="0 0 24 24" style="width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><path d="M12 19v3"></path></svg></button>
+<button onClick="{{ capOpenM }}" aria-label="Quick Capture audio" style="flex:none;width:52px;border:0;border-right:1px solid #40304F;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><span style="width:14px;height:14px;border-radius:50%;background:#FF747D;display:block"></span></button>
+<button onClick="{{ mDone }}" style="flex:none;padding:0 14px;border:0;background:transparent;color:#C5A1F0;font:700 13px Archivo;cursor:pointer">Done</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ mNoKb }}" hint-placeholder-val="{{ true }}">
+<div style="flex:none;display:flex;align-items:center;gap:10px;padding:8px 12px 8px 10px;border-top:1px solid #40304F;background:#130D1B">
+<button onClick="{{ beatToggleOrPick }}" aria-label="{{ playLabel }}" style="flex:none;width:44px;height:44px;border:1px solid #D8D8E0;background:linear-gradient(180deg,#3A2750,#1C1326);color:#F5F0FA;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><sc-if value="{{ playing }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></sc-if><sc-if value="{{ paused }}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor"><path d="M7 4v16l13-8z"></path></svg></sc-if></button>
+<div style="flex:1;min-width:0"><div style="font:600 13px Archivo;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ beatNameM }}</div><div style="height:3px;background:#40304F;margin-top:6px;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ beatPct }};background:#C5A1F0"></div></div></div>
+<span style="flex:none;font:600 11px Archivo;color:#BDB0CA;font-variant-numeric:tabular-nums">{{ beatTimeShort }}</span>
+<button onClick="{{ pickBeat }}" style="flex:none;height:36px;padding:0 10px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:600 12px Archivo;cursor:pointer">{{ beatBtnShort }}</button>
+</div>
+<div style="flex:none;display:grid;grid-template-columns:repeat(5,1fr) 72px;border-top:1px solid #40304F;background:#130D1B;padding-bottom:30px">
+<sc-for list="{{ navM }}" as="n" hint-placeholder-count="5"><div title="{{ n.title }}" style="height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;opacity:{{ n.op }};color:{{ n.fg }}"><svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="{{ n.d }}"></path></svg><span style="font:600 10px Archivo">{{ n.name }}</span></div></sc-for>
+<div style="display:flex;align-items:center;justify-content:center"><button onClick="{{ capOpenM }}" aria-label="Quick Capture audio" style="width:52px;height:52px;margin-top:-18px;border:2px solid #D8D8E0;background:linear-gradient(180deg,#3A2750,#1C1326);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 8px 20px rgba(0,0,0,.5)"><span style="width:18px;height:18px;border-radius:50%;background:#FF747D;display:block"></span></button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ capM }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ capClose }}" style="position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(7,5,10,.55)"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:#291C36;border-top:1px solid #8E8A9C;padding:0 0 34px">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 8px 10px 16px;border-bottom:1px solid #40304F"><div><div style="font:700 16px Archivo">Quick Capture</div><div style="font:11px Archivo;color:#BDB0CA">Audio take — your lyrics stay where they are</div></div><button onClick="{{ capClose }}" aria-label="Close" style="width:44px;height:44px;border:0;background:transparent;color:#F5F0FA;font:600 18px Archivo;cursor:pointer">×</button></div>
+<div style="padding:14px 16px">
+<sc-if value="{{ cIdle }}" hint-placeholder-val="{{ true }}"><button onClick="{{ capStart }}" style="width:100%;height:60px;display:flex;align-items:center;gap:12px;border:0;background:#FF747D;color:#160D20;font:800 14px Archivo;letter-spacing:.06em;text-align:left;padding:0 16px;cursor:pointer"><span style="width:18px;height:18px;border-radius:50%;background:#160D20;display:block"></span>START RECORDING</button><div style="font:12px/1.5 Archivo;color:#BDB0CA;margin-top:8px">Records audio. To type with your voice, use the mic above the keyboard.</div></sc-if>
+<sc-if value="{{ cAsking }}" hint-placeholder-val="{{ false }}"><div style="font:14px Archivo">Waiting for microphone permission…</div></sc-if>
+<sc-if value="{{ cLive }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:baseline;justify-content:space-between"><span style="display:flex;align-items:center;gap:8px;font:700 11px Archivo;letter-spacing:.12em;color:{{ cStateColor }}"><span style="width:9px;height:9px;border-radius:50%;background:{{ cStateColor }};display:block"></span>{{ cStateLabel }}</span><span style="font:800 40px Archivo;font-variant-numeric:tabular-nums;letter-spacing:-.02em">{{ cTime }}</span></div>
+<div style="display:flex;gap:3px;height:18px;margin:10px 0 14px"><sc-for list="{{ meter }}" as="m" hint-placeholder-count="16"><div style="flex:1;background:{{ m.bg }}"></div></sc-for></div>
+<div style="display:flex;gap:8px"><button onClick="{{ capPause }}" style="flex:1;height:52px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:700 14px Archivo;text-align:left;padding:0 14px;cursor:pointer">{{ cPauseLabel }}</button><button onClick="{{ capStop }}" style="flex:1;height:52px;border:0;background:#F5F0FA;color:#160D20;font:700 14px Archivo;text-align:left;padding:0 14px;cursor:pointer">Stop</button></div>
+<div style="font:11px/1.5 Archivo;color:#BDB0CA;margin-top:8px">Locking the screen or switching apps can stop a browser recording.</div>
+</sc-if>
+<sc-if value="{{ cReview }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:8px;align-items:center"><button onClick="{{ capPlay }}" style="flex:none;width:48px;height:48px;border:1px solid #D8D8E0;background:#1C1326;color:#F5F0FA;cursor:pointer;font:700 12px Archivo">{{ cPlayGlyph }}</button><input value="{{ cName }}" onChange="{{ capRename }}" aria-label="Take name" style="flex:1;min-width:0;height:48px;box-sizing:border-box;border:1px solid #6E5B84;background:#0D0912;color:#F5F0FA;font:600 16px Archivo;padding:0 10px;outline:none" /><span style="flex:none;font:600 13px Archivo;font-variant-numeric:tabular-nums">{{ cTime }}</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid #6E5B84;margin-top:12px"><sc-for list="{{ dests }}" as="d" hint-placeholder-count="2"><button onClick="{{ d.onTap }}" style="height:44px;border:0;border-right:1px solid #6E5B84;background:{{ d.bg }};color:{{ d.fg }};font:600 13px Archivo;cursor:pointer;text-align:left;padding:0 10px">{{ d.name }}</button></sc-for></div>
+<div style="font:11px Archivo;color:#9C8DAE;margin-top:8px">Transcription: not connected</div>
+<div style="display:flex;gap:8px;margin-top:12px"><button onClick="{{ capSave }}" style="flex:1;height:52px;border:0;background:#C5A1F0;color:#160D20;font:700 14px Archivo;text-align:left;padding:0 14px;cursor:pointer">Keep take</button><button onClick="{{ capDiscard }}" style="height:52px;padding:0 14px;border:1px solid #6E5B84;background:transparent;color:#FF747D;font:600 14px Archivo;cursor:pointer">Delete</button></div>
+</sc-if>
+<sc-if value="{{ cProblem }}" hint-placeholder-val="{{ false }}"><div style="font:14px/1.5 Archivo">{{ cProblemMsg }}</div><button onClick="{{ capStart }}" style="margin-top:10px;height:44px;padding:0 14px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;font:600 13px Archivo;cursor:pointer">Try again</button></sc-if>
+<sc-if value="{{ cMsgShow }}" hint-placeholder-val="{{ false }}"><div style="margin-top:10px;padding:8px 10px;background:#1C1326;border:1px solid #40304F;font:12px/1.45 Archivo;color:#D5AA69">{{ cMsg }}</div></sc-if>
+<sc-if value="{{ hasMemos }}" hint-placeholder-val="{{ false }}"><div style="margin-top:14px;font:700 10px Archivo;letter-spacing:.12em;color:#BDB0CA">KEPT IN THIS TAB · NOT UPLOADED</div><sc-for list="{{ memos }}" as="m" hint-placeholder-count="1"><div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #40304F"><button onClick="{{ m.onPlay }}" style="flex:none;width:44px;height:44px;border:1px solid #6E5B84;background:transparent;color:#F5F0FA;cursor:pointer;font:700 11px Archivo">{{ m.glyph }}</button><span style="flex:1;min-width:0"><span style="display:block;font:600 14px Archivo">{{ m.name }}</span><span style="display:block;font:11px Archivo;color:#9C8DAE">{{ m.meta }}</span></span></div></sc-for></sc-if>
+</div>
+</div>
+</sc-if>
+</div>
+</x-import>
+</div>
+
+<div id="1c" style="flex:none;width:520px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:baseline;gap:10px;font:12px Archivo;color:#BDB0CA"><a href="#1c" style="font:700 11px Archivo;padding:4px 8px;background:#291C36;color:#F5F0FA;text-decoration:none">1c</a>Identity and tokens — contrast is computed from the hex values below, not estimated.</div>
+<div style="background:#0D0912;border:1px solid #40304F">
+<div style="padding:36px 28px 28px;background:#130D1B;border-bottom:2px solid #40304F;position:relative;overflow:hidden">
+<div style="position:absolute;right:-30px;top:-30px;width:220px;height:220px;opacity:.5;background-image:radial-gradient(circle,#40304F 1.6px,transparent 2px);background-size:9px 9px"></div>
+<div style="position:relative;font:800 92px/.9 Archivo;font-stretch:62%;letter-spacing:-.01em;background:linear-gradient(180deg,#FFFFFF 0%,#D8D8E0 38%,#8E8A9C 54%,#ECE9F2 68%,#B7B2C4 100%);-webkit-background-clip:text;background-clip:text;color:transparent">BPORCH</div>
+<div style="position:relative;display:flex;align-items:center;gap:10px;margin-top:8px"><span style="font:700 15px Archivo;letter-spacing:.42em;color:#C5A1F0">PRODUCTION$</span><span style="flex:1;height:1px;background:#8E8A9C"></span></div>
+<div style="position:relative;font:500 14px Archivo;color:#BDB0CA;margin-top:14px">Write it. Chop it. Make it yours.</div>
+</div>
+<div style="display:flex;gap:18px;align-items:flex-end;padding:20px 28px;border-bottom:1px solid #40304F">
+<div style="width:96px;height:96px;position:relative;background:linear-gradient(160deg,#3A2750 0%,#1C1326 72%);border:1px solid #8E8A9C;box-shadow:inset 0 1px 0 rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center"><span style="font:800 54px/1 Archivo;font-stretch:62%;background:linear-gradient(180deg,#FFFFFF 0%,#D8D8E0 40%,#8E8A9C 55%,#ECE9F2 70%,#B7B2C4 100%);-webkit-background-clip:text;background-clip:text;color:transparent">B$</span><span style="position:absolute;left:16px;right:16px;bottom:12px;height:3px;background:#C5A1F0"></span></div>
+<div style="width:56px;height:56px;position:relative;background:linear-gradient(160deg,#3A2750 0%,#1C1326 72%);border:1px solid #8E8A9C;display:flex;align-items:center;justify-content:center"><span style="font:800 31px/1 Archivo;font-stretch:62%;background:linear-gradient(180deg,#FFFFFF 0%,#D8D8E0 40%,#8E8A9C 55%,#ECE9F2 70%,#B7B2C4 100%);-webkit-background-clip:text;background-clip:text;color:transparent">B$</span><span style="position:absolute;left:10px;right:10px;bottom:7px;height:2px;background:#C5A1F0"></span></div>
+<div style="width:32px;height:32px;position:relative;background:#291C36;border:1px solid #8E8A9C;display:flex;align-items:center;justify-content:center"><span style="font:800 18px/1 Archivo;font-stretch:62%;color:#D8D8E0">B$</span></div>
+<div style="flex:1;font:11px/1.5 Archivo;color:#BDB0CA">App icon: condensed chrome B$ on a plum faceplate, lavender tape-window stroke. The chrome gradient is for the mark only; lyrics and UI text stay flat. Archivo (SIL Open Font License) throughout; its width axis gives the condensed display cut.</div>
+</div>
+<div style="padding:16px 28px 6px;font:700 10px Archivo;letter-spacing:.14em;color:#BDB0CA">TOKENS</div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding:0 28px 10px">
+<sc-for list="{{ tokens }}" as="t" hint-placeholder-count="14"><div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #2A1F36"><span style="flex:none;width:26px;height:26px;background:{{ t.hex }};border:1px solid #40304F"></span><span style="flex:1;min-width:0;font:600 12px Archivo">{{ t.name }}</span><span style="flex:none;font:500 11px Archivo;color:#9C8DAE;padding-right:10px">{{ t.hex }}</span></div></sc-for>
+</div>
+<div style="padding:12px 28px 6px;font:700 10px Archivo;letter-spacing:.14em;color:#BDB0CA">RENDERED PAIRS · WCAG CONTRAST</div>
+<div style="padding:0 28px 12px">
+<sc-for list="{{ pairs }}" as="p" hint-placeholder-count="10"><div style="display:grid;grid-template-columns:120px minmax(0,1fr) 54px 64px;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #2A1F36"><span style="height:28px;display:flex;align-items:center;padding:0 8px;background:{{ p.bg }};color:{{ p.fg }};font:600 13px Archivo;border:1px solid #40304F">Aa {{ p.sample }}</span><span style="font:12px Archivo;color:#BDB0CA">{{ p.name }}</span><span style="font:700 12px Archivo;font-variant-numeric:tabular-nums">{{ p.ratio }}</span><span style="font:700 10px Archivo;letter-spacing:.08em;color:{{ p.vc }}">{{ p.verdict }}</span></div></sc-for>
+</div>
+<div style="padding:12px 28px 6px;font:700 10px Archivo;letter-spacing:.14em;color:#BDB0CA">RHYME FAMILIES · COLOUR + LINE STYLE + MARGIN LETTER</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:0 28px 24px">
+<sc-for list="{{ famKey }}" as="f" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #2A1F36"><span style="font:800 13px Archivo;color:{{ f.c }};width:14px">{{ f.l }}</span><span style="font:500 15px Archivo;text-decoration:{{ f.deco }};text-decoration-thickness:2px;text-underline-offset:6px">{{ f.word }}</span></div></sc-for>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  KEY = "bporch.write.v1";
+  FAM = [
+    { c: "#C5A1F0", s: "solid" }, { c: "#D5AA69", s: "double" }, { c: "#FF747D", s: "dashed" },
+    { c: "#D8D8E0", s: "dotted" }, { c: "#9FC3F0", s: "wavy" }, { c: "#E7A3D6", s: "solid" }
+  ];
+  KINDS = [["Intro", 4], ["Verse", 16], ["Hook", 8], ["Bridge", 8], ["Outro", 4], ["Notes", 4]];
+  KC = { Intro: "#D8D8E0", Verse: "#C5A1F0", Hook: "#D5AA69", Bridge: "#9FC3F0", Outro: "#D8D8E0", Notes: "#BDB0CA" };
+  ICON = {
+    Home: "M3 10 12 3l9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z",
+    Projects: "M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9L9.6 3.9A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z",
+    Write: "M12 20h9M16.4 3.6a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z",
+    Voice: "M2 10v3M6 6v11M10 3v18M14 8v7M18 5v13M22 10v3",
+    Stems: "M16 3h5v5M8 3H3v5M12 22v-8.3a4 4 0 0 0-1.2-2.9L3 3M15 9l6-6",
+    Samples: "M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12",
+    Inbox: "M22 12h-6l-2 3h-4l-2-3H2M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1Z",
+    Settings: "M4 6h16M4 12h16M4 18h16M9 4v4M15 10v4M8 16v4",
+    More: "M5 12h.01M12 12h.01M19 12h.01"
+  };
+
+  initial() {
+    const L = (a, n) => a.concat(Array(Math.max(0, n - a.length)).fill(""));
+    const base = {
+      title: "Midnight on the Feeder", bpm: "72", keySig: "F minor",
+      sections: [
+        { id: "intro", kind: "Intro", name: "Intro", bars: L(["Porch light on and the whole block humming low", "Cassette in the deck and the tape moving slow"], 4) },
+        { id: "v1", kind: "Verse", name: "Verse 1", bars: L(["Candy on the paint and the rain on the glass", "Feeder road glowing like it's holding the past", "Pen on the pad and the city on mute", "Every word I lean on got a slab in the root", "Slowed it all down so the feeling could land", "Chrome on the corner and a tape in my hand", "Mama on the porch saying don't stay late", "I just wrote it down and let the tempo wait"], 16) },
+        { id: "hook", kind: "Hook", name: "Hook", bars: L(["Midnight on the Feeder and I'm riding real slow", "Purple in the speaker, let the whole city know", "Midnight on the Feeder with the windows down low", "Everything I'm leaving on the tape as I go"], 8) },
+        { id: "v2", kind: "Verse", name: "Verse 2", bars: L([], 16) },
+        { id: "outro", kind: "Outro", name: "Outro", bars: L([], 4) }
+      ]
+    };
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(this.KEY) || "null"); } catch (e) {}
+    const doc = saved && Array.isArray(saved.sections) && saved.sections.length ? saved : base;
+    return {
+      title: doc.title, bpm: doc.bpm, keySig: doc.keySig, sections: doc.sections,
+      savedAt: saved ? saved.savedAt : null, saving: false, saveErr: false,
+      active: (doc.sections.find(s => s.id === "v1") || doc.sections[0]).id,
+      readAll: false, sel: null, ptab: "Perfect", showSyl: true, showRhyme: true, hints: true, sylNote: true,
+      hist: [], fut: [], renaming: null, addOpen: false,
+      beat: { name: "", dur: 0, t: 0, playing: false, loop: true, peaks: null, err: "", decoding: false },
+      cap: { open: false, view: "d", status: "idle", secs: 0, level: 0, url: null, name: "", dest: "Idea Inbox", msg: "" },
+      memos: [], playing: null,
+      dict: { status: "idle", view: "d", text: "", msg: "", target: null },
+      mFocus: null, drawer: false, mAn: true, mSecTools: false, mRenaming: false, E: null
+    };
+  }
+  state = this.initial();
+  inputs = {}; refFns = {}; _fc = {};
+
+  componentDidMount() {
+    const _rfBase = document.baseURI;
+    import(new URL("rhyme-engine.js", _rfBase).href).then(m => {
+      const E = m.default || m;
+      fetch(new URL("slang-overlay.json", _rfBase).href).then(r => r.json()).then(j => E.registerSlang(j.entries)).catch(() => {})
+        .then(() => { this._fc = {}; this._sq = null; this.setState({ E }); });
+    }).catch(() => {});
+    this._vis = () => { if (document.hidden && this.state.cap.status === "rec") this.setCap({ msg: "The app went to the background while recording. Some browsers pause or end the take here — play it back before keeping it." }); };
+    document.addEventListener("visibilitychange", this._vis);
+  }
+  componentWillUnmount() {
+    document.removeEventListener("visibilitychange", this._vis);
+    clearInterval(this.tick); clearInterval(this.meterT); clearTimeout(this._saveT);
+    this.stopStream(); if (this.audio) this.audio.pause(); if (this.player) this.player.pause();
+  }
+  componentDidUpdate() {
+    const cur = { mFocus: this.state.mFocus, drawer: this.state.drawer, dict: { status: this.state.dict.status } };
+    const ps = this._prev || cur;
+    this._prev = cur;
+    if (this._pc) {
+      const { key, pos } = this._pc, el = this.inputs[key];
+      if (el) { this._pc = null; this._skip = true; el.focus(); try { el.setSelectionRange(pos, pos); } catch (e) {} setTimeout(() => { this._skip = false; }, 30); }
+    }
+    const kbNow = !!this.state.mFocus, kbWas = !!ps.mFocus;
+    if (this.state.mFocus && (ps.mFocus !== this.state.mFocus || kbNow !== kbWas || ps.drawer !== this.state.drawer || ps.dict.status !== this.state.dict.status)) {
+      setTimeout(() => {
+        const el = this.inputs[this.state.mFocus], sc = this.mScroll;
+        if (!el || !sc) return;
+        const er = el.getBoundingClientRect(), sr = sc.getBoundingClientRect();
+        const k = sc.offsetHeight ? sr.height / sc.offsetHeight : 1;
+        if (er.bottom > sr.bottom - 6) sc.scrollTop += (er.bottom - sr.bottom) / k + 24;
+        else if (er.top < sr.top) sc.scrollTop -= (sr.top - er.top) / k + 24;
+      }, 60);
+    }
+  }
+
+  docOf(s) { return { title: s.title, bpm: s.bpm, keySig: s.keySig, sections: s.sections }; }
+  clone(o) { return JSON.parse(JSON.stringify(o)); }
+  mut(fn, typingKey) {
+    const now = Date.now();
+    const push = !(typingKey && this._tk === typingKey && now - this._tt < 1200);
+    this._tk = typingKey || null; this._tt = now;
+    this.setState(s => {
+      const prev = this.docOf(s), doc = this.clone(prev);
+      fn(doc);
+      return { ...doc, hist: push ? s.hist.concat([prev]).slice(-150) : s.hist, fut: [] };
+    }, () => this.queueSave());
+  }
+  queueSave() {
+    clearTimeout(this._saveT);
+    if (!this.state.saving) this.setState({ saving: true });
+    this._saveT = setTimeout(() => {
+      const at = Date.now();
+      try { localStorage.setItem(this.KEY, JSON.stringify({ ...this.docOf(this.state), savedAt: at })); this.setState({ saving: false, saveErr: false, savedAt: at }); }
+      catch (e) { this.setState({ saving: false, saveErr: true }); }
+    }, 600);
+  }
+  undo = () => this.setState(s => {
+    if (!s.hist.length) return null;
+    const prev = s.hist[s.hist.length - 1];
+    return { ...prev, hist: s.hist.slice(0, -1), fut: s.fut.concat([this.docOf(s)]) };
+  }, () => { this._tk = null; this.queueSave(); });
+  redo = () => this.setState(s => {
+    if (!s.fut.length) return null;
+    const nx = s.fut[s.fut.length - 1];
+    return { ...nx, fut: s.fut.slice(0, -1), hist: s.hist.concat([this.docOf(s)]) };
+  }, () => { this._tk = null; this.queueSave(); });
+
+  sec(doc, id) { return doc.sections.find(x => x.id === id); }
+  syl(line) {
+    if (!String(line || "").trim()) return 0;
+    if (this.state.E) return this.state.E.getSyllableCount(line);
+    return String(line).split(/\s+/).reduce((a, w) => { const m = w.toLowerCase().replace(/[^a-z]/g, "").replace(/e$/, "").match(/[aeiouy]+/g); return a + (w.trim() ? (m ? m.length : 1) : 0); }, 0);
+  }
+  STOP = new Set("the and of on in it its my me im is to that this when like but for with was you your we they he she as at by so or if be been all up out do dont got get keep never just let".split(" "));
+  // Families are grouped against one representative end word each, not by
+  // transitive chaining, so a margin letter always means "rhymes with the
+  // first bar that carries this letter".
+  fam(s) {
+    const E = this.state.E;
+    if (!E) return null;
+    const k = s.bars.join("\n");
+    if (this._fc[s.id] && this._fc[s.id].k === k) return this._fc[s.id].f;
+    const T = E.TIERS || [], min = T.indexOf("family");
+    const ok = (a, b) => { if (a === b) return true; const r = E.score(a, b); return !!r.tier && T.indexOf(r.tier) >= min; };
+    const toks = [];
+    s.bars.forEach((line, li) => {
+      const parts = String(line).split(/\s+/); let last = -1;
+      parts.forEach((raw, ti) => { const w = raw.toLowerCase().replace(/[^a-z']/g, ""); if (w.length < 3 || this.STOP.has(w.replace(/'/g, ""))) return; last = toks.length; toks.push({ li, ti, w, end: false }); });
+      if (last >= 0) toks[last].end = true;
+    });
+    const fams = [];
+    toks.filter(t => t.end).forEach(t => { const f = fams.find(x => ok(x.rep, t.w)); if (f) f.m.push(t); else fams.push({ rep: t.w, m: [t] }); });
+    const keep = fams.filter(f => new Set(f.m.map(t => t.w)).size >= 2).slice(0, 6);
+    toks.filter(t => !t.end).forEach(t => { const f = keep.find(x => ok(x.rep, t.w)); if (f) f.m.push(t); });
+    const map = {};
+    keep.forEach((f, i) => f.m.forEach(t => { map[t.li + ":" + t.ti] = i; }));
+    const out = { of: (li, ti) => (map[li + ":" + ti] === undefined ? null : map[li + ":" + ti]), count: keep.length };
+    this._fc[s.id] = { k, f: out };
+    return out;
+  }
+  wordAt(text, pos) {
+    const re = /[A-Za-z'’]+/g; let m, last = null;
+    while ((m = re.exec(text))) { const r = { start: m.index, end: m.index + m[0].length, word: m[0] }; if (pos >= r.start && pos <= r.end) return r; last = r; }
+    return last;
+  }
+  sugg(q) {
+    const E = this.state.E;
+    if (!E || !q) return { Perfect: [], Near: [], Multi: [] };
+    if (this._sq === q) return this._sv;
+    const clean = q.replace(/[’']/g, "'");
+    const Perfect = E.getRhymes(clean, "perfect", { pool: "words", limit: 30 });
+    const Near = E.getRhymes(clean, "slant", { pool: "words", limit: 60 }).filter(r => r.tier !== "perfect").slice(0, 30);
+    const Multi = E.getRhymes(clean, "slant", { pool: "phrases", limit: 24 });
+    this._sq = q; this._sv = { Perfect, Near, Multi };
+    return this._sv;
+  }
+
+  keyOf(view, sid, bi) { return view + ":" + sid + ":" + bi; }
+  refFor(key) { return this.refFns[key] || (this.refFns[key] = el => { if (el) this.inputs[key] = el; else delete this.inputs[key]; }); }
+  onSel(view, sid, bi, e) {
+    const pos = e.target.selectionStart || 0, text = e.target.value;
+    this.lastCaret = { view, sid, bi, pos };
+    if (this._skip) return;
+    const w = this.wordAt(text, pos);
+    const cur = this.state.sel;
+    if (!w) { if (cur && cur.sid === sid && cur.bi === bi) return; this.setState({ sel: null }); return; }
+    if (cur && cur.sid === sid && cur.bi === bi && cur.start === w.start && cur.q === w.word && cur.view === view) return;
+    this.setState({ sel: { sid, bi, view, start: w.start, end: w.end, q: w.word } });
+  }
+  insert(word) {
+    const sel = this.state.sel; if (!sel) return;
+    const s = this.sec(this.state, sel.sid); if (!s) return;
+    const t = s.bars[sel.bi] || "";
+    const next = t.slice(0, sel.start) + word + t.slice(sel.end);
+    const pos = sel.start + word.length;
+    this._tk = null;
+    this.mut(doc => { this.sec(doc, sel.sid).bars[sel.bi] = next; });
+    this._pc = { key: this.keyOf(sel.view, sel.sid, sel.bi), pos };
+    this.lastCaret = { view: sel.view, sid: sel.sid, bi: sel.bi, pos };
+    this.setState({ sel: { ...sel, end: sel.start + word.length } });
+  }
+  focusBar(view, sid, bi, pos) { this._pc = { key: this.keyOf(view, sid, bi), pos: pos || 0 }; this.forceUpdate(); }
+  onKey(view, sid, bi, e) {
+    const mod = e.ctrlKey || e.metaKey;
+    if (mod && (e.key === "z" || e.key === "Z")) { e.preventDefault(); e.shiftKey ? this.redo() : this.undo(); return; }
+    if (mod && (e.key === "y" || e.key === "Y")) { e.preventDefault(); this.redo(); return; }
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const s = this.sec(this.state, sid);
+      if (bi + 1 >= s.bars.length) this.mut(doc => { this.sec(doc, sid).bars.push(""); });
+      this.focusBar(view, sid, bi + 1, 0);
+    }
+  }
+  setBar(sid, bi, v) { this.mut(doc => { this.sec(doc, sid).bars[bi] = v; }, "bar:" + sid + ":" + bi); }
+
+  addSection(kind, n) {
+    const id = kind.toLowerCase() + "-" + Date.now().toString(36);
+    this.mut(doc => {
+      const same = doc.sections.filter(s => s.kind === kind).length;
+      const name = kind === "Verse" ? "Verse " + (same + 1) : same ? kind + " " + (same + 1) : kind;
+      const at = doc.sections.findIndex(s => s.id === this.state.active);
+      doc.sections.splice(at + 1, 0, { id, kind, name, bars: Array(n).fill("") });
+    });
+    this.setState({ active: id, addOpen: false, readAll: false });
+  }
+  moveSection(id, d) { this.mut(doc => { const i = doc.sections.findIndex(s => s.id === id), j = i + d; if (j < 0 || j >= doc.sections.length) return; const [x] = doc.sections.splice(i, 1); doc.sections.splice(j, 0, x); }); }
+  removeSection(id) {
+    if (this.state.sections.length < 2) return;
+    const i = this.state.sections.findIndex(s => s.id === id);
+    const nxt = this.state.sections[i + 1] || this.state.sections[i - 1];
+    this.mut(doc => { doc.sections = doc.sections.filter(s => s.id !== id); });
+    this.setState({ active: nxt.id, sel: null, mSecTools: false });
+  }
+  canLess(s) { return s.bars.length > 1 && !String(s.bars[s.bars.length - 1]).trim(); }
+  resize(id, d) { this.mut(doc => { const s = this.sec(doc, id); if (d > 0) s.bars.push(""); else if (s.bars.length > 1 && !String(s.bars[s.bars.length - 1]).trim()) s.bars.pop(); }); }
+  rename(id, v) { this.mut(doc => { this.sec(doc, id).name = v; }, "name:" + id); }
+
+  setBeat(p) { this.setState(s => ({ beat: { ...s.beat, ...p } })); }
+  onBeatFile = e => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    if (this.audio) { this.audio.pause(); URL.revokeObjectURL(this.audio.src); }
+    const url = URL.createObjectURL(f), a = new Audio(url);
+    a.loop = this.state.beat.loop; this.audio = a;
+    a.onloadedmetadata = () => this.setBeat({ dur: a.duration || 0 });
+    a.ontimeupdate = () => this.setBeat({ t: a.currentTime });
+    a.onended = () => this.setBeat({ playing: false });
+    a.onerror = () => this.setBeat({ err: "This file couldn't be played in this browser.", playing: false });
+    this.setBeat({ name: f.name, t: 0, dur: 0, playing: false, err: "", peaks: null, decoding: true });
+    f.arrayBuffer().then(buf => {
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) throw new Error("no ctx");
+      const ctx = new AC();
+      return ctx.decodeAudioData(buf).then(ab => {
+        const ch = ab.getChannelData(0), N = 150, step = Math.max(1, Math.floor(ch.length / N)), peaks = [];
+        for (let i = 0; i < N; i++) { let m = 0; for (let j = i * step; j < (i + 1) * step && j < ch.length; j += 32) { const v = Math.abs(ch[j]); if (v > m) m = v; } peaks.push(m); }
+        const mx = Math.max.apply(null, peaks) || 1;
+        this.setBeat({ peaks: peaks.map(p => p / mx), decoding: false });
+        if (ctx.close) ctx.close();
+      });
+    }).catch(() => this.setBeat({ decoding: false, peaks: null }));
+    e.target.value = "";
+  };
+  beatToggle = () => {
+    const a = this.audio; if (!a) return;
+    if (a.paused) a.play().then(() => this.setBeat({ playing: true, err: "" })).catch(() => this.setBeat({ err: "Playback was blocked by the browser. Press play again.", playing: false }));
+    else { a.pause(); this.setBeat({ playing: false }); }
+  };
+
+  setCap(p) { this.setState(s => ({ cap: { ...s.cap, ...p } })); }
+  stopStream() {
+    clearInterval(this.meterT);
+    if (this.stream) { this.stream.getTracks().forEach(t => t.stop()); this.stream = null; }
+    if (this.actx) { try { this.actx.close(); } catch (e) {} this.actx = null; }
+  }
+  capStart = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { this.setCap({ status: "unsupported", msg: "" }); return; }
+    this.setCap({ status: "asking", msg: "" });
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.stream = stream;
+      const mr = new MediaRecorder(stream); this.chunks = [];
+      mr.ondataavailable = e => { if (e.data && e.data.size) this.chunks.push(e.data); };
+      mr.onstop = () => {
+        clearInterval(this.tick);
+        const has = this.chunks.length > 0;
+        const blob = new Blob(this.chunks, { type: mr.mimeType || "audio/webm" });
+        this.stopStream();
+        this.setCap(has ? { status: "review", url: URL.createObjectURL(blob), level: 0 } : { status: "error", msg: "", level: 0, err: "No audio was captured. Check the microphone and try again." });
+      };
+      mr.onerror = () => { this.setCap({ msg: "Recording was interrupted. Anything captured before that is kept." }); try { mr.stop(); } catch (e) {} };
+      this.mr = mr; mr.start(250);
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) {
+        this.actx = new AC();
+        const an = this.actx.createAnalyser(); an.fftSize = 512;
+        this.actx.createMediaStreamSource(stream).connect(an);
+        const buf = new Uint8Array(an.fftSize);
+        this.meterT = setInterval(() => { an.getByteTimeDomainData(buf); let sum = 0; for (let i = 0; i < buf.length; i++) { const x = (buf[i] - 128) / 128; sum += x * x; } this.setCap({ level: Math.min(1, Math.sqrt(sum / buf.length) * 3.2) }); }, 110);
+      }
+      this.t0 = Date.now(); this.acc = 0;
+      this.tick = setInterval(() => { if (this.state.cap.status === "rec") this.setCap({ secs: Math.floor((this.acc + Date.now() - this.t0) / 1000) }); }, 250);
+      const d = new Date();
+      this.setCap({ status: "rec", secs: 0, name: "Idea " + d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) });
+    } catch (err) {
+      const n = err && err.name;
+      this.setCap({ status: n === "NotAllowedError" || n === "SecurityError" ? "denied" : "error", err: n === "NotFoundError" ? "No microphone was found on this device." : "The microphone couldn't be started." });
+    }
+  };
+  capPause = () => {
+    const mr = this.mr; if (!mr) return;
+    if (this.state.cap.status === "rec") { try { mr.pause(); } catch (e) {} this.acc += Date.now() - this.t0; this.setCap({ status: "paused", level: 0 }); }
+    else { try { mr.resume(); } catch (e) {} this.t0 = Date.now(); this.setCap({ status: "rec" }); }
+  };
+  capStop = () => { if (this.state.cap.status === "rec") this.acc += Date.now() - this.t0; this.setCap({ secs: Math.floor(this.acc / 1000) }); try { this.mr.stop(); } catch (e) {} };
+  capSave = () => {
+    const c = this.state.cap;
+    const m = { id: Date.now(), name: c.name || "Untitled idea", secs: c.secs, url: c.url, dest: c.dest };
+    this.setState(s => ({ memos: [m].concat(s.memos), cap: { ...s.cap, status: "idle", url: null, secs: 0, msg: "Kept in this tab — cloud sync isn't connected, so it isn't uploaded yet." } }));
+  };
+  capDiscard = () => { if (this.state.cap.url) URL.revokeObjectURL(this.state.cap.url); this.stopPlayer(); this.setCap({ status: "idle", url: null, secs: 0, msg: "Take deleted." }); };
+  stopPlayer() { if (this.player) { this.player.pause(); this.player = null; } if (this.state.playing) this.setState({ playing: null }); }
+  playUrl(id, url) {
+    if (this.state.playing === id) { this.stopPlayer(); return; }
+    this.stopPlayer();
+    const a = new Audio(url); this.player = a;
+    a.onended = () => this.setState({ playing: null });
+    a.play().then(() => this.setState({ playing: id })).catch(() => this.setState({ playing: null }));
+  }
+
+  setDict(p) { this.setState(s => ({ dict: { ...s.dict, ...p } })); }
+  dictStart(view) {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const tgt = this.lastCaret;
+    if (!tgt) { this.setDict({ status: "notarget", view, text: "" }); return; }
+    if (!SR) { this.setDict({ status: "unsupported", view, text: "", target: tgt }); return; }
+    const r = new SR(); r.lang = "en-US"; r.interimResults = true; r.continuous = false;
+    let fin = "";
+    r.onresult = e => { let inter = ""; for (let i = e.resultIndex; i < e.results.length; i++) { const x = e.results[i]; if (x.isFinal) fin += x[0].transcript; else inter += x[0].transcript; } this.setDict({ text: (fin + " " + inter).trim() }); };
+    r.onerror = e => this.setDict({ status: e.error === "not-allowed" || e.error === "service-not-allowed" ? "denied" : e.error === "no-speech" ? "empty" : "error", msg: e.error });
+    r.onend = () => { const d = this.state.dict; if (d.status === "listening") this.setDict({ status: d.text ? "review" : "empty" }); };
+    this.recog = r;
+    this.setDict({ status: "listening", view, text: "", target: { ...tgt } });
+    try { r.start(); } catch (e) { this.setDict({ status: "error" }); }
+  }
+  dictInsert = () => {
+    const d = this.state.dict, t = d.target; if (!t || !d.text.trim()) return;
+    const s = this.sec(this.state, t.sid); if (!s) return;
+    const line = s.bars[t.bi] || "", pos = Math.min(t.pos, line.length);
+    const pre = line.slice(0, pos), post = line.slice(pos);
+    const ins = (pre && !/\s$/.test(pre) ? " " : "") + d.text.trim() + (post && !/^\s/.test(post) ? " " : "");
+    this._tk = null;
+    this.mut(doc => { this.sec(doc, t.sid).bars[t.bi] = pre + ins + post; });
+    this._pc = { key: this.keyOf(t.view, t.sid, t.bi), pos: pos + ins.length };
+    this.setDict({ status: "idle", text: "" });
+  };
+
+  lum(h) { const c = h.replace("#", "").match(/../g).map(x => parseInt(x, 16) / 255).map(v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; }
+  ratio(a, b) { const A = this.lum(a), B = this.lum(b); return (Math.max(A, B) + 0.05) / (Math.min(A, B) + 0.05); }
+  fmt(t) { t = Math.max(0, Math.floor(t || 0)); return Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0"); }
+
+  buildBars(view, s, compact) {
+    const S = this.state, f = S.showRhyme && (view === "d" || S.mAn) ? this.fam(s) : null;
+    const showSyl = S.showSyl && (view === "d" || S.mAn);
+    let firstEmptyHint = -1;
+    for (let i = 0; i < s.bars.length; i++) { if (!String(s.bars[i]).trim()) { firstEmptyHint = i; break; } }
+    return s.bars.map((text, bi) => {
+      const key = this.keyOf(view, s.id, bi);
+      const parts = String(text).split(/(\s+)/);
+      let off = 0, lastFam = null;
+      const sel = S.sel && S.sel.sid === s.id && S.sel.bi === bi ? S.sel : null;
+      const toks = parts.map((t, i) => {
+        const a = off; off += t.length;
+        if (i % 2 === 1 || !t) return { t, deco: "none", bg: "transparent" };
+        const fi = f ? f.of(bi, i / 2) : null;
+        if (fi !== null && fi !== undefined) lastFam = fi;
+        else if (t.trim()) lastFam = /[a-z]{3,}/i.test(t) ? lastFam : lastFam;
+        const hit = sel && a < sel.end && a + t.length > sel.start;
+        return { t, deco: fi !== null && fi !== undefined ? "underline " + this.FAM[fi % 6].s + " " + this.FAM[fi % 6].c : "none", bg: hit ? "rgba(222,199,255,.22)" : "transparent" };
+      });
+      let endFam = null;
+      if (f) { for (let i = parts.length - 1; i >= 0; i -= 1) { if (i % 2) continue; if (/[a-z]{3,}/i.test(parts[i])) { const x = f.of(bi, i / 2); endFam = x === undefined ? null : x; break; } } }
+      let ph = "";
+      if (S.hints && bi === firstEmptyHint) {
+        const prev = bi > 0 ? String(s.bars[bi - 1]).trim() : "";
+        if (prev) {
+          const lw = (prev.match(/[A-Za-z']+/g) || []).pop() || "";
+          const r = S.E && lw ? S.E.getRhymes(lw, "perfect", { pool: "words", limit: 3 }).map(x => x.word) : [];
+          ph = r.length ? "ends near “" + lw + "”? try " + r.join(", ") : "bar " + (bi + 1);
+        } else if (bi === 0) ph = "Start " + s.name + " here";
+      }
+      const n = this.syl(text);
+      const focused = view === "m" ? S.mFocus === key : S.sel && S.sel.view === "d" && S.sel.sid === s.id && S.sel.bi === bi;
+      return {
+        n: String(bi + 1).padStart(2, "0"), text, ph, toks,
+        aria: s.name + ", bar " + (bi + 1),
+        syl: showSyl && n ? "~" + n : "",
+        letter: endFam !== null ? "ABCDEF"[endFam % 6] : "", lc: endFam !== null ? this.FAM[endFam % 6].c : "transparent",
+        rowBg: focused ? "#1C1326" : "transparent",
+        gut: showSyl || f ? "54px" : "0px", showGut: !!(showSyl || f),
+        ref: this.refFor(key),
+        onChange: e => this.setBar(s.id, bi, e.target.value),
+        onFocus: () => { if (view === "m") { clearTimeout(this._blurT); if (this.state.mFocus !== key) this.setState({ mFocus: key, active: s.id }); } else if (this.state.active !== s.id && !this.state.readAll) this.setState({ active: s.id }); },
+        onBlur: () => { if (view === "m") { clearTimeout(this._blurT); this._blurT = setTimeout(() => this.setState({ mFocus: null }), 150); } },
+        onSelect: e => this.onSel(view, s.id, bi, e),
+        onKeyDown: e => this.onKey(view, s.id, bi, e)
+      };
+    });
+  }
+
+  renderVals() {
+    const S = this.state, E = S.E, self = this;
+    const act = S.sections.find(s => s.id === S.active) || S.sections[0];
+    const actIdx = S.sections.indexOf(act);
+    const written = s => s.bars.filter(b => String(b).trim()).length;
+
+    const navD = ["Home", "Projects", "Write", "Voice", "Stems", "Samples", "Inbox", "Settings"].map(n => ({
+      name: n === "Voice" ? "Notebook" : n, d: this.ICON[n], op: n === "Write" ? 1 : 0.42,
+      bg: n === "Write" ? "#291C36" : "transparent", fg: n === "Write" ? "#C5A1F0" : "#BDB0CA",
+      title: n === "Write" ? "Write" : n + " — designed in a later pass"
+    }));
+    const navM = ["Home", "Projects", "Write", "Voice", "More"].map(n => ({
+      name: n === "Voice" ? "Notebook" : n, d: this.ICON[n], op: n === "Write" ? 1 : 0.42,
+      fg: n === "Write" ? "#C5A1F0" : "#BDB0CA", title: n === "Write" ? "Write" : n + " — later pass"
+    }));
+
+    const secs = S.sections.map((s, i) => {
+      const on = s.id === act.id && !S.readAll;
+      return {
+        name: s.name, kindUp: s.kind.toUpperCase(), kc: this.KC[s.kind] || "#BDB0CA",
+        count: written(s) + "/" + s.bars.length, target: s.bars.length,
+        bg: on ? "#291C36" : "transparent", fg: on ? "#F5F0FA" : "#BDB0CA",
+        active: on, renaming: S.renaming === s.id, notRenaming: S.renaming !== s.id,
+        first: i === 0, last: i === S.sections.length - 1, noLess: !this.canLess(s),
+        lessTitle: this.canLess(s) ? "Remove the last bar" : "The last bar has words — clear it first",
+        onSelect: () => this.setState({ active: s.id, readAll: false, sel: null }),
+        startRename: () => this.setState({ renaming: s.id }),
+        onRename: e => this.rename(s.id, e.target.value),
+        onRenameKey: e => { if (e.key === "Enter" || e.key === "Escape") this.setState({ renaming: null }); },
+        endRename: () => this.setState({ renaming: null }),
+        up: () => this.moveSection(s.id, -1), down: () => this.moveSection(s.id, 1),
+        remove: () => this.removeSection(s.id),
+        less: () => this.resize(s.id, -1), more: () => this.resize(s.id, 1)
+      };
+    });
+    const kinds = this.KINDS.map(([k, n]) => ({ name: k, onAdd: () => this.addSection(k, n) }));
+
+    const groupSet = S.readAll ? S.sections : [act];
+    const groupsD = groupSet.map(s => ({ name: s.name, kindUp: s.kind.toUpperCase(), kc: this.KC[s.kind], count: written(s) + " of " + s.bars.length + " bars", showHead: S.readAll, bars: this.buildBars("d", s) }));
+    const groupsM = groupSet.map(s => ({ name: s.name, count: written(s) + " of " + s.bars.length + " bars", showHead: S.readAll, bars: this.buildBars("m", s) }));
+
+    const q = S.sel ? S.sel.q : "";
+    const sg = this.sugg(q);
+    const list = sg[S.ptab] || [];
+    const picks = list.map(r => ({
+      w: r.word, syl: r.syllables + "", aria: "Insert " + r.word,
+      meta: (S.ptab === "Near" ? r.tier + " · " : "") + r.syllables + " syl",
+      onInsert: () => this.insert(r.word)
+    }));
+    const ptabs = ["Perfect", "Near", "Multi"].map(n => ({
+      label: n + (q && E ? " " + (sg[n] || []).length : ""),
+      mark: S.ptab === n ? "#C5A1F0" : "transparent", fg: S.ptab === n ? "#F5F0FA" : "#BDB0CA",
+      onTap: () => this.setState({ ptab: n })
+    }));
+    const qSyl = q ? this.syl(q) : 0;
+    const qPh = E && q ? E.phonemesForPhrase(q).join(" ") : "";
+    const selBar = S.sel ? S.sel.bi + 1 : 0;
+    const selSec = S.sel ? (this.sec(S, S.sel.sid) || {}).name : "";
+
+    const toggles = [
+      ["Read all", S.readAll, () => this.setState({ readAll: !S.readAll, sel: null })],
+      ["Syllables", S.showSyl, () => this.setState({ showSyl: !S.showSyl })],
+      ["Rhymes", S.showRhyme, () => this.setState({ showRhyme: !S.showRhyme })],
+      ["Hints", S.hints, () => this.setState({ hints: !S.hints })]
+    ].map(([name, on, onTap]) => ({ name, on, onTap, bg: on ? "#C5A1F0" : "transparent", fg: on ? "#160D20" : "#BDB0CA" }));
+
+    const B = S.beat, has = !!this.audio && !!B.name;
+    const wave = B.peaks ? B.peaks.map((p, i) => ({ h: Math.max(6, Math.round(p * 100)) + "%", bg: B.dur && i / B.peaks.length <= B.t / B.dur ? "#C5A1F0" : "#5A4870" })) : [];
+    const waveMsg = B.err ? B.err : B.decoding ? "Reading the waveform from your file…" : has ? "Waveform unavailable for this file — playback still works." : "No beat loaded. Pick an audio file from this device; it plays here and isn't uploaded.";
+
+    const C = S.cap;
+    const meter = Array.from({ length: 16 }, (_, i) => ({ bg: C.status === "rec" && C.level * 16 > i ? (i > 12 ? "#FF747D" : i > 9 ? "#D5AA69" : "#C5A1F0") : "#40304F" }));
+    const problems = { denied: "Microphone access is blocked. Allow it for this site in the browser settings, then try again.", unsupported: "This browser can't record audio here.", error: C.err || "Recording couldn't start." };
+    const dests = ["Idea Inbox", "This project"].map(n => ({ name: n, bg: C.dest === n ? "#C5A1F0" : "transparent", fg: C.dest === n ? "#160D20" : "#F5F0FA", onTap: () => this.setCap({ dest: n }) }));
+    const memos = S.memos.map(m => ({ name: m.name, meta: this.fmt(m.secs) + " · " + (m.dest === "This project" ? S.title : m.dest), glyph: S.playing === m.id ? "■" : "▶", onPlay: () => this.playUrl(m.id, m.url) }));
+
+    const D = S.dict;
+    const dMsgs = {
+      notarget: "Tap into a bar first — dictation inserts at your cursor.",
+      unsupported: "Dictation isn't available in this browser. On iPhone, the keyboard's own mic key types straight into the bar.",
+      denied: "Speech access is blocked. Allow the microphone for this site, then try again.",
+      empty: "Didn't catch anything. Try again a little closer to the mic.",
+      error: "Dictation stopped with an error (" + (D.msg || "unknown") + ")."
+    };
+    const dOpen = D.status !== "idle";
+    const tSec = D.target ? this.sec(S, D.target.sid) : null;
+
+    const tokenList = [["Canvas", "#0D0912"], ["Navigation", "#130D1B"], ["Panel", "#1C1326"], ["Raised panel", "#291C36"], ["Decorative border", "#40304F"], ["Control border", "#6E5B84"], ["Primary text", "#F5F0FA"], ["Secondary text", "#BDB0CA"], ["Hint text", "#9C8DAE"], ["Primary action", "#C5A1F0"], ["Text on action", "#160D20"], ["Focus ring", "#DEC7FF"], ["Silver", "#D8D8E0"], ["Warm accent", "#D5AA69"], ["Recording", "#FF747D"], ["Chrome shadow", "#8E8A9C"]];
+    const pairDefs = [
+      ["Lyrics on canvas", "#F5F0FA", "#0D0912", 4.5], ["Secondary on panel", "#BDB0CA", "#1C1326", 4.5], ["Secondary on raised", "#BDB0CA", "#291C36", 4.5],
+      ["Hint text on canvas", "#9C8DAE", "#0D0912", 4.5], ["Hint text on raised", "#9C8DAE", "#291C36", 4.5], ["Action label", "#160D20", "#C5A1F0", 4.5],
+      ["Lavender on nav", "#C5A1F0", "#130D1B", 4.5], ["Warm on raised", "#D5AA69", "#291C36", 4.5], ["Record label", "#160D20", "#FF747D", 4.5],
+      ["Control border on panel (UI)", "#6E5B84", "#1C1326", 3], ["Decorative border on panel", "#40304F", "#1C1326", 0]
+    ];
+    const pairs = pairDefs.map(([name, fg, bg, need]) => { const r = this.ratio(fg, bg); const ok = need ? r >= need : false; return { name, fg, bg, sample: "", ratio: r.toFixed(1) + ":1", verdict: need ? (ok ? (need === 3 ? "PASS UI" : "PASS AA") : "FAIL") : "DECOR ONLY", vc: need ? (ok ? "#C5A1F0" : "#FF747D") : "#9C8DAE" }; });
+    const famKey = this.FAM.map((f, i) => ({ l: "ABCDEF"[i], c: f.c, word: ["glass", "slow", "mute", "land", "late", "know"][i], deco: "underline " + f.s + " " + f.c }));
+
+    const saveColor = S.saveErr ? "#FF747D" : S.saving ? "#D5AA69" : S.savedAt ? "#C5A1F0" : "#9C8DAE";
+    const tStr = S.savedAt ? new Date(S.savedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "";
+
+    return {
+      lexCount: E && E.WORD_INDEX ? E.WORD_INDEX.length.toLocaleString() : "…",
+      fileRef: el => { this.fileInput = el; },
+      onBeatFile: this.onBeatFile,
+      navD, navM,
+      title: S.title, bpm: S.bpm, keySig: S.keySig,
+      onTitle: e => this.mut(d => { d.title = e.target.value; }, "title"),
+      onBpm: e => this.mut(d => { d.bpm = e.target.value.replace(/[^\d.]/g, "").slice(0, 5); }, "bpm"),
+      onKey: e => this.mut(d => { d.keySig = e.target.value; }, "key"),
+      saveColor, saveLabel: S.saveErr ? "Couldn't save on this device" : S.saving ? "Saving on this device…" : S.savedAt ? "Saved on this device · " + tStr : "Not saved yet",
+      saveShort: S.saveErr ? "Not saved" : S.saving ? "Saving…" : S.savedAt ? "Saved on device" : "Not saved yet",
+      undo: this.undo, redo: this.redo, noUndo: !S.hist.length, noRedo: !S.fut.length,
+      capOpenD: () => this.setCap({ open: true, view: "d" }), capOpenM: () => this.setCap({ open: true, view: "m" }),
+      capClose: () => this.setCap({ open: false }),
+      capBtnBg: C.status === "rec" ? "#3A1E2A" : "transparent",
+      capBtnLabel: C.status === "rec" ? "Recording " + this.fmt(C.secs) : C.status === "paused" ? "Paused " + this.fmt(C.secs) : "Quick Capture",
+      songBars: S.sections.reduce((a, s) => a + written(s), 0) + " / " + S.sections.reduce((a, s) => a + s.bars.length, 0) + " bars",
+      secs, kinds, addOpen: S.addOpen, toggleAdd: () => this.setState({ addOpen: !S.addOpen }),
+      edKicker: S.readAll ? "WHOLE SONG" : act.kind.toUpperCase() + " · " + written(act) + " OF " + act.bars.length + " BARS",
+      edTitle: S.readAll ? S.title : act.name,
+      edKickerM: S.readAll ? "WHOLE SONG" : act.name.toUpperCase() + " · " + written(act) + "/" + act.bars.length + " BARS",
+      toggles, groupsD, groupsM,
+      sylNote: S.sylNote, dismissNote: () => this.setState({ sylNote: false }),
+      qShow: q || "—",
+      qMeta: !E ? "Loading the rhyme dictionary…" : q ? "~" + qSyl + " syllable" + (qSyl === 1 ? "" : "s") + " · heard as " + qPh + " · " + selSec + ", bar " + selBar : "Put your cursor in a word, or at the end of a bar.",
+      qMetaShort: q ? "~" + qSyl + " syl" : "",
+      ptabs, picks,
+      noPicks: !picks.length,
+      noPicksMsg: !E ? "Loading the rhyme dictionary…" : !q ? "Put your cursor in a word to see rhymes." : "No " + S.ptab.toLowerCase() + " matches in the on-device dictionary for “" + q + "”. Try another tab — slang and names may be missing until you add a pronunciation.",
+      panelFoot: q ? "Insert replaces “" + q + "” in bar " + selBar + " and keeps your cursor there. Ctrl+Z undoes it." : "Suggestions come from the on-device dictionary. Nothing is inserted unless you press Insert.",
+      pickBeat: () => this.fileInput && this.fileInput.click(),
+      beatBtn: has ? "Change beat" : "Load beat", beatBtnShort: has ? "Change" : "Load beat",
+      beatToggle: this.beatToggle, beatToggleOrPick: () => (has ? this.beatToggle() : this.fileInput && this.fileInput.click()),
+      noBeat: !has, playing: B.playing, paused: !B.playing, playLabel: B.playing ? "Pause beat" : has ? "Play beat" : "Load a beat",
+      beatName: B.name || "No beat loaded", beatNameM: B.name || "No beat — load one from this phone",
+      beatTime: has ? this.fmt(B.t) + " / " + this.fmt(B.dur) + (S.bpm ? " · " + S.bpm + " BPM (from song)" : "") : "—",
+      beatTimeShort: has ? this.fmt(B.t) : "", beatPct: B.dur ? Math.min(100, (B.t / B.dur) * 100).toFixed(1) + "%" : "0%",
+      wave, waveEmpty: !wave.length, waveMsg, seekCursor: has && B.dur ? "pointer" : "default",
+      seek: e => { if (!this.audio || !B.dur) return; const r = e.currentTarget.getBoundingClientRect(); const fr = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)); this.audio.currentTime = fr * B.dur; this.setBeat({ t: this.audio.currentTime }); },
+      loop: B.loop, loopBg: B.loop ? "#C5A1F0" : "transparent", loopFg: B.loop ? "#160D20" : "#BDB0CA",
+      loopToggle: () => { const v = !B.loop; if (this.audio) this.audio.loop = v; this.setBeat({ loop: v }); },
+      capD: C.open && C.view === "d", capM: C.open && C.view === "m",
+      cIdle: C.status === "idle", cAsking: C.status === "asking", cLive: C.status === "rec" || C.status === "paused",
+      cReview: C.status === "review", cProblem: !!problems[C.status], cProblemMsg: problems[C.status] || "",
+      cStateLabel: C.status === "paused" ? "PAUSED" : "RECORDING", cStateColor: C.status === "paused" ? "#D5AA69" : "#FF747D",
+      cPauseLabel: C.status === "paused" ? "Resume" : "Pause", cTime: this.fmt(C.secs), meter,
+      cName: C.name, capRename: e => this.setCap({ name: e.target.value }),
+      cPlayGlyph: S.playing === "review" ? "■" : "▶", capPlay: () => C.url && this.playUrl("review", C.url),
+      dests, cMsg: C.msg, cMsgShow: !!C.msg,
+      capStart: this.capStart, capPause: this.capPause, capStop: this.capStop, capSave: this.capSave, capDiscard: this.capDiscard,
+      hasMemos: S.memos.length > 0, memos,
+      dictStartD: () => this.dictStart("d"), dictStartM: () => this.dictStart("m"),
+      dictStop: () => { try { this.recog && this.recog.stop(); } catch (e) {} },
+      dictClose: () => { try { this.recog && this.recog.abort(); } catch (e) {} this.setDict({ status: "idle", text: "" }); },
+      dictEdit: e => this.setDict({ text: e.target.value }), dictInsert: this.dictInsert,
+      dictD: dOpen && D.view === "d", dictM: dOpen && D.view === "m",
+      dListening: D.status === "listening", dReview: D.status === "review", dText: D.text || (D.status === "listening" ? "…" : ""),
+      dMsgShow: !!dMsgs[D.status], dMsg: dMsgs[D.status] || "", dRetry: D.status === "empty" || D.status === "error" || D.status === "denied",
+      dInsertLabel: tSec ? "Insert at cursor — " + tSec.name + ", bar " + (D.target.bi + 1) : "Insert at cursor",
+      mKb: !!S.mFocus, mNoKb: !S.mFocus,
+      mTabs: [{ id: "__all", name: "All", count: "" }].concat(S.sections.map(s => ({ id: s.id, name: s.name, count: written(s) + "/" + s.bars.length }))).map(t => {
+        const on = t.id === "__all" ? S.readAll : !S.readAll && t.id === act.id;
+        return { name: t.name, count: t.count, bg: on ? "#C5A1F0" : "transparent", fg: on ? "#160D20" : "#F5F0FA", sub: on ? "#3A2750" : "#9C8DAE", bd: on ? "#C5A1F0" : "#6E5B84",
+          onTap: () => this.setState(t.id === "__all" ? { readAll: true, sel: null } : { readAll: false, active: t.id, sel: null }) };
+      }),
+      mAn: S.mAn, mAnLabel: S.mAn ? "Hide analysis" : "Show analysis", mAnToggle: () => this.setState({ mAn: !S.mAn }),
+      mSecTools: S.mSecTools && !S.readAll, mSecToolsToggle: () => this.setState({ mSecTools: !S.mSecTools, mRenaming: false }),
+      mRenaming: S.mRenaming, actName: act.name,
+      actStartRename: () => this.setState({ mRenaming: !S.mRenaming }),
+      actRename: e => this.rename(act.id, e.target.value),
+      actRenameKey: e => { if (e.key === "Enter") this.setState({ mRenaming: false }); },
+      actUp: () => this.moveSection(act.id, -1), actDown: () => this.moveSection(act.id, 1),
+      actFirst: actIdx === 0, actLast: actIdx === S.sections.length - 1,
+      actLess: () => this.resize(act.id, -1), actMore: () => this.resize(act.id, 1), actNoLess: !this.canLess(act),
+      actRemove: () => this.removeSection(act.id),
+      mScrollRef: el => { this.mScroll = el; },
+      mDrawer: S.drawer, drawerOpen: () => this.setState({ drawer: true }), drawerClose: () => this.setState({ drawer: false }),
+      mDone: () => { const el = this.inputs[S.mFocus]; if (el) el.blur(); this.setState({ mFocus: null, drawer: false }); },
+      keep: e => { if (e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") e.preventDefault(); },
+      keepSoft: e => { if (e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") e.preventDefault(); },
+      tokens: tokenList.map(([name, hex]) => ({ name, hex })), pairs, famKey
+    };
+  }
+}
+</script>
+</body>
+</html>

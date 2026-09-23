@@ -28,6 +28,19 @@ On GitHub, go to Settings → Pages → Deploy from branch → `main` / `docs`. 
 
 Live: https://maximus-aaurelius.github.io/rhymeflux/
 
+## Known source issue
+
+The Write screen and Engine Bench components both load `rhyme-engine.js`/`slang-overlay.json` with a bare relative `import()`/`fetch()`. Because those components run from a `blob:` URL inside the dc-runtime canvas, the relative path never resolves once the page is exported and self-hosted — the rhyme panel just spins on "Loading the rhyme dictionary..." forever with no console error. This repo's `docs/index.html` and `workspace/*.dc.html` have been patched to resolve against `document.baseURI` instead, but **every fresh export from Claude Design will reset this** since the bug lives in the canvas source itself. Fix at the source: in both `componentDidMount()`s, replace
+```js
+import("./rhyme-engine.js")
+fetch("slang-overlay.json")
+```
+with
+```js
+import(new URL("rhyme-engine.js", document.baseURI).href)
+fetch(new URL("slang-overlay.json", document.baseURI).href)
+```
+
 ## What works in this build
 
 - Working in the page: lyric editor, sections, undo/redo, autosave to this browser (localStorage), rhyme marks and suggestions from the on-device dictionary, syllable estimates, beat playback from a local file, Quick Capture audio recording (kept in the tab only).

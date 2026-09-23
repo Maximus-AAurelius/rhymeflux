@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="stylesheet" href="_ds/modernist-f96d09d9-5145-4426-9bcd-92e8738bf153/styles.css"><script src="_ds/modernist-f96d09d9-5145-4426-9bcd-92e8738bf153/_ds_bundle.js"></script><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap"><style>body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body)}a{color:var(--color-accent)}a:hover{color:var(--color-accent-700)}</style></helmet>
+<div style="max-width:1120px;margin:0 auto;padding:48px 40px 80px">
+<div style="font:700 11px var(--font-heading);letter-spacing:.16em;color:var(--color-accent)">MILESTONE 1 · RHYME ENGINE + SYLLABLE COUNTER</div>
+<h1 style="font:800 44px/1.02 var(--font-heading);letter-spacing:-.03em;margin:8px 0 12px">Engine bench</h1>
+<p style="max-width:64ch;font:15px/1.6 var(--font-body);color:var(--color-neutral-800);text-wrap:pretty">The engine is <b>rhyme-engine.js</b> — no DOM, no network, no framework, exported as <code>getRhymes()</code> / <code>getSyllableCount()</code> / <code>score()</code> / <code>verifyRhyme()</code> / <code>rhymeFamilies()</code>. Pronunciations layer curated ARPAbet over a hand-maintained slang overlay over a rule-based G2P fallback, all memoised in-process. Drop CMUdict in between the first two layers and nothing above this line changes.</p>
+<div style="height:2px;background:var(--color-divider);margin:26px 0"></div>
+
+<div style="display:flex;gap:0;border:1px solid var(--color-divider);margin-bottom:34px">
+<div style="flex:1;padding:16px 18px;border-right:1px solid var(--color-divider)"><div style="font:700 9px var(--font-heading);letter-spacing:.14em;color:var(--color-neutral-600)">ASSERTIONS</div><div style="font:800 30px var(--font-heading);letter-spacing:-.02em">{{ total }}</div></div>
+<div style="flex:1;padding:16px 18px;border-right:1px solid var(--color-divider)"><div style="font:700 9px var(--font-heading);letter-spacing:.14em;color:var(--color-neutral-600)">PASSING</div><div style="font:800 30px var(--font-heading);letter-spacing:-.02em;color:var(--color-accent-700)">{{ passed }}</div></div>
+<div style="flex:1;padding:16px 18px;border-right:1px solid var(--color-divider)"><div style="font:700 9px var(--font-heading);letter-spacing:.14em;color:var(--color-neutral-600)">FAILING</div><div style="font:800 30px var(--font-heading);letter-spacing:-.02em;color:{{ failTone }}">{{ failed }}</div></div>
+<div style="flex:1;padding:16px 18px"><div style="font:700 9px var(--font-heading);letter-spacing:.14em;color:var(--color-neutral-600)">CACHE ENTRIES</div><div style="font:800 30px var(--font-heading);letter-spacing:-.02em">{{ cache }}</div></div>
+</div>
+
+<div style="font:700 11px var(--font-heading);letter-spacing:.14em;margin-bottom:10px">SPEC</div>
+<div style="border-top:2px solid var(--color-divider)">
+<div style="display:flex;padding:8px 0;border-bottom:1px solid var(--color-neutral-300);font:700 9px var(--font-heading);letter-spacing:.12em;color:var(--color-neutral-600)">
+<div style="width:64px">STATE</div><div style="flex:1.4">CASE</div><div style="flex:1">EXPECTED</div><div style="flex:1">ACTUAL</div>
+</div>
+<sc-for list="{{ tests }}" as="t" hint-placeholder-count="18">
+<div style="display:flex;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--color-neutral-300);font:13px/1.4 var(--font-body)">
+<div style="width:64px;flex:none;font:700 10px var(--font-heading);letter-spacing:.1em;color:{{ t.tone }}">{{ t.state }}</div>
+<div style="flex:1.4;min-width:0;padding-right:16px">{{ t.name }}</div>
+<div style="flex:1;min-width:0;color:var(--color-neutral-700)">{{ t.want }}</div>
+<div style="flex:1;min-width:0;font-weight:500">{{ t.got }}</div>
+</div>
+</sc-for>
+</div>
+
+<div style="height:2px;background:var(--color-divider);margin:34px 0 26px"></div>
+<div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap">
+<div style="flex:1;min-width:340px">
+<div style="font:700 11px var(--font-heading);letter-spacing:.14em;margin-bottom:12px">SCORE A PAIR</div>
+<div style="display:flex;gap:10px;margin-bottom:14px">
+<input value="{{ a }}" onChange="{{ onA }}" style="flex:1;min-width:0;border:1px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-body);font-size:16px;padding:10px 12px;outline:none" />
+<input value="{{ b }}" onChange="{{ onB }}" style="flex:1;min-width:0;border:1px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-body);font-size:16px;padding:10px 12px;outline:none" />
+</div>
+<div style="border:1px solid var(--color-divider);padding:16px 18px">
+<div style="display:flex;align-items:baseline;gap:14px"><div style="font:800 34px var(--font-heading);letter-spacing:-.03em">{{ pairScore }}</div><div style="font:800 15px var(--font-heading);letter-spacing:.06em;color:{{ pairTone }}">{{ pairTier }}</div></div>
+<div style="margin-top:12px;font:11px/1.7 var(--font-body);color:var(--color-neutral-700)"><span style="color:var(--color-neutral-500)">A</span> {{ aPh }}<br><span style="color:var(--color-neutral-500)">B</span> {{ bPh }}<br><span style="color:var(--color-neutral-500)">TAILS</span> {{ tails }}</div>
+</div>
+<div style="margin-top:12px;font:11px/1.55 var(--font-body);color:var(--color-neutral-600)">Weighted phoneme edit distance over the trailing phonemes from the last stressed vowel. Stressed-vowel substitutions cost the most, trailing consonants less, syllable-count difference a small penalty.</div>
+</div>
+<div style="flex:1;min-width:340px">
+<div style="font:700 11px var(--font-heading);letter-spacing:.14em;margin-bottom:12px">RANKED RHYMES FOR “{{ aClean }}”</div>
+<div style="border-top:1px solid var(--color-divider)">
+<sc-for list="{{ ranked }}" as="r" hint-placeholder-count="10">
+<div style="display:flex;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid var(--color-neutral-300)">
+<div style="flex:1;min-width:0;font:15px var(--font-body)">{{ r.word }}</div>
+<div style="flex:none;font:700 9px var(--font-heading);letter-spacing:.1em;color:{{ r.tone }}">{{ r.tier }}</div>
+<div style="flex:none;width:48px;text-align:right;font:700 13px var(--font-heading);font-variant-numeric:tabular-nums">{{ r.score }}</div>
+<div style="flex:none;width:34px;text-align:right;font:11px var(--font-body);color:var(--color-neutral-600)">{{ r.syl }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1120,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { E: null, a: "casket", b: "Patek" };
+  componentDidMount() {
+    const _rfBase = document.baseURI;
+    import(new URL("rhyme-engine.js", _rfBase).href).then(m => {
+      const E = m.default || m;
+      fetch(new URL("slang-overlay.json", _rfBase).href).then(r => r.json()).then(j => E.registerSlang(j.entries)).catch(() => {})
+        .then(() => this.setState({ E }));
+    });
+  }
+  spec(E) {
+    const t = [];
+    const tierAtLeast = (a, b, want) => {
+      const r = E.score(a, b);
+      const ok = !!r.tier && E.TIERS.indexOf(r.tier) >= E.TIERS.indexOf(want);
+      t.push({ name: "score(" + a + ", " + b + ") ≥ " + want, want: "≥ " + want, got: (r.tier || "none") + " · " + r.score.toFixed(2), ok });
+    };
+    const eq = (name, got, want) => t.push({ name, want: String(want), got: String(got), ok: String(got) === String(want) });
+    tierAtLeast("casket", "Patek", "assonance");
+    tierAtLeast("city", "gritty", "family");
+    tierAtLeast("ready", "steady", "family");
+    tierAtLeast("motion", "ocean", "family");
+    tierAtLeast("time", "mine", "slant");
+    tierAtLeast("god", "fraud", "slant");
+    tierAtLeast("incredible", "unforgettable", "assonance");
+    const nope = E.score("orange", "table");
+    t.push({ name: "score(orange, table) is not a rhyme", want: "none/assonance", got: nope.tier || "none", ok: !nope.tier || nope.tier === "assonance" });
+    eq("getSyllableCount('FBI on the line')", E.getSyllableCount("FBI on the line"), 6);
+    eq("getSyllableCount('city')", E.getSyllableCount("city"), 2);
+    eq("getSyllableCount('Ink on the paper like a map of the city')", E.getSyllableCount("Ink on the paper like a map of the city"), 12);
+    eq("ad-libs in parens ignored", E.getSyllableCount("hold the line (yeah)"), E.getSyllableCount("hold the line"));
+    eq("g2p fallback covers OOV word", E.phonemesFor("skrrt").length > 0, true);
+    eq("slang overlay applied to 'patek'", E.phonemesFor("patek").join(" "), "P AA0 T EH1 K");
+    const rh = E.getRhymes("casket", "slant", { pool: "words", limit: 8 });
+    eq("getRhymes returns ranked tiers, not booleans", rh.length > 0 && !!rh[0].tier && typeof rh[0].score === "number", true);
+    eq("getRhymes is sorted descending", rh.every((r, i) => i === 0 || rh[i - 1].score >= r.score), true);
+    eq("getRhymes never returns the query", rh.every(r => r.word.toLowerCase() !== "casket"), true);
+    const ml = E.getRhymes("map of the city", "slant", { pool: "phrases", limit: 5 });
+    eq("multi-word query returns phrase matches", ml.length > 0, true);
+    const v = E.verifyRhyme("stack it in the attic", "static", "slant");
+    eq("verifyRhyme accepts a real rhyme", v.ok, true);
+    const v2 = E.verifyRhyme("nothing here at all", "static", "slant");
+    eq("verifyRhyme rejects a non-rhyme", v2.ok, false);
+    const fam = E.rhymeFamilies(["Ink on the paper like a map of the city", "Every line I stack it and the pattern get gritty"], "Rap");
+    eq("rhymeFamilies groups city/gritty", fam.of(0, 9) !== null && fam.of(0, 9) === fam.of(1, 9), true);
+    eq("rhymeFamilies skips stopwords", fam.of(0, 1), null);
+    eq("sensitivity Off disables colouring", E.rhymeFamilies(["city gritty"], "Off").count, 0);
+    return t;
+  }
+  renderVals() {
+    const E = this.state.E, S = this.state;
+    if (!E) return { total: "—", passed: "—", failed: "—", cache: "—", failTone: "var(--color-text)", tests: [], a: S.a, b: S.b, onA: e => this.setState({ a: e.target.value }), onB: e => this.setState({ b: e.target.value }), pairScore: "—", pairTier: "LOADING", pairTone: "var(--color-neutral-600)", aPh: "", bPh: "", tails: "", ranked: [], aClean: S.a };
+    const t = this.spec(E);
+    const pass = t.filter(x => x.ok).length;
+    const TONE = { perfect: "var(--color-accent)", family: "var(--color-accent-700)", slant: "var(--color-neutral-700)", assonance: "var(--color-neutral-600)" };
+    const r = E.score(S.a, S.b);
+    const ta = E.tail(E.phonemesForPhrase(S.a)).join(" "), tb = E.tail(E.phonemesForPhrase(S.b)).join(" ");
+    return {
+      total: t.length, passed: pass, failed: t.length - pass,
+      failTone: t.length - pass ? "var(--color-accent)" : "var(--color-neutral-500)",
+      cache: E.cacheSize(),
+      tests: t.map(x => ({ ...x, state: x.ok ? "PASS" : "FAIL", tone: x.ok ? "var(--color-accent-700)" : "var(--color-accent)" })),
+      a: S.a, b: S.b, aClean: S.a,
+      onA: e => this.setState({ a: e.target.value }), onB: e => this.setState({ b: e.target.value }),
+      pairScore: r.score.toFixed(2), pairTier: (r.tier || "no rhyme").toUpperCase(),
+      pairTone: TONE[r.tier] || "var(--color-neutral-600)",
+      aPh: E.phonemesForPhrase(S.a).join(" ") || "—", bPh: E.phonemesForPhrase(S.b).join(" ") || "—",
+      tails: ta + "  ⇄  " + tb,
+      ranked: E.getRhymes(S.a, "assonance", { limit: 14 }).map(x => ({
+        word: x.word, tier: x.tier.toUpperCase(), tone: TONE[x.tier], score: x.score.toFixed(2), syl: x.syllables
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>
