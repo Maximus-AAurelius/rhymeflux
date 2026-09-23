@@ -23,23 +23,25 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0a0712;fon
 .chrome-text{background:linear-gradient(180deg,#fdfbff 0%,#cbb8ef 30%,#8b5cf6 52%,#cbb8ef 78%,#fdfbff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 2px 14px rgba(139,92,246,.4)}
 input[type=range]{accent-color:var(--color-accent)}
 #app-shell{height:100dvh;width:100%;display:flex}
-#app-card{width:100%;height:100%;background:var(--color-bg);display:flex;flex-direction:column;position:relative}
+#app-card{flex:1;max-width:1400px;margin:0 auto;height:100%;background:var(--color-bg);display:flex;flex-direction:column;position:relative}
 #brand-panel{display:none}
 @media (min-width:900px){
   #brand-panel{display:flex;flex-direction:column;justify-content:center;flex:1;min-width:340px;padding:0 clamp(40px,6vw,96px);box-sizing:border-box;height:100%;position:relative;overflow:hidden;background:radial-gradient(120% 90% at 22% 18%,#3a2160 0%,#150f1f 62%),linear-gradient(180deg,#1c1330,#0a0712);border-right:1px solid rgba(201,164,255,.14)}
-  #app-card{flex:none;width:min(52vw,860px);height:100%}
 }
+.login-form{max-width:420px;margin:0 auto;width:100%}
 #brand-panel .bp-word{font:800 clamp(44px,6vw,84px) / 1.02 var(--font-heading);letter-spacing:-.02em}
 #brand-panel .bp-tag{margin-top:18px;font:16px/1.6 var(--font-body);color:rgba(241,236,247,.55);max-width:420px}
 #brand-panel .bp-rule{width:64px;height:3px;background:linear-gradient(90deg,#8b5cf6,#c9a4ff);margin-top:32px}
 #brand-panel .bp-glow{position:absolute;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,.32),transparent 70%);top:-120px;right:-160px;pointer-events:none}
 </style></helmet>
 <div id="app-shell">
+<sc-if value="{{ !authed }}" hint-placeholder-val="{{ false }}">
 <div id="brand-panel"><div class="bp-glow"></div><div class="bp-word chrome-text">BARWORK</div><div class="bp-rule"></div><div class="bp-tag">A rap writing studio. Rhymes, syllables, beats, and takes — all in one place, saved to your account.</div></div>
+</sc-if>
 <div id="app-card">
 
 <sc-if value="{{ !authed }}" hint-placeholder-val="{{ false }}">
-<div style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:32px 24px;box-sizing:border-box">
+<div class="login-form" style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:32px 24px;box-sizing:border-box">
 <div class="chrome-text" style="font:800 28px var(--font-heading);letter-spacing:-.02em">BARWORK</div>
 <div style="font:12px var(--font-body);color:var(--color-neutral-600);margin-bottom:8px">Sign in — this app is private to your account.</div>
 <input value="{{ authEmail }}" onChange="{{ onAuthEmail }}" placeholder="email" type="email" style="border:1px solid var(--color-neutral-300);padding:14px 12px;font:14px var(--font-body);outline:none" />
@@ -615,7 +617,7 @@ class Component extends DCLogic {
     this.startDeckLoop(which);
   };
 
-  toggleDeckPlay = (which) => {
+  toggleDeckPlay = async (which) => {
     const store = this.deckStore(which);
     if (!store.player) return;
     const S = this.state["deck" + which];
@@ -623,6 +625,7 @@ class Component extends DCLogic {
       store.player.stop();
       this.setState(prev => ({ ["deck" + which]: { ...prev["deck" + which], playing: false } }));
     } else {
+      await this._Tone.start();
       const loopReady = S.loopOn && store.loopStart != null && store.loopEnd != null;
       const offset = loopReady ? store.loopStart : (store.startOffset >= (store.buffer ? store.buffer.duration : 0) ? 0 : store.startOffset || 0);
       store.player.loop = !!loopReady;
