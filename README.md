@@ -64,6 +64,16 @@ Use [the iPhone setup guide](docs/IPHONE-SETUP.md) for private home Wi-Fi access
 
 The original Git histories and remote repositories were not rewritten or pushed. Old Supabase records/files remain untouched; they have **not** been copied into the new local database because no authenticated cloud export was available. Existing browser cloud tokens are not read or sent anywhere by ScrewShop. You may need to re-import music that existed only in Supabase.
 
+## STUDIO: GarageBand-style multitrack
+
+- Tracks stack down the page with a **bars.beats ruler** on top and a big position display (bar.beat.sixteenth + time).
+- **IMPORT AUDIO** puts your first file on Track 1 as the beat; later imports land on a new track at the playhead. You can also drop audio files from Windows straight onto a lane.
+- **LOOPS & FILES** lists split stems/sound-pack pieces and your SONGS. Drag one onto a track, or onto the empty bottom lane for a new track (on a phone, tap **+ ADD**).
+- **Clips** drag left/right (and between tracks) and snap to the beat; hold **Alt** for free placement. Drag a clip's **right edge** past its end to **loop** it (notches mark each repeat) or pull it in to trim. ⧉ duplicates a clip, × or Delete removes it (the audio file stays in SONGS/takes).
+- **CYCLE**: drag along the top strip of the ruler to set the yellow region; playback repeats it. **CLICK** = metronome, **COUNT-IN** = one bar of clicks before RECORD. Shortcuts: C cycle, K click, Ctrl+D duplicate.
+- **RECORD** adds a new vocal track at the playhead (cycle is ignored while recording). **TEMPO** sets the grid; it does not time-stretch audio.
+- Sessions saved by the old STUDIO open automatically as one clip per track.
+
 ## SCREW room: lining up two records
 
 - Each deck has a **clock** under its waveform: where you are (m:ss.t), time left, the song length, loop points, and on deck B how far it is **BEHIND A / AHEAD OF A** (or **LOCKED WITH A**).

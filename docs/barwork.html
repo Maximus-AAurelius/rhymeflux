@@ -142,16 +142,28 @@ button:focus-visible,input:focus-visible{outline:2px solid #e2c6ff;outline-offse
 </sc-if>
 
 <sc-if value="{{ isStudio }}" hint-placeholder-val="{{ false }}">
-<div class="recording-workspace">
-<div class="session-toolbar"><div><strong>BUILD YOUR RECORD</strong><small>Beat on Track 1. Every vocal gets its own lane.</small></div><button onClick="{{ studioImport }}">IMPORT BEAT</button><button onClick="{{ studioSources }}">LIBRARY &amp; SPLIT</button></div>
-<div class="session-actions"><button onClick="{{ studioPlay }}">{{ studioPlayLabel }}</button><button onClick="{{ studioStop }}">STOP MIX</button><button class="session-record" onClick="{{ recToggle }}" disabled="{{ studioBusy }}">{{ recLabel }}</button><span data-studio-clock="true">0:00</span><span>{{ studioStatus }}</span></div>
+<div class="recording-workspace gb-studio">
+<div class="gb-bar" role="toolbar" aria-label="Studio controls">
+<div class="gb-group"><button onClick="{{ studioToStart }}" aria-label="Go to start" title="Go to start">⏮</button><button class="gb-play" onClick="{{ studioPlay }}" aria-label="{{ studioPlayLabel }}">{{ studioPlayIcon }}</button><button onClick="{{ studioStop }}" aria-label="Stop and return to start" title="Stop">■</button><button class="session-record" onClick="{{ recToggle }}" disabled="{{ studioBusy }}">{{ recLabel }}</button></div>
+<div class="gb-lcd" aria-label="Position"><b data-gb-bars="true">1.1.1</b><span data-studio-clock="true">0:00</span><small>{{ studioBpm }} BPM · 4/4</small></div>
+<div class="gb-group"><button onClick="{{ studioCycle }}" class="{{ studioCycleClass }}" title="Cycle (C): loop the yellow region in the ruler">⟲ CYCLE</button><button onClick="{{ studioMetro }}" class="{{ studioMetroClass }}" title="Metronome (K)">♩ CLICK</button><button onClick="{{ studioCountIn }}" class="{{ studioCountClass }}" title="One bar of clicks before recording">1234 COUNT-IN</button></div>
+<label class="gb-tempo">TEMPO<input aria-label="Project tempo" type="number" min="30" max="300" value="{{ studioBpm }}" onChange="{{ studioSetBpm }}" /></label>
+<div class="gb-group"><button onClick="{{ studioZoomOut }}" aria-label="Zoom out" title="Zoom out">−</button><button onClick="{{ studioZoomIn }}" aria-label="Zoom in" title="Zoom in">+</button></div>
+<div class="gb-group gb-right"><button onClick="{{ studioAddTrack }}">+ TRACK</button><button onClick="{{ studioImport }}">IMPORT AUDIO</button><button onClick="{{ studioSources }}" class="{{ studioLoopsClass }}">LOOPS &amp; FILES</button></div>
+</div>
 <sc-if value="{{ studioPending }}" hint-placeholder-val="{{ false }}"><button onClick="{{ studioRetry }}">RETRY SAVE RECORDING</button></sc-if>
-<label class="session-seek">PLAYHEAD · click a waveform or seek here<input id="session-seek" aria-label="Session playhead" type="range" min="0" max="{{ studioDuration }}" step="0.01" value="{{ studioPosition }}" onChange="{{ studioSeek }}" disabled="{{ rec }}" /></label>
-<div class="session-tracks"><sc-for list="{{ studioTracks }}" as="t" hint-placeholder-count="3">
-<div class="session-track" data-session-track="{{ t.id }}"><div class="track-controls"><strong>TRACK {{ t.number }}</strong><input aria-label="Track name" value="{{ t.name }}" onChange="{{ t.rename }}" /><div><button onClick="{{ t.mute }}">{{ t.muteLabel }}</button><button onClick="{{ t.solo }}">{{ t.soloLabel }}</button></div><label>LEVEL<input aria-label="Track level" type="range" min="0" max="1" step="0.01" value="{{ t.volume }}" onChange="{{ t.level }}" /></label></div><div class="track-region"><div><span>{{ t.status }}</span><label>START (SEC)<input aria-label="Track start seconds" type="number" min="0" max="7200" step="0.01" value="{{ t.offset }}" onChange="{{ t.move }}" disabled="{{ rec }}" /></label></div><canvas data-track-wave="{{ t.id }}" width="1000" height="90" onClick="{{ t.seek }}" title="Click to place the playhead"></canvas></div></div>
-</sc-for></div>
+<div class="gb-main">
+<div id="gb-arrange" class="gb-arrange" aria-label="Arrange: tracks and clips"></div>
+<sc-if value="{{ studioShowSources }}" hint-placeholder-val="{{ false }}"><aside class="gb-browser" aria-label="Loops and files">
+<h3>LOOPS &amp; FILES</h3><p>Drag onto a track, or onto the empty lane for a new track. On a phone, tap + ADD.</p>
+<h4>SPLIT STEMS &amp; SOUND PACKS</h4>
+<sc-for list="{{ studioStemsList }}" as="f" hint-placeholder-count="2"><div class="gb-loop" draggable="true" data-loop-url="{{ f.url }}" data-loop-name="{{ f.name }}"><span class="gb-grip">⠿</span><span class="gb-loop-name">{{ f.name }}</span><button onClick="{{ f.add }}" aria-label="{{ f.addLabel }}">+ ADD</button></div></sc-for>
+<sc-if value="{{ studioNoStems }}" hint-placeholder-val="{{ false }}"><small>No splits yet. Use SPLIT below or the PACKS tab.</small></sc-if>
+<h4>YOUR SONGS</h4>
+<sc-for list="{{ studioLibrary }}" as="f" hint-placeholder-count="2"><div class="gb-loop" draggable="true" data-loop-url="{{ f.url }}" data-loop-name="{{ f.name }}"><span class="gb-grip">⠿</span><span class="gb-loop-name">{{ f.name }}</span><button onClick="{{ f.add }}" aria-label="{{ f.addLabel }}">+ ADD</button><button onClick="{{ f.use }}" title="Put on Track 1 as the beat">BEAT</button><button onClick="{{ f.split }}" title="Split out the instrumental">SPLIT</button><small>{{ f.status }}</small></div></sc-for>
+</aside></sc-if>
+</div>
 <div class="recording-hint">{{ studioHint }}</div>
-<sc-if value="{{ studioShowSources }}" hint-placeholder-val="{{ false }}"><div class="session-sources"><h3>YOUR FILES</h3><p>Use a file as Track 1, or split a song and choose its instrumental below.</p><sc-for list="{{ studioLibrary }}" as="f" hint-placeholder-count="1"><div><span>{{ f.name }}</span><button onClick="{{ f.use }}">USE AS TRACK 1</button><button onClick="{{ f.split }}">SPLIT INSTRUMENTAL</button><small>{{ f.status }}</small></div></sc-for><h3>SPLIT INSTRUMENTALS</h3><sc-for list="{{ studioInstrumentals }}" as="f" hint-placeholder-count="1"><div><span>{{ f.name }}</span><button onClick="{{ f.use }}">USE AS TRACK 1</button></div></sc-for><p>Completed splits appear here automatically. Your original files stay in SONGS.</p></div></sc-if>
 </div></sc-if>
 
 <sc-if value="{{ isScrew }}" hint-placeholder-val="{{ false }}"><div class="dj-scroll"><div class="dj-intro"><span>THE SCREW ROOM</span><small>Two records. One mix. Your pace.</small></div><sc-if value="{{ coachOpen }}" hint-placeholder-val="{{ false }}"><section class="dj-coach" aria-label="Trill mixing lessons"><div class="coach-tabs"><sc-for list="{{ coachGuides }}" as="g" hint-placeholder-count="3"><button onClick="{{ g.onTap }}" class="coach-tab" style="background:{{ g.bg }};color:{{ g.fg }}">{{ g.name }}</button></sc-for><button onClick="{{ closeCoach }}" class="coach-close" aria-label="Close Trill lessons">×</button></div><div class="coach-body"><img class="guide-avatar" src="/assets/trill.png" alt="Trill" /><div><small>TRILL · STEP {{ coachStepNo }} OF {{ coachStepCount }}</small><h4>{{ coachTitle }}</h4><p>{{ coachBody }}</p></div></div><div class="coach-nav"><button onClick="{{ prevCoach }}" style="color:{{ coachBackFg }}">← BACK</button><button onClick="{{ nextCoach }}" class="coach-next">{{ coachNextLabel }}</button></div></section></sc-if><sc-if value="{{ !coachOpen }}" hint-placeholder-val="{{ true }}"><button onClick="{{ openCoach }}" class="coach-open"><img src="/assets/trill.png" alt="" />LEARN TO MIX WITH TRILL →</button></sc-if><div class="dj-console"><section class="dj-deck" id="turntable-A">
@@ -1474,7 +1486,7 @@ class Component extends DCLogic {
     { title: "Welcome to ScrewShop", body: "A rap writing studio: write bars with live rhyme highlighting, load a beat, chop and screw records, record vocal takes, and build beats on a sampler with your MIDI keyboard. Everything you make is saved on your computer and follows you between your phone and computer. Tap NEXT to walk through each tab." },
     { title: "SONGS — your project folder", body: "Upload any MP3 or WAV here. Each file gets its own row you can rename, and buttons to SET AS BEAT (loads it into the transport bar) or send it to a SCREW deck. To split a song into instruments, head to the PACKS tab." },
     { title: "WRITE — bars and rhymes", body: "Type your bars. Words that rhyme light up in matching colors automatically. Tap any colored word to see more rhymes, same-syllable swaps, and full phrases you can drop in. The syllable count on the right flags bars that run long. Everything autosaves as you type." },
-    { title: "STUDIO — beat and vocals", body: "Import a beat or choose a split instrumental for Track 1. RECORD plays the session from the playhead while capturing a new vocal track. Each take gets its own lane, level, mute, solo and start time. Wear headphones to avoid recording the speakers. The session and audio save locally." },
+    { title: "STUDIO — multitrack, GarageBand style", body: "Tracks stack down the page with a bar-and-beat ruler on top. IMPORT AUDIO puts your beat on Track 1. Open LOOPS & FILES and drag songs, split stems or sound-pack pieces onto a track (or the empty lane for a new track). Drag clips to move them; they snap to the beat. Drag a clip's right edge past its end to loop it. Drag along the top of the ruler to set a yellow CYCLE region that repeats. CLICK turns on the metronome, COUNT-IN gives you one bar before recording, and RECORD adds a new vocal track at the playhead. Wear headphones. Everything saves on your computer." },
     { title: "SCREW — chop and screw", body: "Two turntables and a mixer. Each deck has a clock: where you are, time left, and song length. Load a song on each, drag SCREW SPEED to slow it down (pitch drops with it, the authentic way), flip on SYRUP for reverb, and click the waveform twice to set a loop, then hit CHOP to ride it. PLAY BOTH / PAUSE BOTH / STOP BOTH run both decks together, MATCH B → A lines deck B up with A, and NUDGE pushes B behind or ahead. Want it step by step? Tap LEARN TO MIX WITH TRILL below." },
     { title: "BEATS — pads, sequencer, and your MIDI keyboard", body: "Load a sound onto any of the 8 pads and tap to play it, or plug in a MIDI keyboard (like an M-Audio Oxygen 25) — grant access in Settings, and its keys trigger the pads live. Tap steps in the 16-step grid under each pad to build a loop, then hit PLAY PATTERN." },
     { title: "PACKS — split a song into sound packs", body: "Pick any song from SONGS and tap QUICK SPLIT (vocals + instrumental, fast) or FULL SPLIT (vocals, drums, bass, guitar, piano, other, plus a mixed instrumental). The local ScrewShop processor picks up the job automatically. Keep the computer running; audio and stems stay on disk. Everything you've split shows up below with a PLAY button and pad numbers — tap a number to load that piece straight onto a BEATS pad, saved on disk for next time." },
@@ -1520,7 +1532,7 @@ class Component extends DCLogic {
     const efam = E ? E.rhymeFamilies(S.lines.map(l => String(l).trim()), this.sens) : null;
     const tabs = ["SONGS", "WRITE", "STUDIO", "SCREW", "BEATS", "PACKS"].map(n => {
       const id = n.toLowerCase(), on = S.tab === id;
-      return { name: n, mark: on ? "var(--color-accent)" : "transparent", fg: on ? "var(--color-text)" : "var(--color-neutral-600)", onTap: () => { this.setState({ tab: id, word: null, edit: -1, ammo: false }); if(id === "studio" && !this.state.beatPlaying && !this.state.deckA.playing && !this.state.deckB.playing) this.setState({transportSource:"studio",transportTitle:"STUDIO · Beat + vocal tracks"}); } };
+      return { name: n, mark: on ? "var(--color-accent)" : "transparent", fg: on ? "var(--color-text)" : "var(--color-neutral-600)", onTap: () => { this.setState({ tab: id, word: null, edit: -1, ammo: false }); if(id === "studio" && !this.state.beatPlaying && !this.state.deckA.playing && !this.state.deckB.playing) this.setState({transportSource:"studio",transportTitle:"STUDIO · Multitrack session"}); } };
     });
     const bars = S.lines.map((line, li) => {
       const syl = this.lineSyl(line);
@@ -1879,24 +1891,33 @@ class Component extends DCLogic {
       }),
       recToggle: () => this.studio.record(),
       rec: S.rec,
-      studioTracks: this.studio?.rows() || [],
       studioImport: () => this.studio.importBeat(),
       studioSources: () => this.setState({studioShowSources:!S.studioShowSources}),
       studioShowSources: !!S.studioShowSources,
+      studioLoopsClass: S.studioShowSources ? "on" : "",
       studioBusy: !!this.studio?.busy,
       studioPending: !!this.studio?.pending,
       studioRetry: () => this.studio.saveRecording(),
       studioPlay: () => this.studio.toggle(),
       studioStop: () => { if(this.studio.recording)this.studio.stopRecord(); this.studio.halt(true); },
-      studioPlayLabel: this.studio?.playing ? "PAUSE MIX" : "PLAY MIX",
-      studioDuration: this.studio?.duration() || 10,
-      studioPosition: this.studio?.position() || 0,
-      studioSeek: e => this.studio.seek(+e.target.value),
-      studioStatus: this.studio?.busy ? "WORKING…" : S.rec ? "RECORDING · " + this.fmtTime(S.secs) : "LOCAL SESSION",
-      studioHint: S.rec ? "Recording a new vocal lane… Stop to save it. Existing tracks are playing underneath." : "Wear headphones while recording. RECORD starts at the playhead and adds a new vocal track. Adjust START (SEC) to line up a take; your original recording stays intact.",
-      studioLibrary: S.library.map(f=>({...f,use:()=>this.studio.setBeat(f),split:()=>this.requestSplit(f,"quick"),status:S.splitJobs[f.id]?.error || S.splitJobs[f.id]?.status || ""})),
-      studioInstrumentals: S.allStems.filter(f=>f.kind==="instrumental").map(f=>({name:f.trackName+" · instrumental",use:()=>this.studio.setBeat({...f,name:f.trackName+" · instrumental"})}))
-
+      studioToStart: () => this.studio.seek(0),
+      studioPlayLabel: this.studio?.playing ? "Pause" : "Play",
+      studioPlayIcon: this.studio?.playing ? "❚❚" : "▶",
+      studioBpm: this.studio?.bpm || 82,
+      studioSetBpm: e => this.studio.setBpm(e.target.value),
+      studioCycle: () => this.studio.toggleCycle(),
+      studioCycleClass: this.studio?.cycle?.on ? "on cyc" : "",
+      studioMetro: () => this.studio.toggleMetronome(),
+      studioMetroClass: this.studio?.metronome ? "on" : "",
+      studioCountIn: () => this.studio.toggleCountIn(),
+      studioCountClass: this.studio?.countIn ? "on" : "",
+      studioZoomIn: () => this.studio.setZoom(1),
+      studioZoomOut: () => this.studio.setZoom(-1),
+      studioAddTrack: () => this.studio.addTrack(),
+      studioHint: S.rec ? "Recording a new vocal track… hit STOP to save it. Everything else keeps playing underneath." : "Drag clips to move them (they snap to the beat; hold Alt for free). Drag a clip's right edge past its end to loop it. Drag along the top of the ruler to set the cycle region. Click the ruler to move the playhead. RECORD adds a new vocal track at the playhead — wear headphones. Changing TEMPO moves the grid, not your audio.",
+      studioStemsList: S.allStems.filter(f=>f.url).map(f=>{const name=f.trackName+" · "+f.kind;return {name,url:f.url,addLabel:"Add "+name+" on a new track",add:()=>this.studio.addClip(null,{name,url:f.url},this.studio.cursor)};}),
+      studioNoStems: !S.allStems.length,
+      studioLibrary: S.library.map(f=>({...f,addLabel:"Add "+f.name+" on a new track",add:()=>this.studio.addClip(null,{name:f.name,url:f.url},this.studio.cursor),use:()=>this.studio.setBeat(f),split:()=>this.requestSplit(f,"quick"),status:S.splitJobs[f.id]?.error || S.splitJobs[f.id]?.status || ""}))
     };
   }
 }
