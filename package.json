@@ -1,0 +1,20 @@
+{
+  "name": "screwshop",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Local rap writing and chopped-and-screwed production studio",
+  "scripts": {
+    "start": ".venv\\Scripts\\python.exe scripts/local_server.py",
+    "test": ".venv\\Scripts\\python.exe -m unittest discover -s tests",
+    "test:browser": ".venv\\Scripts\\python.exe tests/browser.py",
+    "vendor": "node scripts/vendor.cjs"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "tone": "15.1.22"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}

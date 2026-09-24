@@ -1,0 +1,122 @@
+"""Reusable WAVs and complete, aligned DAW stem packs. Original audio is preserved."""
+import json
+import re
+import shutil
+import tempfile
+import uuid
+import wave
+import zipfile
+from pathlib import Path
+
+FULL_STEMS = ("vocals", "drums", "bass", "guitar", "piano", "other", "instrumental")
+
+
+def slug(value):
+    return re.sub(r"[^a-zA-Z0-9_-]+", "-", str(value)).strip("-_")[:70] or "Track"
+
+
+def safe_export_path(store, relative):
+    if not isinstance(relative, str) or "\\" in relative or ":" in relative:
+        raise ValueError("Invalid export path")
+    path = (store.beats_root / relative).resolve()
+    if not path.is_relative_to(store.beats_root) or path.suffix.lower() not in {".wav", ".zip"}:
+        raise ValueError("Invalid export path")
+    return path
+
+
+def record_export(store, key, relative, name):
+    result = store.query({"table": "exports", "action": "upsert", "values": {"id": key, "relative_path": relative, "download_name": name}, "single": "required"})
+    return {"id": result["id"], "saved_to": "Beats/" + relative, "download_url": "/downloads/" + result["id"]}
+
+
+def save_stem(store, stem_id):
+    with store.lock:
+        stem = store.query({"table": "stems", "filters": [["id", stem_id]], "single": "required"})
+        beat = store.query({"table": "beats", "filters": [["id", stem["beat_id"]]], "single": "required"})
+        source = store.asset("stems", stem["storage_path"])
+        if not source.is_file():
+            raise ValueError("The split audio is missing. Split the source track again.")
+        # Each split revision gets a separate destination; existing saved versions stay intact.
+        job_id = Path(stem["storage_path"]).parent.name
+        key = slug(stem_id + "-" + job_id)
+        name = slug(beat.get("label", "Track")) + "-" + slug(stem["kind"]) + ".wav"
+        relative = name[:-4] + "-" + slug(job_id) + ".wav"
+        dest = safe_export_path(store, relative)
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        if not dest.exists():
+            with tempfile.NamedTemporaryFile(dir=dest.parent, suffix=".tmp", delete=False) as tmp:
+                tmp_path = Path(tmp.name)
+            try:
+                shutil.copyfile(source, tmp_path)
+                tmp_path.replace(dest)
+            finally:
+                tmp_path.unlink(missing_ok=True)
+        return record_export(store, key, relative, name)
+
+
+def save_pack(store, beat_id=None, job=None):
+    with store.lock:
+        if job is None:
+            jobs = store.query({"table": "split_jobs", "filters": [["beat_id", beat_id], ["mode", "full"], ["status", "done"]], "order": ["created_at", False]})
+            if not jobs:
+                raise ValueError("Run FULL SPLIT first to create a complete sound pack.")
+            job = jobs[0]
+        if job.get("mode") != "full":
+            raise ValueError("Sound packs require a full split")
+        beat = store.query({"table": "beats", "filters": [["id", job["beat_id"]]], "single": "required"})
+        title = str(beat.get("label") or "Track")
+        key = slug("pack-" + job["id"])
+        folder_name = slug(title) + "-" + slug(job["id"])
+        parent = store.beats_root / "sound packs"
+        parent.mkdir(parents=True, exist_ok=True)
+        folder = parent / folder_name
+        archive = parent / (folder_name + ".zip")
+        sources = {kind: store.asset("stems", f"local/{job['beat_id']}/{job['id']}/{kind}.wav") for kind in FULL_STEMS}
+        if any(not p.is_file() for p in sources.values()):
+            raise ValueError("This full split is incomplete. Run FULL SPLIT again before exporting.")
+        info = {}
+        for kind, source in sources.items():
+            with wave.open(str(source), "rb") as audio:
+                info[kind] = {"sample_rate": audio.getframerate(), "channels": audio.getnchannels(), "frames": audio.getnframes(), "bit_depth": audio.getsampwidth() * 8}
+        if len({(v["sample_rate"], v["frames"]) for v in info.values()}) != 1:
+            raise ValueError("Stem lengths or sample rates do not match; cannot export an aligned pack.")
+        if not folder.exists():
+            with tempfile.TemporaryDirectory(dir=parent, prefix=".packing-") as temp:
+                staging = Path(temp) / folder_name
+                staging.mkdir()
+                for kind, source in sources.items():
+                    shutil.copyfile(source, staging / (kind + ".wav"))
+                (staging / "manifest.json").write_text(json.dumps({"title": title, "job_id": job["id"], "source_beat_id": job["beat_id"], "files": info, "alignment": "All files start at source time zero."}, indent=2), encoding="utf-8")
+                (staging / "README.txt").write_text("ScrewShop sound pack: " + title + "\n\nImport the WAV files onto separate audio tracks in your DAW.\nAlign every file at the same starting point; no silence has been trimmed.\nNo tempo is embedded or guessed.\n\nUse the six individual stems OR vocals.wav + instrumental.wav.\nDo not layer instrumental.wav over its component stems (it contains them).\n", encoding="utf-8")
+                staging.replace(folder)
+        if not archive.exists():
+            with tempfile.NamedTemporaryFile(dir=parent, suffix=".zip.tmp", delete=False) as tmp:
+                tmp_path = Path(tmp.name)
+            try:
+                with zipfile.ZipFile(tmp_path, "w", zipfile.ZIP_DEFLATED) as zipped:
+                    for name in [*(kind + ".wav" for kind in FULL_STEMS), "manifest.json", "README.txt"]:
+                        zipped.write(folder / name, folder_name + "/" + name)
+                tmp_path.replace(archive)
+            finally:
+                tmp_path.unlink(missing_ok=True)
+        result = record_export(store, key, str(archive.relative_to(store.beats_root)).replace("\\", "/"), title + "-sound-pack.zip")
+        result["folder"] = "Beats/sound packs/" + folder_name
+        return result
+
+
+def reuse_stem(store, stem_id):
+    """Make an independent library copy; deleting/re-splitting the source cannot replace it."""
+    with store.lock:
+        stem = store.query({"table": "stems", "filters": [["id", stem_id]], "single": "required"})
+        beat = store.query({"table": "beats", "filters": [["id", stem["beat_id"]]], "single": "required"})
+        revision = stem["storage_path"]
+        previous = store.query({"table": "library", "filters": [["source_stem_revision", revision]]})
+        if previous:
+            return previous[0]
+        saved = save_stem(store, stem_id)
+        source = store.asset("stems", revision)
+        relative = f"local/reused/{uuid.uuid4()}/{slug(stem['kind'])}.wav"
+        target = store.asset("beats", relative)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+        return store.query({"table": "library", "action": "insert", "values": {"name": str(beat.get("label") or "Track") + " — " + stem["kind"], "storage_path": relative, "source_stem_revision": revision}, "single": "required"})

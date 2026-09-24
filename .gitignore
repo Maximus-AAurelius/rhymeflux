@@ -1,3 +1,14 @@
 scripts/*.log
 __pycache__/
 *.pyc
+.venv/
+node_modules/
+data/
+Beats/
+archive/
+design/originals/
+media/
+test-results/
+.env*
+!.env.example
+mp3s/
